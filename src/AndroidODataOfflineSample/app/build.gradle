@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'com.google.dagger.hilt.android'
     id 'kotlin-kapt'
+    id 'com.google.devtools.ksp' version '1.8.0-1.0.8'
 }
 
 android {
@@ -19,6 +20,10 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
+        }
+
+        kapt {
+            arguments {arg("room.schemaLocation", "$projectDir/schemas")} // Path to DB scheme
         }
     }
 
@@ -73,4 +78,12 @@ dependencies {
     // Hilt DI.
     implementation 'com.google.dagger:hilt-android:2.44'
     kapt("com.google.dagger:hilt-android-compiler:2.44")
+
+    // Room library
+    def room_version = "2.5.1"
+
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor("androidx.room:room-compiler:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-ktx:$room_version") // Kotlin Extensions and Coroutines support for Room
 }
