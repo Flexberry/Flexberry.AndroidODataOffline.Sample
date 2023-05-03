@@ -14,4 +14,4 @@ jobs:
       - uses: actions/setup-java@v1
         with: {java-version: 1.8}
       - name: Build release APK
-        run: ./gradlew assembleRelease
+        run: .src/AndroidODataOfflineSample/gradlew assembleRelease
