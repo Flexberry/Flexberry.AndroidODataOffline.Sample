@@ -81,4 +81,5 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version") // Kotlin Extensions and Coroutines support for Room
+    testImplementation("androidx.room:room-testing:$room_version") // Test helpers
 }
