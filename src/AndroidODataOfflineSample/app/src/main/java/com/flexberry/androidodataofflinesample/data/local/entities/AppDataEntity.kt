@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.UUID
 
-@Entity(tableName = "AppDataLocal")
+@Entity(tableName = "AppData")
 data class AppDataEntity(
     @PrimaryKey
     @ColumnInfo(name = "__primaryKey")

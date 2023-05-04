@@ -7,7 +7,7 @@ import com.flexberry.androidodataofflinesample.data.enums.VoteType
 import java.sql.Timestamp
 import java.util.UUID
 
-@Entity(tableName = "VoteLocal")
+@Entity(tableName = "Vote")
 data class VoteEntity(
     @PrimaryKey
     @ColumnInfo(name = "__primaryKey")
@@ -29,5 +29,5 @@ data class VoteEntity(
     val voteType: VoteType,
 
     @ColumnInfo(name = "ApplicationUser")
-    val applicationUser: UUID
+    val applicationUserId: UUID
 )
