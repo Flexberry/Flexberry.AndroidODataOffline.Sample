@@ -62,8 +62,5 @@ data class ApplicationUserEntity(
     val vip: Boolean,
 
     @ColumnInfo(name = "Karma")
-    val karma: Double,
-
-    @ColumnInfo(name = "Votes")
-    val votes: List<VoteEntity>
+    val karma: Double
 )

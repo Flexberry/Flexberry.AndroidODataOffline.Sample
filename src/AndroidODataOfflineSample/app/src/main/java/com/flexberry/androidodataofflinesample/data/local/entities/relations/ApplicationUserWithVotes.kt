@@ -5,11 +5,11 @@ import androidx.room.Relation
 import com.flexberry.androidodataofflinesample.data.local.entities.ApplicationUserEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.VoteEntity
 
-data class ApplicationUserAndVote(
+data class ApplicationUserWithVotes(
     @Embedded val user: ApplicationUserEntity,
     @Relation(
         parentColumn = "__primaryKey",
-        entityColumn = "applicationUserId"
+        entityColumn = "ApplicationUserId"
     )
     val votes: List<VoteEntity>
 )

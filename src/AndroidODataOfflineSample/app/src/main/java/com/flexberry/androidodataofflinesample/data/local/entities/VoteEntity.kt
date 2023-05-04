@@ -28,6 +28,6 @@ data class VoteEntity(
     @ColumnInfo(name = "VoteType")
     val voteType: VoteType,
 
-    @ColumnInfo(name = "ApplicationUser")
+    @ColumnInfo(name = "ApplicationUserId")
     val applicationUserId: UUID
 )
