@@ -1,0 +1,25 @@
+name: BuildAPK
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+    types: [opened, synchronize, reopened]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Permission for gradlew
+        run: chmod +x src/AndroidODataOfflineSample/gradlew
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build
+          build-root-directory: src/AndroidODataOfflineSample
