@@ -43,7 +43,7 @@ fun MainScreen( modifier: Modifier = Modifier ) {
             Button(
                 modifier = modifier
                     .size(100.dp),
-                onClick = { /*TODO*/ }
+                onClick = { }
             ) {
                 Text(
                     text = "Offline",
@@ -61,7 +61,7 @@ fun mainButton(modifier: Modifier, fontSize: TextUnit, text: String) {
         modifier = modifier
             .size(200.dp)
             .background(color = MaterialTheme.colorScheme.primary),
-        onClick = { /*TODO*/ },
+        onClick = { },
         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
     ) {
         Text(
