@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.flexberry.androidodataofflinesample.ui.mainmodel.MainScreen
 import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampleTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,7 +20,7 @@ class MainActivity : ComponentActivity() {
             AndroidODataOfflineSampleTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    Greeting("Android")
+                    MainScreen()
                 }
             }
         }
@@ -38,6 +39,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     AndroidODataOfflineSampleTheme {
-        Greeting("Android")
+        MainScreen()
     }
 }
