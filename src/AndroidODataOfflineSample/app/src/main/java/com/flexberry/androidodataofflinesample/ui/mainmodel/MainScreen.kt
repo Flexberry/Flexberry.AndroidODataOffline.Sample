@@ -1,14 +1,14 @@
 package com.flexberry.androidodataofflinesample.ui.mainmodel
 
 import android.content.res.Configuration
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,52 +22,78 @@ import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampl
 
 
 @Composable
-fun MainScreen( modifier: Modifier = Modifier ) {
+fun MainScreen( modifier: Modifier = Modifier, viewModel: MainViewModel = MainViewModel() ) {
     Column(
         modifier
             .fillMaxSize()
-            .padding(vertical = 40.dp, horizontal = 20.dp),
-        verticalArrangement = Arrangement.spacedBy(32.dp, alignment = Alignment.CenterVertically),
-        horizontalAlignment = Alignment.CenterHorizontally
-    )
-    {
-        mainButton(modifier = modifier, fontSize = 126.sp, text = "+")
-        mainButton(modifier = modifier, fontSize = 36.sp, text = "Список")
+            .padding(
+                vertical = 40.dp,
+                horizontal = 20.dp
+            ),
 
-        Column(
-            modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(32.dp, alignment = Alignment.Bottom),
-            horizontalAlignment = Alignment.End
+    ) {
+        val rowModifier = modifier
+            .padding(bottom = 18.dp)
+            .weight(2f)
+            .fillMaxSize()
+        val btnModifier = modifier.size(200.dp)
+        Row(
+            modifier = rowModifier,
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            mainButton(
+                modifier = btnModifier,
+                fontSize = 126.sp,
+                text = "+",
+                onClick = viewModel::addButton
+            )
+        }
+        Row(
+            modifier = rowModifier,
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            mainButton(
+                modifier = btnModifier,
+                fontSize = 36.sp,
+                text = "Список",
+                onClick = viewModel::listButton
+            )
+        }
+        Row(
+            Modifier.weight(1f).fillMaxSize(),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.spacedBy(32.dp, alignment = Alignment.End)
         )
         {
-            Button(
-                modifier = modifier
-                    .size(100.dp),
-                onClick = { }
-            ) {
-                Text(
-                    text = "Offline",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.secondary,
-                )
-            }
+            mainButton(
+                modifier = modifier.size(100.dp),
+                fontSize = 18.sp,
+                text = "Offline",
+                onClick = viewModel::onlineButton,
+                rounded = 50
+            )
         }
     }
 }
 
 @Composable
-fun mainButton(modifier: Modifier, fontSize: TextUnit, text: String) {
+fun mainButton(
+    modifier: Modifier,
+    fontSize: TextUnit,
+    text: String,
+    onClick: () -> Unit,
+    rounded: Int = 0
+    ) {
     Button(
-        modifier = modifier
-            .size(200.dp)
-            .background(color = MaterialTheme.colorScheme.primary),
-        onClick = { },
-        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+        modifier = modifier,
+        shape = RoundedCornerShape(rounded),
+        onClick = { onClick() },
     ) {
         Text(
             text = text,
             style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.secondary,
             fontSize = fontSize
         )
     }
