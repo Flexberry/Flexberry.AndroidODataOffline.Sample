@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.flexberry.androidodataofflinesample.ui.mainmodel.MainScreen
 import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampleTheme
 import org.apache.olingo.client.core.ODataClientFactory
 import org.apache.olingo.commons.api.format.ContentType
@@ -24,8 +25,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             AndroidODataOfflineSampleTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    Greeting("Android")
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    MainScreen()
                 }
             }
         }
@@ -64,6 +68,6 @@ fun OdataTest(){
 @Composable
 fun GreetingPreview() {
     AndroidODataOfflineSampleTheme {
-        Greeting("Android")
+        MainScreen()
     }
 }

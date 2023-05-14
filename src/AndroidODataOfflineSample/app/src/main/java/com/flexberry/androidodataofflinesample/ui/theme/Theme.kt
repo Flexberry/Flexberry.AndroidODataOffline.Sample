@@ -16,15 +16,17 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-        primary = Purple80,
+        primary = LightGrey,
+        onPrimary = Black,
         secondary = PurpleGrey80,
-        tertiary = Pink80
+        tertiary = Pink80,
 )
 
 private val LightColorScheme = lightColorScheme(
-        primary = Purple40,
+        primary = LightGrey,
+        onPrimary = Black,
         secondary = PurpleGrey40,
-        tertiary = Pink40
+        tertiary = Pink40,
 
         /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -41,7 +43,9 @@ private val LightColorScheme = lightColorScheme(
 fun AndroidODataOfflineSampleTheme(
         darkTheme: Boolean = isSystemInDarkTheme(),
         // Dynamic color is available on Android 12+
-        dynamicColor: Boolean = true,
+        // Установлено значение по умолчанию «false», чтобы отключить динамический цвет в приложении на Android 12+
+        // Будут использоваться цвета темы приложения на всех версиях Android
+        dynamicColor: Boolean = false,
         content: @Composable () -> Unit
 ) {
     val colorScheme = when {
