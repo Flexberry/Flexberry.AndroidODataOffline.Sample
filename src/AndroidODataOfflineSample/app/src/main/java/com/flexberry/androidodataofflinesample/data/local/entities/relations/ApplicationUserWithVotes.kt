@@ -9,7 +9,7 @@ data class ApplicationUserWithVotes(
     @Embedded val user: ApplicationUserEntity,
     @Relation(
         parentColumn = "__primaryKey",
-        entityColumn = "ApplicationUserId"
+        entityColumn = "ApplicationUser"
     )
     val votes: List<VoteEntity>
 )

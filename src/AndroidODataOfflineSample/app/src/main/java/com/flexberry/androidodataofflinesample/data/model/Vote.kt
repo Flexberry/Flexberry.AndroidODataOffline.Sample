@@ -13,6 +13,5 @@ data class Vote(
     val creator: String,
     val editTime: Timestamp,
     val editor: String,
-    val voteType: VoteType,
-    val applicationUser: ApplicationUser
+    val voteType: VoteType
 )

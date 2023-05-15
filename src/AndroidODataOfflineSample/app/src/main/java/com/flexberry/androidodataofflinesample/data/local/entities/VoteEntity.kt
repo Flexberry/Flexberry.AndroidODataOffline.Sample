@@ -1,9 +1,14 @@
 package com.flexberry.androidodataofflinesample.data.local.entities
 
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.flexberry.androidodataofflinesample.data.enums.VoteType
+import com.flexberry.androidodataofflinesample.data.model.AppData
+import com.flexberry.androidodataofflinesample.data.model.ApplicationUser
+import com.flexberry.androidodataofflinesample.data.model.Vote
 import java.sql.Timestamp
 import java.util.UUID
 
@@ -28,6 +33,15 @@ data class VoteEntity(
     @ColumnInfo(name = "VoteType")
     val voteType: VoteType,
 
-    @ColumnInfo(name = "ApplicationUserId")
+    @ColumnInfo(name = "ApplicationUser")
     val applicationUserId: UUID
+)
+
+fun VoteEntity.asExternalModel() = Vote(
+    primarykey = primarykey,
+    createTime = createTime,
+    creator = creator,
+    editTime = editTime,
+    editor = editor,
+    voteType = voteType
 )

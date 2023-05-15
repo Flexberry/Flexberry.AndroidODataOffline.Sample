@@ -2,7 +2,10 @@ package com.flexberry.androidodataofflinesample.data.local.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import com.flexberry.androidodataofflinesample.data.model.ApplicationUser
+import com.flexberry.androidodataofflinesample.data.model.Vote
 import java.sql.Date
 import java.sql.Timestamp
 import java.util.UUID
@@ -63,4 +66,25 @@ data class ApplicationUserEntity(
 
     @ColumnInfo(name = "Karma")
     val karma: Double
+)
+
+fun ApplicationUserEntity.asExternalModel() = ApplicationUser(
+    primarykey = primarykey,
+    createTime = createTime,
+    creator = creator,
+    editTime = editTime,
+    editor = editor,
+    name = name,
+    email = email,
+    phone1 = phone1,
+    phone2 = phone2,
+    phone3 = phone3,
+    activated = activated,
+    vK = vK,
+    facebook = facebook,
+    twitter = twitter,
+    birthday = birthday,
+    gender = gender,
+    vip = vip,
+    karma = karma
 )
