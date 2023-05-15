@@ -16,10 +16,10 @@ class ApplicationUserListFormViewModel {
     )
 
     fun editUser():Unit {
-        // TODO изменение данных пользователя
+        // изменение данных пользователя
     }
 
     fun deleteUser():Unit {
-        // TODO удаление пользователя
+        // удаление пользователя
     }
 }

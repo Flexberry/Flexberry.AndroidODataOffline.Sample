@@ -5,7 +5,6 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
@@ -42,19 +40,27 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampleTheme
-import java.time.LocalDate
 
 @Composable
 fun ApplicationUserListFormModelScreen(
     modifier: Modifier = Modifier,
-    viewModel: ApplicationUserListFormViewModel = ApplicationUserListFormViewModel()
+    viewModel: ApplicationUserListFormViewModel = ApplicationUserListFormViewModel(),
+    users: List<ApplicationUserListFormViewModel.User>
 ) {
-
+    LazyColumn(
+        modifier = modifier
+            .padding(start = 32.dp, top = 16.dp, end = 32.dp, bottom = 16.dp)
+    ) {
+        items(users) { user ->
+            ListItem(user, viewModel)
+        }
+    }
 }
 
 @Composable
-fun Item(
-    model: ApplicationUserListFormViewModel.User,
+fun ListItem(
+    user: ApplicationUserListFormViewModel.User,
+    viewModel: ApplicationUserListFormViewModel = ApplicationUserListFormViewModel(),
     modifier: Modifier = Modifier
 ) {
     var isExpandedItem by remember { mutableStateOf(false) }
@@ -70,18 +76,18 @@ fun Item(
                 .padding(all = 16.dp)
         ) {
             Text(
-                text = model.name,
+                text = user.name,
                 style = MaterialTheme.typography.titleLarge
             )
             Spacer(modifier = modifier.height(8.dp))
-            ItemData(text = model.birthday.toString())
+            ItemData(text = user.birthday.toString())
 
             if (isExpandedItem) {
-                ItemData(text = model.email)
-                ItemData(text = model.phone)
+                ItemData(text = user.email)
+                ItemData(text = user.phone)
                 ItemData(
                     text = "Активный ",
-                    if(model.activated) Icons.Default.Check else Icons.Default.Close
+                    if(user.activated) Icons.Default.Check else Icons.Default.Close
                 )
             }
 
@@ -108,7 +114,7 @@ fun Item(
                 ) {
                 DropdownMenuItem(
                     text = { Text("Редактировать") },
-                    onClick = {  },
+                    onClick = { viewModel::editUser },
                     leadingIcon = {
                         Icon(imageVector = Icons.Default.Edit, contentDescription = null)
                     },
@@ -116,7 +122,7 @@ fun Item(
                 Divider()
                 DropdownMenuItem(
                     text = { Text("Удалить") },
-                    onClick = {  },
+                    onClick = { viewModel::deleteUser },
                     leadingIcon = {
                         Icon(imageVector = Icons.Default.Delete, contentDescription = null)
                     },
@@ -143,19 +149,6 @@ fun ItemData(text: String, icon: ImageVector? = null) {
     }
 }
 
-@Composable
-fun ListItems(users: List<ApplicationUserListFormViewModel.User>) {
-    LazyColumn(
-        modifier = Modifier
-            .padding(start = 32.dp, top = 16.dp, end = 32.dp, bottom = 16.dp)
-    ) {
-        items(users) { user ->
-            Item(user)
-        }
-    }
-}
-
-
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_YES,
@@ -169,6 +162,6 @@ fun ListItems(users: List<ApplicationUserListFormViewModel.User>) {
 @Composable
 fun ListItemsPreview() {
     AndroidODataOfflineSampleTheme {
-        ListItems(SampleData.usersSample)
+        ApplicationUserListFormModelScreen(users = SampleData.usersSample)
     }
 }
