@@ -4,7 +4,8 @@ import java.sql.Date
 import java.sql.Timestamp
 import java.util.UUID
 
-@Suppress("DUPLICATED_LINES")
+@Suppress("ALL")
+@SuppressWarnings("ALL")
 object SampleData {
     val usersSample = listOf(
         ApplicationUser(
