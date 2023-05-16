@@ -39,6 +39,14 @@ class Filter(
             return Filter(FilterType.Contains, null, paramName, paramValue)
         }
 
+        fun startsWithFilter(paramName: String, paramValue: String): Filter {
+            return Filter(FilterType.StartsWith, null, paramName, paramValue)
+        }
+
+        fun endsWithFilter(paramName: String, paramValue: String): Filter {
+            return Filter(FilterType.EndsWith, null, paramName, paramValue)
+        }
+
         fun andFilter(filterParams: List<Filter>): Filter {
             return Filter(FilterType.And, filterParams)
         }
