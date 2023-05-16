@@ -7,6 +7,7 @@ import java.util.UUID
 /**
  * Network representation of [ApplicationUser]
  */
+@Suppress("kotlin:S117")
 data class NetworkApplicationUser(
     val __PrimaryKey : UUID,
     val CreateTime: Timestamp? = null,

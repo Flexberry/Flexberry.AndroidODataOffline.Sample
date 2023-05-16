@@ -7,6 +7,7 @@ import java.util.UUID
 /**
  * Network representation of [Vote]
  */
+@Suppress("kotlin:S117")
 data class NetworkVote(
     val __PrimaryKey : UUID,
     val CreateTime: Timestamp? = null,
