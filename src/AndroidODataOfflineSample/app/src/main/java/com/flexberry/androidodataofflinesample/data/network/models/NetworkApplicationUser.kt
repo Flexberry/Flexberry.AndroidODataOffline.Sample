@@ -7,24 +7,25 @@ import java.util.UUID
 /**
  * Network representation of [ApplicationUser]
  */
+@Suppress("kotlin:S117")
 data class NetworkApplicationUser(
-    val primarykey : UUID,
-    val createTime: Timestamp,
-    val creator: String,
-    val editTime: Timestamp,
-    val editor: String,
-    val name: String,
-    val email: String,
-    val phone1: String,
-    val phone2: String,
-    val phone3: String,
-    val activated: Boolean,
-    val vK: String,
-    val facebook: String,
-    val twitter: String,
-    val birthday: Date,
-    val gender: String,
-    val vip: Boolean,
-    val karma: Double,
-    val votes: List<NetworkVote>
+    val __PrimaryKey : UUID,
+    val CreateTime: Timestamp? = null,
+    val Creator: String? = null,
+    val EditTime: Timestamp? = null,
+    val Editor: String? = null,
+    val Name: String? = null,
+    val EMail: String,
+    val Phone1: String? = null,
+    val Phone2: String? = null,
+    val Phone3: String? = null,
+    val Activated: Boolean? = null,
+    val VK: String? = null,
+    val Facebook: String? = null,
+    val Twitter: String? = null,
+    val Birthday: Date? = null,
+    val Gender: String? = null,
+    val Vip: Boolean? = null,
+    val Karma: Double? = null,
+    val Votes: List<NetworkVote>? = null
 )
