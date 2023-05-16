@@ -45,21 +45,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     )
 }
 
-fun OdataTest(){
-    val client = ODataClientFactory.getClient();
-    client.getConfiguration().setDefaultPubFormat(ContentType.APPLICATION_JSON);
-
-    // TODO как-то надо подождать выполнение запроса, т.к падает ошибка в response.body.
-    // Если выполнять эту команду в интерактивной оболочке, то раза с третьего она проходит и данные пользователей получаются.
-    try {
-        val request = client.retrieveRequestFactory.getEntitySetRequest(client.newURIBuilder("http://stands-backend.flexberry.net/odata").appendEntitySetSegment("EmberFlexberryDummyApplicationUsers").build());
-        val response = request.execute();
-        val entitySet = response.body;
-    } catch (e: Exception) {
-        Log.e("ERROR", "Error in odata request", e)
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
