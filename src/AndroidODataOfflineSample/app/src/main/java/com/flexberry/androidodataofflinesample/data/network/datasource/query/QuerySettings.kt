@@ -35,6 +35,24 @@ class QuerySettings(
         return orderBy(propName, OrderType.Desc)
     }
 
+    fun select(propName: String): QuerySettings {
+        initSelectList()
+
+        val ind = selectList?.indexOf(propName) ?: -1
+
+        if (ind < 0) {
+            selectList?.add(propName)
+        }
+
+        return this
+    }
+
+    fun select(propNames: List<String>): QuerySettings {
+        propNames.forEach { x -> select(x) }
+
+        return this
+    }
+
     fun top(topValueToSet: Int): QuerySettings {
         topValue = topValueToSet
 
