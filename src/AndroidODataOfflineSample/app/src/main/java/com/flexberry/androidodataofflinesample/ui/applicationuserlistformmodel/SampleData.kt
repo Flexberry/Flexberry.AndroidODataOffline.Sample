@@ -5,7 +5,6 @@ import java.sql.Timestamp
 import java.util.UUID
 
 @Suppress("all")
-@SuppressWarnings("all")
 object SampleData {
     val usersSample = listOf(
         ApplicationUser(
