@@ -11,23 +11,11 @@ class OdataDataSourceTypeManager {
         )
 
         fun getOdataTypeName(typeName: String?): String? {
-            val ind = odataTypeMap.indexOfFirst { x -> x.first == typeName }
-
-            return if (ind < 0) {
-                null
-            } else {
-                odataTypeMap[ind].second
-            }
+            return odataTypeMap.firstOrNull { x -> x.first == typeName }?.second
         }
 
         fun getTypeName(odataTypeName: String?): String? {
-            val ind = odataTypeMap.indexOfFirst { x -> x.second == odataTypeName }
-
-            return if (ind < 0) {
-                null
-            } else {
-                odataTypeMap[ind].first
-            }
+            return odataTypeMap.firstOrNull { x -> x.second == odataTypeName }?.first
         }
     }
 }
