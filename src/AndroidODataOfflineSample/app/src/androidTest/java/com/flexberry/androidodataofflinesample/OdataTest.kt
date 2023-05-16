@@ -2,6 +2,8 @@ package com.flexberry.androidodataofflinesample
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.flexberry.androidodataofflinesample.data.network.datasource.ApplicationUserOdataDataSource
+import com.flexberry.androidodataofflinesample.data.network.datasource.query.Filter
+import com.flexberry.androidodataofflinesample.data.network.datasource.query.QuerySettings
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkApplicationUser
 import org.junit.Assert
 import org.junit.Test
@@ -61,9 +63,11 @@ class OdataTest {
     @Test
     fun applicationUserFilterTest() {
         val ds = ApplicationUserOdataDataSource()
-        val settings = ds.getSettingsBuilder()
-        val settingsValue = settings.filter("Name eq 'NameForTest'").orderBy("Name asc").top(5).build()
-        val objs = ds.readObjects(settingsValue)
+        val querySettings = QuerySettings()
+            .filter(Filter.equalFilter("Name", "NameForTest"))
+            .orderBy("Name")
+            .top(5)
+        val objs = ds.readObjects(querySettings)
 
         if (objs.any()) {
             Assert.assertTrue(objs.any { x -> x.Name != null })
