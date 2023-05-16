@@ -1,7 +1,6 @@
 package com.flexberry.androidodataofflinesample.data.network.datasource
 
 import android.util.Log
-import com.flexberry.androidodataofflinesample.data.network.models.NetworkVote
 import com.flexberry.androidodataofflinesample.data.query.Filter
 import com.flexberry.androidodataofflinesample.data.query.FilterType
 import com.flexberry.androidodataofflinesample.data.query.OrderType
@@ -213,7 +212,7 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
         }
 
         // TODO: Костыль!!!
-        if (odataObjectClass.simpleName == NetworkVote::class.simpleName) {
+        if (odataObjectClass.simpleName == "NetworkVote") {
             jsonNewValue.put("Suggestion@odata.bind", "EmberFlexberryDummySuggestions(0b76edce-5900-45ec-a958-b9d6bb943b2d)")
         }
 
@@ -237,7 +236,7 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
         }
 
         // TODO: Костыль!!!
-        if (odataObjectClass.simpleName == NetworkVote::class.simpleName) {
+        if (odataObjectClass.simpleName == "NetworkVote") {
             val elem = "Suggestion(${UrlParamNames.select}=$primaryKeyPropertyName)"
 
             lstRes.add(elem)
