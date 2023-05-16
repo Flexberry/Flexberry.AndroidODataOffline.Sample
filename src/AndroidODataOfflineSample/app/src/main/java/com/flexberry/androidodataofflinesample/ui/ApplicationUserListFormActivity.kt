@@ -8,7 +8,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.flexberry.androidodataofflinesample.ui.applicationuserlistformmodel.ApplicationUserListFormModelScreen
-import com.flexberry.androidodataofflinesample.ui.applicationuserlistformmodel.SampleData
 import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampleTheme
 
 class ApplicationUserListFormActivity : ComponentActivity() {
@@ -21,7 +20,7 @@ class ApplicationUserListFormActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    ApplicationUserListFormModelScreen(users = SampleData.usersSample)
+                    ApplicationUserListFormModelScreen(users = emptyList())
                 }
             }
         }

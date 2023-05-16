@@ -212,6 +212,6 @@ fun ItemData(text: String, icon: ImageVector? = null) {
 @Composable
 fun ListItemsPreview() {
     AndroidODataOfflineSampleTheme {
-        ApplicationUserListFormModelScreen(users = SampleData.usersSample)
+        ApplicationUserListFormModelScreen(users = emptyList())
     }
 }
