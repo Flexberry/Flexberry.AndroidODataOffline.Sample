@@ -345,7 +345,7 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
     }
 
     private fun getParamValueAsString(paramValue: Any?): String {
-        if (paramValue == null) return "''"
+        if (paramValue == null) return "null"
         if (paramValue is UUID) return "$paramValue"
 
         return "'$paramValue'"
