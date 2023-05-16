@@ -12,7 +12,7 @@ import java.util.UUID
 @RunWith(AndroidJUnit4::class)
 class OdataTest {
     @Test
-    fun applicationUser_OdataDataSource_ReadTest() {
+    fun applicationUserReadTest() {
         val ds = ApplicationUserOdataDataSource()
         val objs = ds.readObjects()
 
@@ -22,7 +22,7 @@ class OdataTest {
     }
 
     @Test
-    fun applicationUser_OdataDataSource_CreateUpdateDeleteTest() {
+    fun applicationUserCreateUpdateDeleteTest() {
         val ds = ApplicationUserOdataDataSource()
         val obj1 = NetworkApplicationUser(
             __PrimaryKey = UUID.randomUUID(),
@@ -59,7 +59,7 @@ class OdataTest {
     }
 
     @Test
-    fun applicationUser_OdataDataSource_FilterTest() {
+    fun applicationUserFilterTest() {
         val ds = ApplicationUserOdataDataSource()
         val settings = ds.getSettingsBuilder()
         val settingsValue = settings.filter("Name eq 'NameForTest'").orderBy("Name asc").top(5).build()

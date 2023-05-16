@@ -48,7 +48,8 @@ open class OdataDataSource<T : Any>(
                 cnt++;
             }
             else {
-                Log.e("ERROR", "Failed Connection")
+                Log.e("ERROR", "Failed to create object. Failed Connection.")
+                Log.d("OBJECT", obj.toString())
             }
 
             connection.disconnect()
@@ -89,7 +90,8 @@ open class OdataDataSource<T : Any>(
         }
         else
         {
-            Log.e("ERROR", "Failed Connection")
+            Log.e("ERROR", "Failed to read objects. Failed Connection.")
+            Log.d("URL", url.toString())
         }
 
         return lstResult;
@@ -117,7 +119,8 @@ open class OdataDataSource<T : Any>(
                 cnt++
             }
             else {
-                Log.e("ERROR", "Failed Connection")
+                Log.e("ERROR", "Filed to update object $pkValue. Failed Connection.")
+                Log.d("OBJECT", obj.toString())
             }
 
             connection.disconnect()
@@ -130,7 +133,6 @@ open class OdataDataSource<T : Any>(
         var cnt = 0
 
         listObjects.forEach { obj ->
-            val jsonObject = Gson().toJson(obj)
             val pkValue = primaryKeyProperty.get(obj)
             val url = URL("$odataUrl/$odataObjectName($pkValue)")
             val connection = url.openConnection() as HttpURLConnection
@@ -141,7 +143,8 @@ open class OdataDataSource<T : Any>(
             if (connection.responseCode == 204) {
                 cnt++
             } else {
-                Log.e("ERROR", "Failed Connection")
+                Log.e("ERROR", "Filed to delete object $pkValue. Failed Connection.")
+                Log.d("OBJECT", obj.toString())
             }
 
             connection.disconnect()
