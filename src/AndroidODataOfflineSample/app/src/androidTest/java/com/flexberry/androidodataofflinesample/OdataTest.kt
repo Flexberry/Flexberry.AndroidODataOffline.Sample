@@ -2,8 +2,8 @@ package com.flexberry.androidodataofflinesample
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.flexberry.androidodataofflinesample.data.network.datasource.ApplicationUserOdataDataSource
-import com.flexberry.androidodataofflinesample.data.network.datasource.query.Filter
-import com.flexberry.androidodataofflinesample.data.network.datasource.query.QuerySettings
+import com.flexberry.androidodataofflinesample.data.query.Filter
+import com.flexberry.androidodataofflinesample.data.query.QuerySettings
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkApplicationUser
 import org.junit.Assert
 import org.junit.Test

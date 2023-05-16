@@ -1,10 +1,10 @@
 package com.flexberry.androidodataofflinesample.data.network.datasource
 
 import android.util.Log
-import com.flexberry.androidodataofflinesample.data.network.datasource.query.Filter
-import com.flexberry.androidodataofflinesample.data.network.datasource.query.FilterType
-import com.flexberry.androidodataofflinesample.data.network.datasource.query.OrderType
-import com.flexberry.androidodataofflinesample.data.network.datasource.query.QuerySettings
+import com.flexberry.androidodataofflinesample.data.query.Filter
+import com.flexberry.androidodataofflinesample.data.query.FilterType
+import com.flexberry.androidodataofflinesample.data.query.OrderType
+import com.flexberry.androidodataofflinesample.data.query.QuerySettings
 import com.google.gson.Gson
 import org.json.JSONObject
 import java.io.DataOutputStream

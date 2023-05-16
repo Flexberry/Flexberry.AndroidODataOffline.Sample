@@ -1,4 +1,4 @@
-package com.flexberry.androidodataofflinesample.data.network.datasource.query
+package com.flexberry.androidodataofflinesample.data.query
 
 class QuerySettings(
     var filterValue: Filter? = null,
