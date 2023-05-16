@@ -1,6 +1,7 @@
 package com.flexberry.androidodataofflinesample.data.network.datasource
 
 import android.util.Log
+import com.flexberry.androidodataofflinesample.data.network.models.NetworkVote
 import com.flexberry.androidodataofflinesample.data.query.Filter
 import com.flexberry.androidodataofflinesample.data.query.FilterType
 import com.flexberry.androidodataofflinesample.data.query.OrderType
@@ -14,20 +15,39 @@ import java.net.URL
 import java.util.UUID
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.jvm.javaField
 
-open class OdataDataSource<T : Any>(
-    private val odataObjectName: String,
-    private val odataObjectClass: KClass<T>)
+open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
 {
+    private class UrlParamNames {
+        companion object {
+            const val select: String = "\$select"
+            const val filter: String = "\$filter"
+            const val order: String = "\$orderby"
+            const val top: String = "\$top"
+            const val skip: String = "\$skip"
+            const val expand: String = "\$expand"
+        }
+    }
+
     private val odataUrl = "http://stands-backend.flexberry.net/odata"
     private val primaryKeyPropertyName = "__PrimaryKey"
     private val primaryKeyProperty = odataObjectClass.members.first {it.name == primaryKeyPropertyName } as KProperty1<T, UUID>
+    private val odataObjectName = OdataDataSourceTypeManager.getOdataTypeName(odataObjectClass.simpleName)!!
+
+    fun createObject(obj: T): Int {
+        return createObjects(listOf(obj))
+    }
 
     fun createObjects(listObjects: List<T>): Int {
         var cnt = 0
 
         listObjects.forEach { obj ->
-            val jsonObject = Gson().toJson(obj)
+            var jsonObject = Gson().toJson(obj)
+
+            jsonObject = convertMasters(jsonObject)
+
             val url = URL("$odataUrl/$odataObjectName")
             val connection = url.openConnection() as HttpURLConnection
             connection.doOutput = true
@@ -53,13 +73,23 @@ open class OdataDataSource<T : Any>(
 
     fun readObjects(querySettings: QuerySettings? = null): List<T>
     {
-        var querySettingsValue = ""
+        var queryParamsValue = ""
+        val queryParams = mutableListOf<String>()
+        val expandValue = getRequestExtension()
 
         if (querySettings != null) {
-            querySettingsValue = "?${querySettings.getOdataDataSourceValue()}"
+            queryParams.add(querySettings.getOdataDataSourceValue())
         }
 
-        val url = URL("$odataUrl/$odataObjectName$querySettingsValue")
+        if (expandValue != null) {
+            queryParams.add(expandValue)
+        }
+
+        if (queryParams.any()) {
+            queryParamsValue = "?${queryParams.joinToString("&")}"
+        }
+
+        val url = URL("$odataUrl/$odataObjectName$queryParamsValue")
         val lstResult = mutableListOf<T>()
         val connection  = url.openConnection() as HttpURLConnection
 
@@ -96,11 +126,18 @@ open class OdataDataSource<T : Any>(
         return lstResult;
     }
 
+    fun updateObject(obj: T): Int {
+        return updateObjects(listOf(obj))
+    }
+
     fun updateObjects(listObjects: List<T>): Int {
         var cnt = 0
 
         listObjects.forEach { obj ->
-            val jsonObject = Gson().toJson(obj)
+            var jsonObject = Gson().toJson(obj)
+
+            jsonObject = convertMasters(jsonObject)
+
             val pkValue = primaryKeyProperty.get(obj)
             val url = URL("$odataUrl/$odataObjectName($pkValue)")
             val connection = url.openConnection() as HttpURLConnection
@@ -128,6 +165,10 @@ open class OdataDataSource<T : Any>(
         return cnt
     }
 
+    fun deleteObject(obj: T): Int {
+        return deleteObjects(listOf(obj))
+    }
+
     fun deleteObjects(listObjects: List<T>): Int {
         var cnt = 0
 
@@ -152,35 +193,87 @@ open class OdataDataSource<T : Any>(
         return cnt
     }
 
+    private fun convertMasters(jsonObject: String): String {
+        val jsonValue = JSONObject(jsonObject)
+        val jsonNewValue = JSONObject(jsonObject)
+
+        // Мастера должны идти как ИмяМастера@odata.bind: ИмяОДатаТипа(Ключ)
+        odataObjectClass.declaredMemberProperties.forEach { prop ->
+            val propName = prop.name
+            val propType = prop.javaField?.type?.simpleName
+            val odataTypeName = OdataDataSourceTypeManager.getOdataTypeName(propType)
+
+            if (odataTypeName != null) {
+                val node = jsonValue[propName] as JSONObject
+                val pkValue = node.get(primaryKeyPropertyName)
+
+                jsonNewValue.remove(propName)
+                jsonNewValue.put("$propName@odata.bind", "$odataTypeName($pkValue)")
+            }
+        }
+
+        // TODO: Костыль!!!
+        if (odataObjectClass.simpleName == NetworkVote::class.simpleName) {
+            jsonNewValue.put("Suggestion@odata.bind", "EmberFlexberryDummySuggestions(0b76edce-5900-45ec-a958-b9d6bb943b2d)")
+        }
+
+        return jsonNewValue.toString()
+    }
+
+    /// TODO: тут в будущем появится параметр в виде предатавления объекта.
+    private fun getRequestExtension(): String? {
+        val lstRes = mutableListOf<String>()
+
+        odataObjectClass.declaredMemberProperties.forEach { prop ->
+            val propName = prop.name
+            val propType = prop.javaField?.type?.simpleName
+            val odataTypeName = OdataDataSourceTypeManager.getOdataTypeName(propType)
+
+            if (odataTypeName != null) {
+                val elem = "$propName(${UrlParamNames.select}=$primaryKeyPropertyName)"
+
+                lstRes.add(elem)
+            }
+        }
+
+        // TODO: Костыль!!!
+        if (odataObjectClass.simpleName == NetworkVote::class.simpleName) {
+            val elem = "Suggestion(${UrlParamNames.select}=$primaryKeyPropertyName)"
+
+            lstRes.add(elem)
+        }
+
+        return if (lstRes.any()) {
+            "${UrlParamNames.expand}=${lstRes.joinToString(",")}"
+        } else {
+            null
+        }
+    }
+
     private fun QuerySettings.getOdataDataSourceValue(): String {
-        val selectUrlParamName = "\$select"
-        val filterUrlParamName = "\$filter"
-        val orderUrlParamName = "\$orderby"
-        val topUrlParamName = "\$top"
-        val skipUrlParamName = "\$skip"
         val elements: MutableList<String> = mutableListOf()
 
         if (this.selectList != null) {
             val selectValue = this.selectList!!.joinToString(",")
-            elements.add("$selectUrlParamName=$selectValue")
+            elements.add("${UrlParamNames.select}=$selectValue")
         }
 
         if (this.filterValue != null) {
-            elements.add("$filterUrlParamName=${this.filterValue!!.getOdataDataSourceValue()}")
+            elements.add("${UrlParamNames.filter}=${this.filterValue!!.getOdataDataSourceValue()}")
         }
 
         if (this.orderList != null) {
             val orderValue = this.orderList!!
                 .joinToString(",") { x -> "${x.first} ${x.second.getOdataDataSourceValue()}"}
-            elements.add("$orderUrlParamName=$orderValue")
+            elements.add("${UrlParamNames.order}=$orderValue")
         }
 
         if (this.topValue != null) {
-            elements.add("$topUrlParamName=${this.topValue}")
+            elements.add("${UrlParamNames.top}=${this.topValue}")
         }
 
         if (this.skipValue != null) {
-            elements.add("$skipUrlParamName=${this.skipValue}")
+            elements.add("${UrlParamNames.skip}=${this.skipValue}")
         }
 
         return elements.joinToString("&")
@@ -197,7 +290,7 @@ open class OdataDataSource<T : Any>(
             FilterType.Less,
             FilterType.LessOrEqual,
             FilterType.Has -> {
-                result = "$paramName ${filterType.getOdataDataSourceValue()} '$paramValue'"
+                result = "$paramName ${filterType.getOdataDataSourceValue()} ${getParamValueAsString(paramValue)}"
             }
 
             FilterType.Contains,
@@ -250,5 +343,12 @@ open class OdataDataSource<T : Any>(
             FilterType.Or -> "or"
             FilterType.Not -> "not"
         }
+    }
+
+    private fun getParamValueAsString(paramValue: Any?): String {
+        if (paramValue == null) return "''"
+        if (paramValue is UUID) return "$paramValue"
+
+        return "'$paramValue'"
     }
 }
