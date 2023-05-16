@@ -64,6 +64,7 @@ fun OdataTest(){
     }
 }
 
+// Для предпросмотра в Android Studio
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {

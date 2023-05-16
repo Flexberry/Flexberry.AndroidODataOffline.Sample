@@ -36,7 +36,7 @@ fun MainScreen( modifier: Modifier = Modifier, viewModel: MainViewModel = MainVi
             .padding(bottom = 18.dp)
             .weight(2f)
             .fillMaxSize()
-        val btnModifier = modifier.size(200.dp)
+        val btnModifier = modifier.size(250.dp)
         Row(
             modifier = rowModifier,
             horizontalArrangement = Arrangement.Center,
@@ -44,9 +44,10 @@ fun MainScreen( modifier: Modifier = Modifier, viewModel: MainViewModel = MainVi
         ) {
             mainButton(
                 modifier = btnModifier,
-                fontSize = 126.sp,
-                text = "+",
-                onClick = viewModel::addButton
+                fontSize = 24.sp,
+                text = "ApplicationUser",
+                rounded = 10,
+                onClick = viewModel::appUserButton
             )
         }
         Row(
@@ -56,9 +57,10 @@ fun MainScreen( modifier: Modifier = Modifier, viewModel: MainViewModel = MainVi
         ) {
             mainButton(
                 modifier = btnModifier,
-                fontSize = 36.sp,
-                text = "Список",
-                onClick = viewModel::listButton
+                fontSize = 24.sp,
+                text = "Vote",
+                rounded = 10,
+                onClick = viewModel::voteButton
             )
         }
         Row(
@@ -71,7 +73,7 @@ fun MainScreen( modifier: Modifier = Modifier, viewModel: MainViewModel = MainVi
                 modifier = modifier.size(100.dp),
                 fontSize = 18.sp,
                 text = "Offline",
-                onClick = viewModel::onlineButton,
+                onClick = viewModel::offlineButton,
                 rounded = 50
             )
         }
@@ -99,6 +101,7 @@ fun mainButton(
     }
 }
 
+// Для предпросмотра в Android Studio
 @Preview(
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     name = "Dark Mode",
