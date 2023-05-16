@@ -2,10 +2,14 @@ package com.flexberry.androidodataofflinesample.data.network.datasource
 
 import android.util.Log
 import com.google.gson.Gson
+import org.apache.olingo.client.api.uri.URIBuilder
+import org.apache.olingo.client.core.ODataClientFactory
+import org.apache.olingo.commons.api.format.ContentType
 import org.json.JSONObject
 import java.io.DataOutputStream
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
+import java.net.URI
 import java.net.URL
 import java.util.UUID
 import kotlin.reflect.KClass
@@ -18,6 +22,13 @@ open class OdataDataSource<T : Any>(
     private val odataUrl = "http://stands-backend.flexberry.net/odata"
     private val primaryKeyPropertyName = "__PrimaryKey"
     private val primaryKeyProperty = odataObjectClass.members.first {it.name == primaryKeyPropertyName } as KProperty1<T, UUID>
+
+    fun getSettingsBuilder(): URIBuilder {
+        val client = ODataClientFactory.getClient();
+        client.configuration.defaultPubFormat = ContentType.APPLICATION_JSON;
+
+        return client.newURIBuilder(odataUrl).appendEntitySetSegment(odataObjectName)
+    }
 
     fun createObjects(listObjects: List<T>): Int {
         var cnt = 0
@@ -46,10 +57,10 @@ open class OdataDataSource<T : Any>(
         return cnt;
     }
 
-    fun readObjects(): List<T>
+    fun readObjects(settings: URI? = null): List<T>
     {
         val lstResult = mutableListOf<T>()
-        val url = URL("$odataUrl/$odataObjectName")
+        val url = URL(settings?.toString() ?: "$odataUrl/$odataObjectName")
         val connection  = url.openConnection() as HttpURLConnection
 
         if(connection.responseCode == 200)

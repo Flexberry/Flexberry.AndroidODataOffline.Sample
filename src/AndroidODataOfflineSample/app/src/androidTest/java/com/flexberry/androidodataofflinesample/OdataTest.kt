@@ -8,6 +8,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.UUID
 
+
 @RunWith(AndroidJUnit4::class)
 class OdataTest {
     @Test
@@ -55,5 +56,17 @@ class OdataTest {
         val cntDelete = ds.deleteObjects(listOf(obj1, obj2))
 
         Assert.assertEquals(cntDelete, 2)
+    }
+
+    @Test
+    fun applicationUser_OdataDataSource_FilterTest() {
+        val ds = ApplicationUserOdataDataSource()
+        val settings = ds.getSettingsBuilder()
+        val settingsValue = settings.filter("Name eq 'NameForTest'").orderBy("Name asc").top(5).build()
+        val objs = ds.readObjects(settingsValue)
+
+        if (objs.any()) {
+            Assert.assertTrue(objs.any { x -> x.Name != null })
+        }
     }
 }
