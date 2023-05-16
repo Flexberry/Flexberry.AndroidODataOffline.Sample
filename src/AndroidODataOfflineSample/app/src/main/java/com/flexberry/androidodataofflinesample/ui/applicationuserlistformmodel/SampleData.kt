@@ -4,7 +4,7 @@ import java.sql.Date
 import java.sql.Timestamp
 import java.util.UUID
 
-@Suppress("all")
+@Suppress("*")
 object SampleData {
     val usersSample = listOf(
         ApplicationUser(
