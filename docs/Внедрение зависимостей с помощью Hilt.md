@@ -1,0 +1,105 @@
+# Внедрение зависимостей с помощью Hilt
+
+В качестве DI в Android проектах рекомендуется использовать Hilt. Hilt является раширением контейнера Dagger2. Работает с проектом Jetpack (набор библиотек и инструментов, созданный командой Google для упрощения разработки под Android)
+
+## Установка необходимых компонентов
+
+1) build.gradle(app)
+
+```
+plugins {
+    id 'com.google.dagger.hilt.android'
+    id 'kotlin-kapt'
+}
+
+dependencies {
+
+	// необходимо для внедрения view-моделей в Activity, компоненыт и compose.
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1"
+
+    // Hilt DI.
+    implementation 'com.google.dagger:hilt-android:2.44'
+    kapt("com.google.dagger:hilt-android-compiler:2.44")
+}
+
+```
+
+2) build.gradle(Project)
+
+```
+plugins {
+    id 'com.google.dagger.hilt.android' version '2.44' apply false
+}
+```
+
+3) Добавить application name в манифест (должно совпадать с именем класса Application())
+
+```
+<application
+        android:name="AndroidOdataOfflineSampleApplication"
+```
+
+
+## Создание класса Application
+
+Для Hilt необходимо создать класс, наследуемый от Application.
+
+```
+package com.flexberry.androidodataofflinesample
+
+import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
+
+@HiltAndroidApp
+class AndroidOdataOfflineSampleApplication : Application()
+```
+
+## Внедрение ViewModel в Activity и Compose
+
+1) MainViewModel
+
+```
+package com.flexberry.androidodataofflinesample.ui.mainmodel
+
+import androidx.lifecycle.ViewModel
+import javax.inject.Inject
+
+class MainViewModel @Inject constructor() : ViewModel() {
+    data class MainViewModelState (val isOnline: Boolean)
+
+    fun appUserButton():Unit {
+        // Функционал для кнопки "ApplicationUser"
+    }
+}
+```
+
+2) Инжектим в MainActivity
+
+```
+package com.flexberry.androidodataofflinesample
+
+import androidx.activity.viewModels
+
+@AndroidEntryPoint
+class MainActivity : ComponentActivity() {
+
+    // Внедрение viewModel через hilt.
+    private val mainViewModel: MainViewModel by viewModels()
+```
+
+Аннотация @AndroidEntryPoint обязательна
+
+3) Инжектим в Compose класс mainScreen, который отрисовывает главное меню
+
+```
+package com.flexberry.androidodataofflinesample.ui.mainmodel
+
+import androidx.lifecycle.viewmodel.compose.viewModel
+
+@Composable
+fun MainScreen( modifier: Modifier = Modifier, viewModel: MainViewModel = viewModel() ) {
+```
+
+Ссылка на документацию
+https://developer.android.com/training/dependency-injection
+
