@@ -45,13 +45,14 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.flexberry.androidodataofflinesample.data.model.ApplicationUser
 import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampleTheme
 
 @Composable
 fun ApplicationUserListFormModelScreen(
     modifier: Modifier = Modifier,
-    viewModel: ApplicationUserListFormViewModel = ApplicationUserListFormViewModel(),
+    viewModel: ApplicationUserListFormViewModel = viewModel(),
     users: List<ApplicationUser>
 ) {
     Box(
