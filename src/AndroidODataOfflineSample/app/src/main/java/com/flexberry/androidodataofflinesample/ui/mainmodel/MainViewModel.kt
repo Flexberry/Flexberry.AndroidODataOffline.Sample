@@ -1,7 +1,9 @@
 package com.flexberry.androidodataofflinesample.ui.mainmodel
 
+import androidx.lifecycle.ViewModel
+import javax.inject.Inject
 
-class MainViewModel {
+class MainViewModel @Inject constructor() : ViewModel() {
     data class MainViewModelState (val isOnline: Boolean)
 
     fun appUserButton():Unit {

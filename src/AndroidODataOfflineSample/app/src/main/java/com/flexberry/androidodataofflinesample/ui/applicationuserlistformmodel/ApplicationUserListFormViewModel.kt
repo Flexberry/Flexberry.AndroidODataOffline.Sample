@@ -1,6 +1,9 @@
 package com.flexberry.androidodataofflinesample.ui.applicationuserlistformmodel
 
-class ApplicationUserListFormViewModel {
+import androidx.lifecycle.ViewModel
+import javax.inject.Inject
+
+class ApplicationUserListFormViewModel @Inject constructor() : ViewModel() {
 
     fun addUser():Unit {
         // добавление нового пользователя

@@ -19,10 +19,11 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampleTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 @Composable
-fun MainScreen( modifier: Modifier = Modifier, viewModel: MainViewModel = MainViewModel() ) {
+fun MainScreen( modifier: Modifier = Modifier, viewModel: MainViewModel = viewModel() ) {
     Column(
         modifier
             .fillMaxSize()
