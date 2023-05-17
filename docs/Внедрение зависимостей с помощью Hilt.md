@@ -6,7 +6,7 @@
 
 1) build.gradle(app)
 
-```
+```kotlin
 plugins {
     id 'com.google.dagger.hilt.android'
     id 'kotlin-kapt'
@@ -44,7 +44,7 @@ plugins {
 
 Для Hilt необходимо создать класс, наследуемый от Application.
 
-```
+```kotlin
 package com.flexberry.androidodataofflinesample
 
 import android.app.Application
@@ -58,7 +58,7 @@ class AndroidOdataOfflineSampleApplication : Application()
 
 1) MainViewModel
 
-```
+```kotlin
 package com.flexberry.androidodataofflinesample.ui.mainmodel
 
 import androidx.lifecycle.ViewModel
@@ -75,7 +75,7 @@ class MainViewModel @Inject constructor() : ViewModel() {
 
 2) Инжектим в MainActivity. В Activity для этого дабавляются аннотации @AndroidEntryPoint
 
-```
+```kotlin
 package com.flexberry.androidodataofflinesample
 
 import androidx.activity.viewModels
@@ -90,7 +90,7 @@ class MainActivity : ComponentActivity() {
 
 3) Инжектим в Compose класс mainScreen, который отрисовывает главное меню
 
-```
+```kotlin
 package com.flexberry.androidodataofflinesample.ui.mainmodel
 
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -103,7 +103,7 @@ fun MainScreen( modifier: Modifier = Modifier, viewModel: MainViewModel = viewMo
 
 1) Repository. Добавить @Inject constructor()
 
-```
+```kotlin
 package com.flexberry.androidodataofflinesample.data
 
 import javax.inject.Inject
@@ -116,7 +116,7 @@ class AppDataRepository @Inject constructor()
 
 2) Инжектим в ViewModel. Добавить аннотацию @HiltViewModel, добавить репозиторий в конструктор
 
-```
+```kotlin
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val repository: AppDataRepository
