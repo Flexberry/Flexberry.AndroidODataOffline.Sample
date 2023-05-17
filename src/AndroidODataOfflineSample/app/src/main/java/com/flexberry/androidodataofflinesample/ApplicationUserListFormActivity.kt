@@ -10,7 +10,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.flexberry.androidodataofflinesample.ui.applicationuserlistformmodel.ApplicationUserListFormModelScreen
 import com.flexberry.androidodataofflinesample.ui.applicationuserlistformmodel.ApplicationUserListFormViewModel
-import com.flexberry.androidodataofflinesample.ui.mainmodel.MainViewModel
 import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampleTheme
 import dagger.hilt.android.AndroidEntryPoint
 
