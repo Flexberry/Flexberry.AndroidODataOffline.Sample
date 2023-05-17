@@ -1,12 +1,11 @@
 package com.flexberry.androidodataofflinesample.data
 
-import com.flexberry.androidodataofflinesample.data.model.AppData
-import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class AppDataRepository(
+class AppDataRepository @Inject constructor()
     // TODO через конструктор репозитория будет внедряться local DataSources.
     // private val exampleLocalDataSource: ExampleLocalDataSource
-) {
+{
     /*
     fun getAppDataOffline(): Flow<List<AppData>> =
         exampleLocalDataSource.getAppData()
