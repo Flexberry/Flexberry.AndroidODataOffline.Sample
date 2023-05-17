@@ -79,6 +79,37 @@ class OdataTest {
     }
 
     @Test
+    fun applicationUserBooleanFilterTest() {
+        val dsUser = ApplicationUserOdataDataSource()
+        val objUser = NetworkApplicationUser(
+            __PrimaryKey = UUID.randomUUID(),
+            Name = "Test from android. Boolean test",
+            EMail = "b@b.b",
+            Creator = "Android",
+            Activated = false
+        )
+
+        val cntCreate = dsUser.createObjects(objUser)
+
+        Assert.assertEquals(cntCreate, 1)
+
+        val querySettings = QuerySettings()
+            .filter(
+                Filter.equalFilter("Name", "Test from android. Boolean test"),
+                Filter.equalFilter("Activated", false)
+            )
+            .top(10)
+
+        val userObjsRead = dsUser.readObjects(querySettings)
+
+        Assert.assertTrue(userObjsRead.isNotEmpty())
+
+        val cntDelete = dsUser.deleteObjects(objUser)
+
+        Assert.assertEquals(cntDelete, 1)
+    }
+
+    @Test
     fun voteCreateReadUpdateFilterDeleteTest() {
         val dsUser = ApplicationUserOdataDataSource()
         val dsVote = VoteOdataDataSource()

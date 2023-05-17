@@ -369,6 +369,7 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
     private fun getParamValueForFilter(paramValue: Any?): String {
         if (paramValue == null) return "null"
         if (paramValue is UUID) return "$paramValue"
+        if (paramValue is Boolean) return "$paramValue"
 
         if (paramValue is Date) {
             val simpleDateFormat = SimpleDateFormat(odataDateTimeFormat, Locale.PRC)
