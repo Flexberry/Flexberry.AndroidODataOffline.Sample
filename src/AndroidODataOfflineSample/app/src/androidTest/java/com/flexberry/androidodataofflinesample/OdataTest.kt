@@ -110,6 +110,45 @@ class OdataTest {
     }
 
     @Test
+    fun applicationUserDoubleFilterTest() {
+        val dsUser = ApplicationUserOdataDataSource()
+        val objUser1 = NetworkApplicationUser(
+            __PrimaryKey = UUID.randomUUID(),
+            Name = "Test from android. Double test 1",
+            EMail = "double@test.com",
+            Creator = "Android",
+            Karma = 58.4
+        )
+
+        val objUser2 = NetworkApplicationUser(
+            __PrimaryKey = UUID.randomUUID(),
+            Name = "Test from android. Double test 2",
+            EMail = "double2@test.com",
+            Creator = "Android",
+            Karma = -12.34
+        )
+
+        val cntCreate = dsUser.createObjects(objUser1, objUser2)
+
+        Assert.assertEquals(cntCreate, 2)
+
+        val querySettings = QuerySettings()
+            .filter(
+                Filter.containsFilter("Name", "Test from android. Double test"),
+                Filter.equalFilter("Karma", 58.4)
+            )
+            .top(10)
+
+        val userObjsRead = dsUser.readObjects(querySettings)
+
+        Assert.assertTrue(userObjsRead.isNotEmpty())
+
+        val cntDelete = dsUser.deleteObjects(objUser1, objUser2)
+
+        Assert.assertEquals(cntDelete, 2)
+    }
+
+    @Test
     fun voteCreateReadUpdateFilterDeleteTest() {
         val dsUser = ApplicationUserOdataDataSource()
         val dsVote = VoteOdataDataSource()
