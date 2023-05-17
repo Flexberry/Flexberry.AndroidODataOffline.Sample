@@ -3,6 +3,8 @@
 Для задания условий ограничения запросов к источникам данных были созданы классы для хранения этих условий.
 Классы содержаться в пространстве имен **com.flexberry.androidodataofflinesample.data.query**.
 
+Эти настройки должны понимать источники данных (dataSource), для формирования ограничеий.
+
 - [Filter](https://github.com/Flexberry/Flexberry.AndroidODataOffline.Sample/blob/develop/src/AndroidODataOfflineSample/app/src/main/java/com/flexberry/androidodataofflinesample/data/query/Filter.kt): настройки фильтрации;
 - [FilterType](https://github.com/Flexberry/Flexberry.AndroidODataOffline.Sample/blob/develop/src/AndroidODataOfflineSample/app/src/main/java/com/flexberry/androidodataofflinesample/data/query/FilterType.kt): enum типов фильтров;
 - [OrderType](https://github.com/Flexberry/Flexberry.AndroidODataOffline.Sample/blob/develop/src/AndroidODataOfflineSample/app/src/main/java/com/flexberry/androidodataofflinesample/data/query/OrderType.kt): enum направлений сортировки;
@@ -124,4 +126,13 @@ val querySettings = QuerySettings()
             Filter.endsWithFilter("EMail", "gmail.com")
         )
     )
+```
+
+Пример использования в источнике данных (ds):
+```kotlin
+val objs = ds.readObjects(querySettings)
+
+if (objs.any()) {
+    ...
+}
 ```
