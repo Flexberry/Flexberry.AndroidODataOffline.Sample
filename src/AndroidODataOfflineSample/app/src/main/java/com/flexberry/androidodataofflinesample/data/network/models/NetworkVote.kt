@@ -15,5 +15,5 @@ data class NetworkVote(
     val EditTime: Timestamp? = null,
     val Editor: String? = null,
     val VoteType: VoteType? = null,
-    val ApplicationUser: NetworkApplicationUser
+    val Author: NetworkApplicationUser
 )

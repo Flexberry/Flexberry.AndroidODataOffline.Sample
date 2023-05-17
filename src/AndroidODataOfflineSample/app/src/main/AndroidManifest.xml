@@ -8,6 +8,7 @@
 
     <!-- android:usesCleartextTraffic="true" означает, что приложение намерено использовать трафик в незашифрованном виде. Например при http запросах . -->
     <application
+        android:name="AndroidOdataOfflineSampleApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"

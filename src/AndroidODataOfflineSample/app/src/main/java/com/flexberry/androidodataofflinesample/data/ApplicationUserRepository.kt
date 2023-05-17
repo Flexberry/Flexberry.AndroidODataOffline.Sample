@@ -5,13 +5,13 @@ import com.flexberry.androidodataofflinesample.data.local.entities.ApplicationUs
 import com.flexberry.androidodataofflinesample.data.local.entities.asExternalModel
 import com.flexberry.androidodataofflinesample.data.model.ApplicationUser
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class ApplicationUserRepository(
+class ApplicationUserRepository @Inject constructor()
     // TODO через конструктор репозитория будут внедряться local и network DataSources.
     // private val exampleNetworkDataSource: ExampleNetworkDataSource
-    private val ApplicationUserLocalDataSource: ApplicationUserDao
-) {
+    // private val exampleLocalDataSource: ExampleLocalDataSource
+{
     // Будут отдельные методы для Remote и Network DB на получение данных.
     // Методы будут доставать данные соотв из Local и Network датасоурсов, но возвращать всегда в виде представлений (базовых моделей).
     /*

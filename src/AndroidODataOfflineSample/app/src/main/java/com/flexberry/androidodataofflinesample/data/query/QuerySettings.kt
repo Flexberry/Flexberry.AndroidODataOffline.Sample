@@ -7,11 +7,14 @@ class QuerySettings(
     var topValue: Int? = null,
     var skipValue: Int? = null)
 {
-    fun filter(filterToAdd: Filter): QuerySettings {
+    fun filter(vararg filters: Filter): QuerySettings {
         filterValue = if (filterValue == null) {
-            filterToAdd
+            Filter.andFilter(filters.asList())
         } else {
-            Filter.andFilter(listOf(filterValue!!, filterToAdd))
+            val lst = mutableListOf(filterValue!!)
+
+            lst.addAll(filters)
+            Filter.andFilter(lst)
         }
 
         return this
@@ -28,7 +31,7 @@ class QuerySettings(
             orderList?.add(Pair(propName, orderType))
         }
 
-        return this;
+        return this
     }
 
     fun orderByDescending(propName: String): QuerySettings {
@@ -51,6 +54,10 @@ class QuerySettings(
         propNames.forEach { x -> select(x) }
 
         return this
+    }
+
+    fun select(vararg propNames: String): QuerySettings {
+        return select(propNames.asList())
     }
 
     fun top(topValueToSet: Int): QuerySettings {
