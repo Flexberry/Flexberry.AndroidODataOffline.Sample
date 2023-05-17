@@ -15,6 +15,7 @@ import java.util.UUID
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.javaField
 
 open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
@@ -33,10 +34,11 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
     private val odataUrl = "http://stands-backend.flexberry.net/odata"
     private val primaryKeyPropertyName = "__PrimaryKey"
     private val primaryKeyProperty = odataObjectClass.members.first {it.name == primaryKeyPropertyName } as KProperty1<T, UUID>
-    private val odataObjectName = OdataDataSourceTypeManager.getOdataTypeName(odataObjectClass.simpleName)!!
+    private val odataTypeInfo = OdataDataSourceTypeManager.getInfoByTypeName(odataObjectClass.simpleName)!!
+    private val odataObjectName = odataTypeInfo.fullOdataTypeName
 
-    fun createObject(obj: T): Int {
-        return createObjects(listOf(obj))
+    fun createObjects(vararg dataObjects: T): Int {
+        return createObjects(dataObjects.asList())
     }
 
     fun createObjects(listObjects: List<T>): Int {
@@ -70,8 +72,7 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
         return cnt;
     }
 
-    fun readObjects(querySettings: QuerySettings? = null): List<T>
-    {
+    fun readObjects(querySettings: QuerySettings? = null): List<T> {
         var queryParamsValue = ""
         val queryParams = mutableListOf<String>()
         val expandValue = getRequestExtension()
@@ -125,8 +126,8 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
         return lstResult;
     }
 
-    fun updateObject(obj: T): Int {
-        return updateObjects(listOf(obj))
+    fun updateObjects(vararg dataObjects: T): Int {
+        return updateObjects(dataObjects.asList())
     }
 
     fun updateObjects(listObjects: List<T>): Int {
@@ -164,8 +165,8 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
         return cnt
     }
 
-    fun deleteObject(obj: T): Int {
-        return deleteObjects(listOf(obj))
+    fun deleteObjects(vararg dataObjects: T): Int {
+        return deleteObjects(dataObjects.asList())
     }
 
     fun deleteObjects(listObjects: List<T>): Int {
@@ -200,14 +201,20 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
         odataObjectClass.declaredMemberProperties.forEach { prop ->
             val propName = prop.name
             val propType = prop.javaField?.type?.simpleName
-            val odataTypeName = OdataDataSourceTypeManager.getOdataTypeName(propType)
+            val odataTypeInfo = OdataDataSourceTypeManager.getInfoByTypeName(propType)
 
-            if (odataTypeName != null) {
-                val node = jsonValue[propName] as JSONObject
-                val pkValue = node.get(primaryKeyPropertyName)
+            if (odataTypeInfo != null && !odataTypeInfo.isEnum) {
+                val node = jsonValue[propName]
 
-                jsonNewValue.remove(propName)
-                jsonNewValue.put("$propName@odata.bind", "$odataTypeName($pkValue)")
+                if (node is JSONObject) {
+                    val pkValue = node.get(primaryKeyPropertyName)
+
+                    jsonNewValue.remove(propName)
+                    jsonNewValue.put(
+                        "$propName@odata.bind",
+                        "${odataTypeInfo.fullOdataTypeName}($pkValue)"
+                    )
+                }
             }
         }
 
@@ -226,9 +233,9 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
         odataObjectClass.declaredMemberProperties.forEach { prop ->
             val propName = prop.name
             val propType = prop.javaField?.type?.simpleName
-            val odataTypeName = OdataDataSourceTypeManager.getOdataTypeName(propType)
+            val odataTypeInfo = OdataDataSourceTypeManager.getInfoByTypeName(propType)
 
-            if (odataTypeName != null) {
+            if (odataTypeInfo != null && !odataTypeInfo.isEnum) {
                 val elem = "$propName(${UrlParamNames.select}=$primaryKeyPropertyName)"
 
                 lstRes.add(elem)
@@ -289,13 +296,13 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
             FilterType.Less,
             FilterType.LessOrEqual,
             FilterType.Has -> {
-                result = "$paramName ${filterType.getOdataDataSourceValue()} ${getParamValueAsString(paramValue)}"
+                result = "${getParamNameAsString(paramName)} ${filterType.getOdataDataSourceValue()} ${getParamValueForFilter(paramValue)}"
             }
 
             FilterType.Contains,
             FilterType.StartsWith,
             FilterType.EndsWith -> {
-                result = "${filterType.getOdataDataSourceValue()}($paramName,'$paramValue')"
+                result = "${filterType.getOdataDataSourceValue()}(${getParamNameAsString(paramName)},'$paramValue')"
             }
 
             FilterType.And -> {
@@ -344,9 +351,24 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
         }
     }
 
-    private fun getParamValueAsString(paramValue: Any?): String {
+    private fun getParamNameAsString(paramName: String?): String {
+        if (paramName == null) return "null"
+
+        return paramName.replace('.', '/')
+    }
+
+    private fun getParamValueForFilter(paramValue: Any?): String {
         if (paramValue == null) return "null"
         if (paramValue is UUID) return "$paramValue"
+        
+        if (paramValue::class.isSubclassOf(Enum::class)) {
+            val typeName = paramValue::class.simpleName
+            val odataTypeInfo = OdataDataSourceTypeManager.getInfoByTypeName(typeName)
+
+            if (odataTypeInfo != null) {
+                return "${odataTypeInfo.enumFilterTypeName}'$paramValue'"
+            }
+        }
 
         return "'$paramValue'"
     }

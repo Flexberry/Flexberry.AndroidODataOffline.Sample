@@ -43,7 +43,7 @@ class OdataTest {
             Creator = "Android"
         )
 
-        val cntCreate = ds.createObjects(listOf(obj1, obj2))
+        val cntCreate = ds.createObjects(obj1, obj2)
 
         Assert.assertEquals(cntCreate, 2)
 
@@ -54,11 +54,11 @@ class OdataTest {
             Editor = obj2.Creator
         )
 
-        val cntUpdate = ds.updateObjects(listOf(obj3))
+        val cntUpdate = ds.updateObjects(obj3)
 
         Assert.assertEquals(cntUpdate, 1)
 
-        val cntDelete = ds.deleteObjects(listOf(obj1, obj2))
+        val cntDelete = ds.deleteObjects(obj1, obj2)
 
         Assert.assertEquals(cntDelete, 2)
     }
@@ -78,7 +78,7 @@ class OdataTest {
     }
 
     @Test
-    fun voteCreateAndReadTest() {
+    fun voteCreateReadUpdateFilterDeleteTest() {
         val dsUser = ApplicationUserOdataDataSource()
         val dsVote = VoteOdataDataSource()
 
@@ -89,7 +89,7 @@ class OdataTest {
             Creator = "Android"
         )
 
-        val cntUserCreate = dsUser.createObject(objUser)
+        val cntUserCreate = dsUser.createObjects(objUser)
 
         Assert.assertEquals(cntUserCreate, 1)
 
@@ -100,51 +100,7 @@ class OdataTest {
             Author = objUser
         )
 
-        val cntVoteCreate = dsVote.createObject(objVote)
-
-        Assert.assertEquals(cntVoteCreate, 1)
-
-        val querySettings = QuerySettings()
-            .filter(Filter.equalFilter("Author/__PrimaryKey", objUser.__PrimaryKey))
-            .top(10)
-
-        val voteObjsRead = dsVote.readObjects(querySettings)
-
-        Assert.assertTrue(voteObjsRead.isNotEmpty())
-
-        val cntVoteDelete = dsVote.deleteObject(objVote)
-
-        Assert.assertEquals(cntVoteDelete, 1)
-
-        val cntUserDelete = dsUser.deleteObject(objUser)
-
-        Assert.assertEquals(cntUserDelete, 1)
-    }
-
-    @Test
-    fun voteCreateUpdateDeleteTest() {
-        val dsUser = ApplicationUserOdataDataSource()
-        val dsVote = VoteOdataDataSource()
-
-        val objUser = NetworkApplicationUser(
-            __PrimaryKey = UUID.randomUUID(),
-            Name = "Test from android cud",
-            EMail = "q@q.q",
-            Creator = "Android"
-        )
-
-        val cntUserCreate = dsUser.createObject(objUser)
-
-        Assert.assertEquals(cntUserCreate, 1)
-
-        val objVote = NetworkVote(
-            __PrimaryKey = UUID.randomUUID(),
-            VoteType = VoteType.Like,
-            Creator = "Android",
-            Author = objUser
-        )
-
-        val cntVoteCreate = dsVote.createObject(objVote)
+        val cntVoteCreate = dsVote.createObjects(objVote)
 
         Assert.assertEquals(cntVoteCreate, 1)
 
@@ -155,15 +111,26 @@ class OdataTest {
             Author = objUser
         )
 
-        val cntVoteUpdate = dsVote.updateObject(objVote2)
+        val cntVoteUpdate = dsVote.updateObjects(objVote2)
 
         Assert.assertEquals(cntVoteUpdate, 1)
 
-        val cntVoteDelete = dsVote.deleteObject(objVote)
+        val querySettings = QuerySettings()
+            .filter(
+                Filter.equalFilter("Author.__PrimaryKey", objUser.__PrimaryKey),
+                Filter.equalFilter("VoteType", VoteType.Dislike)
+            )
+            .top(10)
+
+        val voteObjsRead = dsVote.readObjects(querySettings)
+
+        Assert.assertTrue(voteObjsRead.isNotEmpty())
+
+        val cntVoteDelete = dsVote.deleteObjects(objVote)
 
         Assert.assertEquals(cntVoteDelete, 1)
 
-        val cntUserDelete = dsUser.deleteObject(objUser)
+        val cntUserDelete = dsUser.deleteObjects(objUser)
 
         Assert.assertEquals(cntUserDelete, 1)
     }

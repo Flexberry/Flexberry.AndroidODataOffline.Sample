@@ -1,21 +1,33 @@
 package com.flexberry.androidodataofflinesample.data.network.datasource
 
+import com.flexberry.androidodataofflinesample.data.enums.VoteType
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkApplicationUser
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkVote
 
 class OdataDataSourceTypeManager {
     companion object {
-        private val odataTypeMap: List<Pair<String, String>> = listOf(
-            Pair(NetworkApplicationUser::class.simpleName!!, "EmberFlexberryDummyApplicationUsers"),
-            Pair(NetworkVote::class.simpleName!!, "EmberFlexberryDummyVotes")
+        private val odataTypeMap: List<OdataDataSourceTypeInfo> = listOf(
+            OdataDataSourceTypeInfo(
+                NetworkApplicationUser::class.simpleName!!,
+                "EmberFlexberryDummy",
+                "ApplicationUsers"),
+            OdataDataSourceTypeInfo(
+                NetworkVote::class.simpleName!!,
+                "EmberFlexberryDummy",
+                "Votes"),
+            OdataDataSourceTypeInfo(
+                VoteType::class.simpleName!!,
+                "EmberFlexberryDummy",
+                "VoteType",
+                true)
         )
 
-        fun getOdataTypeName(typeName: String?): String? {
-            return odataTypeMap.firstOrNull { x -> x.first == typeName }?.second
+        fun getInfoByTypeName(typeName: String?): OdataDataSourceTypeInfo? {
+            return odataTypeMap.firstOrNull { x -> x.TypeName == typeName }
         }
 
-        fun getTypeName(odataTypeName: String?): String? {
-            return odataTypeMap.firstOrNull { x -> x.second == odataTypeName }?.first
+        fun getInfoByOdataTypeName(odataTypeName: String?): OdataDataSourceTypeInfo? {
+            return odataTypeMap.firstOrNull { x -> x.OdataTypeName == odataTypeName }
         }
     }
 }

@@ -51,8 +51,16 @@ class Filter(
             return Filter(FilterType.And, filterParams)
         }
 
+        fun andFilter(vararg filterParams: Filter): Filter {
+            return andFilter(filterParams.asList())
+        }
+
         fun orFilter(filterParams: List<Filter>): Filter {
             return Filter(FilterType.Or, filterParams)
+        }
+
+        fun orFilter(vararg filterParams: Filter): Filter {
+            return orFilter(filterParams.asList())
         }
 
         fun notFilter(filterParam: Filter): Filter {
