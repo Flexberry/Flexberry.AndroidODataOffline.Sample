@@ -16,7 +16,8 @@ data class AppDataEntity(
     val isOnline: Boolean
 )
 
+/*
 fun AppDataEntity.asExternalModel() = AppData(
     primarykey = primarykey,
     isOnline = isOnline
-)
+)*/

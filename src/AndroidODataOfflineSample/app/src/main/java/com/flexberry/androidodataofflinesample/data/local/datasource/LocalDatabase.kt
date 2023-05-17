@@ -1,13 +1,13 @@
-package com.flexberry.androidodataofflinesample.data.local.databases
+package com.flexberry.androidodataofflinesample.data.local.datasource
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.flexberry.androidodataofflinesample.data.local.daos.AppDataDao
-import com.flexberry.androidodataofflinesample.data.local.daos.ApplicationUserDao
-import com.flexberry.androidodataofflinesample.data.local.daos.VoteDao
+import com.flexberry.androidodataofflinesample.data.local.dao.AppDataDao
+import com.flexberry.androidodataofflinesample.data.local.dao.ApplicationUserDao
+import com.flexberry.androidodataofflinesample.data.local.dao.VoteDao
 import com.flexberry.androidodataofflinesample.data.local.entities.AppDataEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.ApplicationUserEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.VoteEntity

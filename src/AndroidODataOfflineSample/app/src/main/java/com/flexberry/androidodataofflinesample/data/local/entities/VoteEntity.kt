@@ -19,24 +19,25 @@ data class VoteEntity(
     val primarykey : UUID,
 
     @ColumnInfo(name = "CreateTime")
-    val createTime: Timestamp,
+    val createTime: Timestamp? = null,
 
     @ColumnInfo(name = "Creator")
-    val creator: String,
+    val creator: String? = null,
 
     @ColumnInfo(name = "EditTime")
-    val editTime: Timestamp,
+    val editTime: Timestamp? = null,
 
     @ColumnInfo(name = "Editor")
-    val editor: String,
+    val editor: String? = null,
 
     @ColumnInfo(name = "VoteType")
-    val voteType: VoteType,
+    val voteType: VoteType? = null,
 
     @ColumnInfo(name = "ApplicationUser")
     val applicationUserId: UUID
 )
 
+/*
 fun VoteEntity.asExternalModel() = Vote(
     primarykey = primarykey,
     createTime = createTime,
@@ -44,4 +45,4 @@ fun VoteEntity.asExternalModel() = Vote(
     editTime = editTime,
     editor = editor,
     voteType = voteType
-)
+)*/
