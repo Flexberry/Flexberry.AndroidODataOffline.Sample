@@ -6,11 +6,15 @@ import com.flexberry.androidodataofflinesample.data.query.FilterType
 import com.flexberry.androidodataofflinesample.data.query.OrderType
 import com.flexberry.androidodataofflinesample.data.query.QuerySettings
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import org.json.JSONObject
 import java.io.DataOutputStream
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.UUID
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
@@ -33,6 +37,7 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
 
     private val odataUrl = "http://stands-backend.flexberry.net/odata"
     private val primaryKeyPropertyName = "__PrimaryKey"
+    private val odataDateTimeFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
     private val primaryKeyProperty = odataObjectClass.members.first {it.name == primaryKeyPropertyName } as KProperty1<T, UUID>
     private val odataTypeInfo = OdataDataSourceTypeManager.getInfoByTypeName(odataObjectClass.simpleName)!!
     private val odataObjectName = odataTypeInfo.fullOdataTypeName
@@ -45,7 +50,7 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
         var cnt = 0
 
         listObjects.forEach { obj ->
-            var jsonObject = Gson().toJson(obj)
+            var jsonObject = getGson().toJson(obj)
 
             jsonObject = convertMasters(jsonObject)
 
@@ -59,7 +64,7 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
             DataOutputStream(connection.outputStream).use { it.writeBytes(jsonObject) }
 
             if (connection.responseCode == 201) {
-                cnt++;
+                cnt++
             }
             else {
                 Log.e("ERROR", "Failed to create object. Failed Connection.")
@@ -69,7 +74,7 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
             connection.disconnect()
         }
 
-        return cnt;
+        return cnt
     }
 
     fun readObjects(querySettings: QuerySettings? = null): List<T> {
@@ -105,7 +110,7 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
                 val objectJson = objectsArray[i].toString()
 
                 try {
-                    val objectValue = Gson().fromJson(objectJson, odataObjectClass.java)
+                    val objectValue = getGson().fromJson(objectJson, odataObjectClass.java)
 
                     lstResult.add(objectValue)
                 }
@@ -123,7 +128,7 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
             Log.d("URL", url.toString())
         }
 
-        return lstResult;
+        return lstResult
     }
 
     fun updateObjects(vararg dataObjects: T): Int {
@@ -134,7 +139,7 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
         var cnt = 0
 
         listObjects.forEach { obj ->
-            var jsonObject = Gson().toJson(obj)
+            var jsonObject = getGson().toJson(obj)
 
             jsonObject = convertMasters(jsonObject)
 
@@ -142,8 +147,8 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
             val url = URL("$odataUrl/$odataObjectName($pkValue)")
             val connection = url.openConnection() as HttpURLConnection
 
-            connection.setRequestProperty("X-HTTP-Method-Override", "PATCH");
-            connection.requestMethod = "PATCH";
+            connection.setRequestProperty("X-HTTP-Method-Override", "PATCH")
+            connection.requestMethod = "PATCH"
             connection.doOutput = true
 
             connection.setRequestProperty("Content-Type", "application/json")
@@ -177,8 +182,8 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
             val url = URL("$odataUrl/$odataObjectName($pkValue)")
             val connection = url.openConnection() as HttpURLConnection
 
-            connection.setRequestProperty("X-HTTP-Method-Override", "DELETE");
-            connection.requestMethod = "DELETE";
+            connection.setRequestProperty("X-HTTP-Method-Override", "DELETE")
+            connection.requestMethod = "DELETE"
 
             if (connection.responseCode == 204) {
                 cnt++
@@ -191,6 +196,10 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
         }
 
         return cnt
+    }
+
+    private fun getGson(): Gson {
+        return GsonBuilder().setDateFormat(odataDateTimeFormat).create()
     }
 
     private fun convertMasters(jsonObject: String): String {
@@ -360,6 +369,11 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
     private fun getParamValueForFilter(paramValue: Any?): String {
         if (paramValue == null) return "null"
         if (paramValue is UUID) return "$paramValue"
+
+        if (paramValue is Date) {
+            val simpleDateFormat = SimpleDateFormat(odataDateTimeFormat, Locale.PRC)
+            return simpleDateFormat.format(paramValue)
+        }
         
         if (paramValue::class.isSubclassOf(Enum::class)) {
             val typeName = paramValue::class.simpleName
