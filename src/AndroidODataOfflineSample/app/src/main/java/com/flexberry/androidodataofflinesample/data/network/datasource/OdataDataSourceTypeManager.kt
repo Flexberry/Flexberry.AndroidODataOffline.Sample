@@ -27,7 +27,8 @@ class OdataDataSourceTypeManager {
         }
 
         fun getInfoByOdataTypeName(odataTypeName: String?): OdataDataSourceTypeInfo? {
-            return odataTypeMap.firstOrNull { x -> x.OdataTypeName == odataTypeName }
+            return odataTypeMap.firstOrNull { x -> x.OdataTypeName == odataTypeName
+                    || x.fullOdataTypeName == odataTypeName }
         }
     }
 }
