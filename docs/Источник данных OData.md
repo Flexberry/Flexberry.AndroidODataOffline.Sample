@@ -6,7 +6,6 @@ OData как источник данных используется во мно�
 - [OdataDataSource](https://github.com/Flexberry/Flexberry.AndroidODataOffline.Sample/blob/develop/src/AndroidODataOfflineSample/app/src/main/java/com/flexberry/androidodataofflinesample/data/network/datasource/OdataDataSource.kt): типизированный источник данных OData;
 - [OdataDataSourceTypeInfo](https://github.com/Flexberry/Flexberry.AndroidODataOffline.Sample/blob/develop/src/AndroidODataOfflineSample/app/src/main/java/com/flexberry/androidodataofflinesample/data/network/datasource/OdataDataSourceTypeInfo.kt): информация о типе, который может использовать OdataDataSource;
 - [OdataDataSourceTypeManager](https://github.com/Flexberry/Flexberry.AndroidODataOffline.Sample/blob/develop/src/AndroidODataOfflineSample/app/src/main/java/com/flexberry/androidodataofflinesample/data/network/datasource/OdataDataSourceTypeManager.kt): менеджер типов для всех OdataDataSource;
-- [QuerySettings](%D0%9D%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B8%20%D0%B7%D0%B0%D0%BF%D1%80%D0%BE%D1%81%D0%BE%D0%B2%20QuerySettings.md): настройки ограничений для вычитки данных.
 
 ## OdataDataSource
 
@@ -51,7 +50,7 @@ fun createObjects(listObjects: List<T>): Int {
 
 Формирует запрос на вычитку объектов из OData. Получает данные и формирует из них объекты проекта.
 
-Принимает параметром QuerySettings - настройки ограничений для вычитки данных. Внутри метода они преобразуются в нужные URL параметры и добавляются к строке URL запроса.
+Принимает параметром [QuerySettings](%D0%9D%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B8%20%D0%B7%D0%B0%D0%BF%D1%80%D0%BE%D1%81%D0%BE%D0%B2%20QuerySettings.md) - настройки ограничений для вычитки данных. Внутри метода они преобразуются в нужные URL параметры и добавляются к строке URL запроса.
 
 ```kotlin
 fun readObjects(querySettings: QuerySettings? = null): List<T> {
@@ -60,6 +59,23 @@ fun readObjects(querySettings: QuerySettings? = null): List<T> {
 ```
 
 Возвращает список созданных объектов.
+
+Пример использования ограничения querySettings:
+```kotlin
+val ds = VoteOdataDataSource()
+val querySettings = QuerySettings()
+    .filter(
+        Filter.equalFilter("Author.__PrimaryKey", objUser.__PrimaryKey),
+        Filter.notEqualFilter("VoteType", VoteType.Dislike)
+    )
+    .top(10)
+
+val objs = ds.readObjects(querySettings)
+
+if (objs.any()) {
+    ...
+}
+```
 
 ## Обновление объектов **updateObjects**
 
@@ -154,27 +170,5 @@ class OdataDataSourceTypeManager {
                     || x.fullOdataTypeName == odataTypeName }
         }
     }
-}
-```
-
-## QuerySettings
-*Основная статья: [Настройки запросов QuerySettings](%D0%9D%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B8%20%D0%B7%D0%B0%D0%BF%D1%80%D0%BE%D1%81%D0%BE%D0%B2%20QuerySettings.md)*
-
-Настройки ограничений для вычитки данных.
-
-Пример использования:
-```kotlin
-val ds = VoteOdataDataSource()
-val querySettings = QuerySettings()
-    .filter(
-        Filter.equalFilter("Author.__PrimaryKey", objUser.__PrimaryKey),
-        Filter.notEqualFilter("VoteType", VoteType.Dislike)
-    )
-    .top(10)
-
-val objs = ds.readObjects(querySettings)
-
-if (objs.any()) {
-    ...
 }
 ```
