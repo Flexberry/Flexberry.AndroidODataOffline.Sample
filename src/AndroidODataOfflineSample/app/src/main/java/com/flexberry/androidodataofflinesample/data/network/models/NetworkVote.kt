@@ -7,12 +7,13 @@ import java.util.UUID
 /**
  * Network representation of [Vote]
  */
+@Suppress("kotlin:S117")
 data class NetworkVote(
-    val primarykey : UUID,
-    val createTime: Timestamp,
-    val creator: String,
-    val editTime: Timestamp,
-    val editor: String,
-    val voteType: VoteType,
-    val applicationUser: NetworkApplicationUser
+    val __PrimaryKey : UUID,
+    val CreateTime: Timestamp? = null,
+    val Creator: String? = null,
+    val EditTime: Timestamp? = null,
+    val Editor: String? = null,
+    val VoteType: VoteType? = null,
+    val ApplicationUser: NetworkApplicationUser
 )

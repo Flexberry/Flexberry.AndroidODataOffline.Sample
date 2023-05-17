@@ -3,7 +3,6 @@ package com.flexberry.androidodataofflinesample
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.ThreadPolicy
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,9 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.flexberry.androidodataofflinesample.ui.mainmodel.MainScreen
 import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampleTheme
-import org.apache.olingo.client.core.ODataClientFactory
-import org.apache.olingo.commons.api.format.ContentType
-
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,21 +43,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             text = "Hello $name!",
             modifier = modifier
     )
-}
-
-fun OdataTest(){
-    val client = ODataClientFactory.getClient();
-    client.getConfiguration().setDefaultPubFormat(ContentType.APPLICATION_JSON);
-
-    // TODO как-то надо подождать выполнение запроса, т.к падает ошибка в response.body.
-    // Если выполнять эту команду в интерактивной оболочке, то раза с третьего она проходит и данные пользователей получаются.
-    try {
-        val request = client.retrieveRequestFactory.getEntitySetRequest(client.newURIBuilder("http://stands-backend.flexberry.net/odata").appendEntitySetSegment("EmberFlexberryDummyApplicationUsers").build());
-        val response = request.execute();
-        val entitySet = response.body;
-    } catch (e: Exception) {
-        Log.e("ERROR", "Error in odata request", e)
-    }
 }
 
 @Preview(showBackground = true)
