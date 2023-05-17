@@ -14,7 +14,7 @@ plugins {
 
 dependencies {
 
-	// необходимо для внедрения view-моделей в Activity, компоненыт и compose.
+    // необходимо для внедрения view-моделей в Activity, компоненты и compose.
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1"
 
     // Hilt DI.
