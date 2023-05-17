@@ -73,7 +73,7 @@ class MainViewModel @Inject constructor() : ViewModel() {
 }
 ```
 
-2) Инжектим в MainActivity
+2) Инжектим в MainActivity. В Activity для этого дабавляются аннотации @AndroidEntryPoint
 
 ```
 package com.flexberry.androidodataofflinesample
@@ -87,7 +87,6 @@ class MainActivity : ComponentActivity() {
     private val mainViewModel: MainViewModel by viewModels()
 ```
 
-Аннотация @AndroidEntryPoint обязательна
 
 3) Инжектим в Compose класс mainScreen, который отрисовывает главное меню
 
@@ -98,6 +97,32 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun MainScreen( modifier: Modifier = Modifier, viewModel: MainViewModel = viewModel() ) {
+```
+
+## Внедрение Repository в ViewModel
+
+1) Repository. Добавить @Inject constructor()
+
+```
+package com.flexberry.androidodataofflinesample.data
+
+import javax.inject.Inject
+
+class AppDataRepository @Inject constructor()
+{
+....
+}
+```
+
+2) Инжектим в ViewModel. Добавить аннотацию @HiltViewModel, добавить репозиторий в конструктор
+
+```
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private val repository: AppDataRepository
+) : ViewModel() {
+....
+}
 ```
 
 Ссылка на документацию
