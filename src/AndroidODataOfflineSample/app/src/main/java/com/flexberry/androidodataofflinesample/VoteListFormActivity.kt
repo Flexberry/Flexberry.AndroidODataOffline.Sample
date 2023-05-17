@@ -1,8 +1,6 @@
 package com.flexberry.androidodataofflinesample
 
 import android.os.Bundle
-import android.os.StrictMode
-import android.os.StrictMode.ThreadPolicy
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -10,16 +8,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.flexberry.androidodataofflinesample.ui.mainmodel.MainScreen
-import com.flexberry.androidodataofflinesample.ui.mainmodel.MainViewModel
 import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampleTheme
+import com.flexberry.androidodataofflinesample.ui.votelistformmodel.VoteListFormModelScreen
+import com.flexberry.androidodataofflinesample.ui.votelistformmodel.VoteListFormViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class VoteListFormActivity : ComponentActivity() {
 
     // Внедрение viewModel через hilt.
-    private val mainViewModel: MainViewModel by viewModels()
+    private val voteListFormViewModel: VoteListFormViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,14 +28,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen()
+                    VoteListFormModelScreen(votes = emptyList())
                 }
             }
         }
-
-        // Настройки безопасности для выполнения http запросов. Разрешить все.
-        // TODO Возможно это нужно перенести в AndroidOdataOfflineSampleApplication : Application()
-        val policy = ThreadPolicy.Builder().permitAll().build()
-        StrictMode.setThreadPolicy(policy)
     }
 }

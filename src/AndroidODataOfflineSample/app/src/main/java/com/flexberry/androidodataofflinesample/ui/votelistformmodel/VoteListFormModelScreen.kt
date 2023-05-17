@@ -1,4 +1,4 @@
-package com.flexberry.androidodataofflinesample.ui.applicationuserlistformmodel
+package com.flexberry.androidodataofflinesample.ui.votelistformmodel
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
@@ -17,8 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
@@ -40,20 +38,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.flexberry.androidodataofflinesample.data.model.ApplicationUser
+import com.flexberry.androidodataofflinesample.R
+import com.flexberry.androidodataofflinesample.data.enums.VoteType
+import com.flexberry.androidodataofflinesample.data.model.Vote
 import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampleTheme
 
+
 @Composable
-fun ApplicationUserListFormModelScreen(
+fun VoteListFormModelScreen(
     modifier: Modifier = Modifier,
-    viewModel: ApplicationUserListFormViewModel = viewModel(),
-    users: List<ApplicationUser>
+    viewModel: VoteListFormViewModel = viewModel(),
+    votes: List<Vote>
 ) {
     Box(
         modifier = modifier.fillMaxWidth(),
@@ -63,8 +64,8 @@ fun ApplicationUserListFormModelScreen(
                 modifier = modifier
                     .padding(start = 32.dp, top = 16.dp, end = 32.dp, bottom = 16.dp)
             ) {
-                items(users) { user ->
-                    ListItem(user, viewModel)
+                items(votes) { vote ->
+                    ListItem(vote, viewModel)
                 }
             }
         }
@@ -94,7 +95,7 @@ fun ApplicationUserListFormModelScreen(
             Button(
                 modifier = modifier.size(80.dp),
                 shape = RoundedCornerShape(10),
-                onClick = { viewModel::addUser }
+                onClick = { viewModel::addVote }
             ) {
                 Text(
                     text = "+",
@@ -103,15 +104,13 @@ fun ApplicationUserListFormModelScreen(
                 )
             }
         }
-
     }
-
 }
 
 @Composable
 fun ListItem(
-    user: ApplicationUser,
-    viewModel: ApplicationUserListFormViewModel = viewModel(),
+    vote: Vote,
+    viewModel: VoteListFormViewModel = viewModel(),
     modifier: Modifier = Modifier
 ) {
     var isExpandedItem by remember { mutableStateOf(false) }
@@ -127,18 +126,22 @@ fun ListItem(
                 .padding(all = 16.dp)
         ) {
             Text(
-                text = user.name,
+                text = vote.creator,
                 style = MaterialTheme.typography.titleLarge
             )
             Spacer(modifier = modifier.height(8.dp))
-            ItemData(text = user.birthday.toString())
+            ItemData(text = vote.createTime.toString())
 
             if (isExpandedItem) {
-                ItemData(text = user.email)
-                ItemData(text = user.phone1)
+                ItemData(text = vote.editor)
+                ItemData(text = vote.editTime.toString())
                 ItemData(
-                    text = "Активный ",
-                    icon = if(user.activated) Icons.Default.Check else Icons.Default.Close
+                    text = "",
+                    painterResourceId = when (vote.voteType) {
+                            VoteType.Like -> R.drawable.thumb_up_fill0_wght400_grad0_opsz48
+                            VoteType.Dislike -> R.drawable.thumb_down_fill0_wght400_grad0_opsz48
+                            else -> null
+                        }
                 )
             }
 
@@ -165,7 +168,7 @@ fun ListItem(
                 ) {
                 DropdownMenuItem(
                     text = { Text("Редактировать") },
-                    onClick = { viewModel::editUser },
+                    onClick = { viewModel::editVote },
                     leadingIcon = {
                         Icon(imageVector = Icons.Default.Edit, contentDescription = null)
                     },
@@ -173,7 +176,7 @@ fun ListItem(
                 Divider()
                 DropdownMenuItem(
                     text = { Text("Удалить") },
-                    onClick = { viewModel::deleteUser },
+                    onClick = { viewModel::deleteVote },
                     leadingIcon = {
                         Icon(imageVector = Icons.Default.Delete, contentDescription = null)
                     },
@@ -184,16 +187,15 @@ fun ListItem(
 }
 
 @Composable
-fun ItemData(text: String, icon: ImageVector? = null) {
+fun ItemData(text: String, painterResourceId: Int? = null) {
     Row() {
         Text(
             text = text,
             style = MaterialTheme.typography.bodyLarge,
         )
-        if (icon != null) {
+        if (painterResourceId != null) {
             Icon(
-                modifier = Modifier.rotate(0f),
-                imageVector = icon,
+                painter = painterResource(painterResourceId),
                 contentDescription = null,
             )
         }
@@ -213,6 +215,6 @@ fun ItemData(text: String, icon: ImageVector? = null) {
 @Composable
 fun ListItemsPreview() {
     AndroidODataOfflineSampleTheme {
-        ApplicationUserListFormModelScreen(users = emptyList())
+        VoteListFormModelScreen(votes = emptyList())
     }
 }
