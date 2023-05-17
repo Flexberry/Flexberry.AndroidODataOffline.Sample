@@ -1,11 +1,11 @@
 package com.flexberry.androidodataofflinesample.data.network.datasource
 
 class OdataDataSourceTypeInfo(
-    val TypeName: String,
-    val Namespace: String,
-    val OdataTypeName: String,
+    val typeName: String,
+    val namespace: String,
+    val odataTypeName: String,
     val isEnum: Boolean = false
 ) {
-    val fullOdataTypeName = "$Namespace$OdataTypeName"
-    val enumFilterTypeName = "$Namespace.$OdataTypeName"
+    val fullOdataTypeName = "$namespace$odataTypeName"
+    val enumFilterTypeName = "$namespace.$odataTypeName"
 }
