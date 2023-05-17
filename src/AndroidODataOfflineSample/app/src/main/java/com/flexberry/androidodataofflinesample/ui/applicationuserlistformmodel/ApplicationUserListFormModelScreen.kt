@@ -111,7 +111,7 @@ fun ApplicationUserListFormModelScreen(
 @Composable
 fun ListItem(
     user: ApplicationUser,
-    viewModel: ApplicationUserListFormViewModel = ApplicationUserListFormViewModel(),
+    viewModel: ApplicationUserListFormViewModel = viewModel(),
     modifier: Modifier = Modifier
 ) {
     var isExpandedItem by remember { mutableStateOf(false) }
