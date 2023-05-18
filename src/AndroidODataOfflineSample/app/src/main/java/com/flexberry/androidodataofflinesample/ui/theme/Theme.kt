@@ -94,7 +94,7 @@ fun AndroidODataOfflineSampleTheme(
 }
 
 @Composable
-fun bottomMenu(modifier: Modifier = Modifier, addItemFun: KFunction0<Unit>?) {
+fun listFormBottomMenu(modifier: Modifier = Modifier, addItemFun: KFunction0<Unit>?) {
     val tileSize = with(LocalDensity.current) {80.dp.toPx()}
     Box(modifier = modifier.fillMaxSize()){
         Box(
@@ -147,6 +147,6 @@ fun bottomMenu(modifier: Modifier = Modifier, addItemFun: KFunction0<Unit>?) {
 @Composable
 fun ListItemsPreview() {
     AndroidODataOfflineSampleTheme {
-        bottomMenu(addItemFun = null)
+        listFormBottomMenu(addItemFun = null)
     }
 }

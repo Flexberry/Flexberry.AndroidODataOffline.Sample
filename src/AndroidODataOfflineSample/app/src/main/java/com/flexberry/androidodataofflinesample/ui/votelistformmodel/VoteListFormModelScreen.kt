@@ -40,7 +40,7 @@ import com.flexberry.androidodataofflinesample.R
 import com.flexberry.androidodataofflinesample.data.enums.VoteType
 import com.flexberry.androidodataofflinesample.data.model.Vote
 import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampleTheme
-import com.flexberry.androidodataofflinesample.ui.theme.bottomMenu
+import com.flexberry.androidodataofflinesample.ui.theme.listFormBottomMenu
 
 
 @Composable
@@ -63,7 +63,7 @@ fun VoteListFormModelScreen(
             }
         }
 
-        bottomMenu(addItemFun = viewModel::addVote)
+        listFormBottomMenu(addItemFun = viewModel::addVote)
     }
 }
 

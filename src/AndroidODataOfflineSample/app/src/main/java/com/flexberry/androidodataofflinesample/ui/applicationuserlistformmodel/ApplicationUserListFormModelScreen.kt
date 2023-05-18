@@ -40,7 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.flexberry.androidodataofflinesample.data.model.ApplicationUser
 import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampleTheme
-import com.flexberry.androidodataofflinesample.ui.theme.bottomMenu
+import com.flexberry.androidodataofflinesample.ui.theme.listFormBottomMenu
+
 
 @Composable
 fun ApplicationUserListFormModelScreen(
@@ -61,8 +62,8 @@ fun ApplicationUserListFormModelScreen(
                 }
             }
         }
-        
-        bottomMenu(addItemFun = viewModel::addUser)
+
+        listFormBottomMenu(addItemFun = viewModel::addUser)
     }
 
 }
