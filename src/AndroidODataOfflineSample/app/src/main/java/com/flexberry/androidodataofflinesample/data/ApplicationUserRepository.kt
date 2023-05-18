@@ -1,10 +1,13 @@
 package com.flexberry.androidodataofflinesample.data
 
-import com.flexberry.androidodataofflinesample.data.model.ApplicationUser
-import kotlinx.coroutines.flow.Flow
+import com.flexberry.androidodataofflinesample.data.di.ApplicationUserNetworkDataSource
+import com.flexberry.androidodataofflinesample.data.network.interfaces.NetworkDataSource
+import com.flexberry.androidodataofflinesample.data.network.models.NetworkApplicationUser
 import javax.inject.Inject
 
-class ApplicationUserRepository @Inject constructor()
+class ApplicationUserRepository @Inject constructor(
+    @ApplicationUserNetworkDataSource private val networkDataSource: NetworkDataSource<NetworkApplicationUser>
+)
     // TODO через конструктор репозитория будут внедряться local и network DataSources.
     // private val exampleNetworkDataSource: ExampleNetworkDataSource
     // private val exampleLocalDataSource: ExampleLocalDataSource
