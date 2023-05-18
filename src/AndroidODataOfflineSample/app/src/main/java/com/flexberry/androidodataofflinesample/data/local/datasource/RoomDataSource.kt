@@ -5,16 +5,13 @@ import com.flexberry.androidodataofflinesample.data.query.FilterType
 import com.flexberry.androidodataofflinesample.data.query.OrderType
 import com.flexberry.androidodataofflinesample.data.query.QuerySettings
 
-open class RoomDataSource<T: Any>(
-    protected val db: LocalDatabase,
-    private val queryParams: QuerySettings) {
-
-    open fun createObjects(listObjects: List<T>): Int {
-        return 0;
+open class RoomDataSource<T: Any>() {
+    open fun createObjects(listObjects: List<T>): List<Long> {
+        return emptyList();
     }
 
     open fun readObjects(querySettings: QuerySettings? = null): List<T> {
-        return emptyList();
+        return mutableListOf();
     }
 
     open fun updateObjects(listObjects: List<T>): Int {
@@ -25,7 +22,7 @@ open class RoomDataSource<T: Any>(
         return 0;
     }
 
-    private fun QuerySettings.getRoomDataSourceValue(): String {
+    protected fun QuerySettings.getRoomDataSourceValue(): MutableList<String> {
         val elements: MutableList<String> = mutableListOf()
 
         if (this.selectList != null) {
@@ -36,28 +33,24 @@ open class RoomDataSource<T: Any>(
 
         if (this.filterValue != null) {
             val filterVal = "${this.filterValue!!.getRoomDataSourceValue()}"
-            val filterValFull = if (filterVal.isNullOrEmpty()) "" else "where $filterVal"
+            val filterValFull = if (filterVal.isNullOrEmpty()) "" else " WHERE $filterVal"
             elements.add(filterValFull)
         }
 
         if (this.orderList != null) {
             val orderValue = this.orderList!!
                 .joinToString(",") { x -> "${x.first} ${x.second.getRoomDataSourceValue()}"}
-            val orderValueFull = if (orderValue.isNullOrEmpty()) "" else "order by $orderValue"
+            val orderValueFull = if (orderValue.isNullOrEmpty()) "" else " ORDER BY $orderValue"
             elements.add(orderValueFull)
         }
 
         // В postgresql нет top. Limit ok?
-        if (this.topValue != null) {
-            elements.add("limit ${this.topValue}")
-        }
+        elements.add(if (this.topValue != null) " LIMIT ${this.topValue}" else "")
 
         // В postgresql нет skip. Offset ok?
-        if (this.skipValue != null) {
-            elements.add("offset ${this.skipValue}")
-        }
+        elements.add(if (this.skipValue != null) " OFFSET ${this.skipValue}" else "")
 
-        return elements.joinToString("&")
+        return elements
     }
 
     private fun Filter.getRoomDataSourceValue(): String {
@@ -110,16 +103,16 @@ open class RoomDataSource<T: Any>(
 
     private fun FilterType.getRoomDataSourceValue(): String {
         return when (this) {
-            FilterType.Equal -> "eq"
-            FilterType.NotEqual -> "neq"
-            FilterType.Greater -> "gt"
-            FilterType.GreaterOrEqual -> "ge"
-            FilterType.Less -> "lt"
-            FilterType.LessOrEqual -> "le"
-            FilterType.Has -> "has"
-            FilterType.Contains -> "contains"
-            FilterType.StartsWith -> "startswith"
-            FilterType.EndsWith -> "endswith"
+            FilterType.Equal -> "="
+            FilterType.NotEqual -> "<>"
+            FilterType.Greater -> ">"
+            FilterType.GreaterOrEqual -> ">="
+            FilterType.Less -> "<"
+            FilterType.LessOrEqual -> "<="
+            FilterType.Has -> "has" // ?
+            FilterType.Contains -> "contains" // ?
+            FilterType.StartsWith -> "startswith" // ?
+            FilterType.EndsWith -> "endswith" // ?
             FilterType.And -> "and"
             FilterType.Or -> "or"
             FilterType.Not -> "not"

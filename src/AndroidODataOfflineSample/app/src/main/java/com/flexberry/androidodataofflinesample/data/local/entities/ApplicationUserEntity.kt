@@ -2,10 +2,7 @@ package com.flexberry.androidodataofflinesample.data.local.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import com.flexberry.androidodataofflinesample.data.model.ApplicationUser
-import com.flexberry.androidodataofflinesample.data.model.Vote
 import java.sql.Date
 import java.sql.Timestamp
 import java.util.UUID
@@ -32,7 +29,7 @@ data class ApplicationUserEntity(
     val name: String? = null,
 
     @ColumnInfo(name = "Email")
-    val email: String? = null,
+    var email: String? = null,
 
     @ColumnInfo(name = "Phone1")
     val phone1: String? = null,

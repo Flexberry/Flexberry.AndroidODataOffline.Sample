@@ -1,23 +1,28 @@
 package com.flexberry.androidodataofflinesample.data.local.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.RawQuery
+import androidx.room.Update
+import androidx.sqlite.db.SimpleSQLiteQuery
 import com.flexberry.androidodataofflinesample.data.local.entities.VoteEntity
-import com.flexberry.androidodataofflinesample.data.local.entities.relations.VoteWithUser
-import kotlinx.coroutines.flow.Flow
-import java.util.UUID
 
 @Dao
 interface VoteDao {
     @Insert
-    suspend fun insertVote(vote: VoteEntity)
+    fun insertObjects(votes: List<VoteEntity>) : List<Long>
 
-    // Получение всех строк из таблицы Vote
-    @Query("SELECT * FROM Vote")
-    fun getVotes(): Flow<List<VoteEntity>>
+    @RawQuery
+    fun getObjects(query: SimpleSQLiteQuery) : List<VoteEntity>
 
-    // Получение конкретного Vote по ключу и привязанного ApplicationUser
-    @Query("SELECT * FROM Vote WHERE __primaryKey=:voteId")
-    fun getVoteWithUser(voteId: UUID): Flow<VoteWithUser?>
+    // TODO реализовать со связью с юзером
+    // @RawQuery
+    // fun getVoteWithUser(voteIds: List<UUID>): List<VoteWithUser?>
+
+    @Update
+    fun updateObjects(votes: List<VoteEntity>): Int
+
+    @Delete
+    fun deleteObjects(votes: List<VoteEntity>): Int
 }
