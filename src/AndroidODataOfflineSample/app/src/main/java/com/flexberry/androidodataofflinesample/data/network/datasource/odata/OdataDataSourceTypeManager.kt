@@ -3,10 +3,15 @@ package com.flexberry.androidodataofflinesample.data.network.datasource.odata
 import com.flexberry.androidodataofflinesample.data.enums.VoteType
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkApplicationUser
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkVote
-import java.util.Dictionary
 
+/**
+ * Менеджер типов OData.
+ */
 class OdataDataSourceTypeManager {
     companion object {
+        /**
+         * Список типов [OdataDataSourceTypeInfo].
+         */
         private val odataTypeMap  = listOf(
             OdataDataSourceTypeInfo(
                 kotlinClass = NetworkApplicationUser::class,
@@ -25,12 +30,22 @@ class OdataDataSourceTypeManager {
                 isEnum = true)
         )
 
-        private val odataDataSources: Dictionary<String, Any>? = null
-
+        /**
+         * Получить информацию о типе по его имени.
+         *
+         * @param typeName Имя типа.
+         * @return [OdataDataSourceTypeInfo] указанного типа.
+         */
         fun getInfoByTypeName(typeName: String?): OdataDataSourceTypeInfo<*>? {
             return odataTypeMap.firstOrNull { x -> x.typeName == typeName }
         }
 
+        /**
+         * Получить информацию о типе по его имени в OData.
+         *
+         * @param odataTypeName Имя типа в OData.
+         * @return [OdataDataSourceTypeInfo] указанного типа.
+         */
         fun getInfoByOdataTypeName(odataTypeName: String?): OdataDataSourceTypeInfo<*>? {
             return odataTypeMap.firstOrNull { x -> x.odataTypeName == odataTypeName
                     || x.fullOdataTypeName == odataTypeName }
