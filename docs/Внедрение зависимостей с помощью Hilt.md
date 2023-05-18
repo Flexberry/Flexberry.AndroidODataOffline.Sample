@@ -128,3 +128,118 @@ class MainViewModel @Inject constructor(
 Ссылка на документацию
 https://developer.android.com/training/dependency-injection
 
+## Внедрение DataSource в Repository.
+
+Некоторый DataSource реализует интерфейс NetworkDataSource и имеет несколько вариаций. В разных репозиториях нужны разные реализации этого DataSource, поэтому внедрение будет происходить с использованием именованных регистраций.
+
+1) Интрерфейс (имеет дженерик тип T, это просто особенность примера)
+
+```kotlin
+package com.flexberry.androidodataofflinesample.data.network.interfaces
+
+import com.flexberry.androidodataofflinesample.data.query.QuerySettings
+
+interface NetworkDataSource<T> {
+    fun createObjects(vararg dataObjects: T): Int
+    fun createObjects(listObjects: List<T>): Int
+    fun readObjects(querySettings: QuerySettings? = null): List<T>
+    fun updateObjects(vararg dataObjects: T): Int
+    fun updateObjects(listObjects: List<T>): Int
+    fun deleteObjects(vararg dataObjects: T): Int
+    fun deleteObjects(listObjects: List<T>): Int
+}
+```
+
+2) Реализация интерфейса в базовом классе DataSource (от которого наследуются его вариации)
+
+```kotlin
+open class OdataDataSource<T : Any> (private val odataObjectClass: KClass<T>) : NetworkDataSource<T>
+{
+    override fun createObjects(vararg dataObjects: T): Int {
+        ...
+    }
+
+    override fun createObjects(listObjects: List<T>): Int {
+        ...
+    }
+
+    override fun readObjects(querySettings: QuerySettings?): List<T> {
+        ...
+    }
+
+    override fun updateObjects(vararg dataObjects: T): Int {
+        ...
+    }
+
+    override fun updateObjects(listObjects: List<T>): Int {
+        ...
+    }
+
+    override fun deleteObjects(vararg dataObjects: T): Int {
+        ...
+    }
+
+    override fun deleteObjects(listObjects: List<T>): Int {
+        ...
+    }
+
+}
+```
+
+3) Регистрация
+
+Для регистраций экземпляров, реализующих интрефейс, создают класс с аннотацией @Module.
+
+```kotlin
+package com.flexberry.androidodataofflinesample.data.di
+
+import com.flexberry.androidodataofflinesample.data.network.datasource.ApplicationUserOdataDataSource
+import com.flexberry.androidodataofflinesample.data.network.datasource.VoteOdataDataSource
+import com.flexberry.androidodataofflinesample.data.network.interfaces.NetworkDataSource
+import com.flexberry.androidodataofflinesample.data.network.models.NetworkApplicationUser
+import com.flexberry.androidodataofflinesample.data.network.models.NetworkVote
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Qualifier
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class ApplicationUserNetworkDataSource
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class VoteNetworkDatasource
+
+@Module
+@InstallIn(SingletonComponent::class)
+object DataSourceModule {
+    @ApplicationUserNetworkDataSource
+    @Provides
+    fun provideApplicationUserNetworkDataSource(): NetworkDataSource<NetworkApplicationUser> {
+        return ApplicationUserOdataDataSource()
+    }
+
+    @VoteNetworkDatasource
+    @Provides
+    fun provideVoteNetworkDataSource(): NetworkDataSource<NetworkVote> {
+        return VoteOdataDataSource()
+    }
+}
+```
+
+В данном примере выполняются именованные регистрации разных реализаций интерфейса NetworkDataSource<T>. Имена задаются с помощью переменных annotation.
+
+
+4) Инжект в репозиторий
+
+```kotlin
+class ApplicationUserRepository @Inject constructor(
+    @ApplicationUserNetworkDataSource private val networkDataSource: NetworkDataSource<NetworkApplicationUser>
+) {
+
+...
+
+}
+```
