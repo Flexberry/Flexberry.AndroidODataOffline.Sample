@@ -26,5 +26,5 @@ data class NetworkApplicationUser(
     val Gender: String? = null,
     val Vip: Boolean? = null,
     val Karma: Double? = null,
-    val Votes: List<NetworkVote>? = null
+    var Votes: List<NetworkVote>? = null
 )

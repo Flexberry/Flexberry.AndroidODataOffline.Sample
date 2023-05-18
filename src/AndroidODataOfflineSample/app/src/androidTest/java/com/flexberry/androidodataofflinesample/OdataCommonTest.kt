@@ -2,8 +2,7 @@ package com.flexberry.androidodataofflinesample
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.flexberry.androidodataofflinesample.data.enums.VoteType
-import com.flexberry.androidodataofflinesample.data.network.datasource.ApplicationUserOdataDataSource
-import com.flexberry.androidodataofflinesample.data.network.datasource.VoteOdataDataSource
+import com.flexberry.androidodataofflinesample.data.network.datasource.OdataDataSourceCommon
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkApplicationUser
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkVote
 import com.flexberry.androidodataofflinesample.data.query.Filter
@@ -16,11 +15,11 @@ import java.util.UUID
 
 
 @RunWith(AndroidJUnit4::class)
-class OdataTest {
+class OdataCommonTest {
     @Test
     fun applicationUserReadTest() {
-        val ds = ApplicationUserOdataDataSource()
-        val objs = ds.readObjects()
+        val ds = OdataDataSourceCommon()
+        val objs = ds.readObjects(NetworkApplicationUser::class) as List<NetworkApplicationUser>
 
         if (objs.any()) {
             Assert.assertTrue(objs.any { x -> x.Name != null })
@@ -29,7 +28,7 @@ class OdataTest {
 
     @Test
     fun applicationUserCreateUpdateDeleteTest() {
-        val ds = ApplicationUserOdataDataSource()
+        val ds = OdataDataSourceCommon()
         val obj1 = NetworkApplicationUser(
             __PrimaryKey = UUID.randomUUID(),
             Name = "Test from android",
@@ -66,12 +65,13 @@ class OdataTest {
 
     @Test
     fun applicationUserFilterTest() {
-        val ds = ApplicationUserOdataDataSource()
+        val ds = OdataDataSourceCommon()
         val querySettings = QuerySettings()
             .filter(Filter.equalFilter("Name", "NameForTest"))
             .orderBy("Name")
             .top(5)
-        val objs = ds.readObjects(querySettings)
+        val objs = ds.readObjects(NetworkApplicationUser::class, querySettings)
+            as List<NetworkApplicationUser>
 
         if (objs.any()) {
             Assert.assertTrue(objs.any { x -> x.Name != null })
@@ -80,7 +80,7 @@ class OdataTest {
 
     @Test
     fun applicationUserBooleanFilterTest() {
-        val dsUser = ApplicationUserOdataDataSource()
+        val dsUser = OdataDataSourceCommon()
         val objUser = NetworkApplicationUser(
             __PrimaryKey = UUID.randomUUID(),
             Name = "Test from android. Boolean test",
@@ -100,7 +100,7 @@ class OdataTest {
             )
             .top(10)
 
-        val userObjsRead = dsUser.readObjects(querySettings)
+        val userObjsRead = dsUser.readObjects(NetworkApplicationUser::class, querySettings)
 
         Assert.assertTrue(userObjsRead.isNotEmpty())
 
@@ -111,7 +111,7 @@ class OdataTest {
 
     @Test
     fun applicationUserDoubleFilterTest() {
-        val dsUser = ApplicationUserOdataDataSource()
+        val dsUser = OdataDataSourceCommon()
         val objUser1 = NetworkApplicationUser(
             __PrimaryKey = UUID.randomUUID(),
             Name = "Test from android. Double test 1",
@@ -139,7 +139,7 @@ class OdataTest {
             )
             .top(10)
 
-        val userObjsRead = dsUser.readObjects(querySettings)
+        val userObjsRead = dsUser.readObjects(NetworkApplicationUser::class, querySettings)
 
         Assert.assertTrue(userObjsRead.isNotEmpty())
 
@@ -150,7 +150,7 @@ class OdataTest {
 
     @Test
     fun applicationUserWithVotesCreateDeleteTest() {
-        val dsUser = ApplicationUserOdataDataSource()
+        val dsUser = OdataDataSourceCommon()
         val objUser = NetworkApplicationUser(
             __PrimaryKey = UUID.randomUUID(),
             Name = "Test from android. Save with detail.",
@@ -178,8 +178,7 @@ class OdataTest {
 
     @Test
     fun voteCreateReadUpdateFilterDeleteTest() {
-        val dsUser = ApplicationUserOdataDataSource()
-        val dsVote = VoteOdataDataSource()
+        val dsCommon = OdataDataSourceCommon()
 
         val objUser = NetworkApplicationUser(
             __PrimaryKey = UUID.randomUUID(),
@@ -188,7 +187,7 @@ class OdataTest {
             Creator = "Android"
         )
 
-        val cntUserCreate = dsUser.createObjects(objUser)
+        val cntUserCreate = dsCommon.createObjects(objUser)
 
         Assert.assertEquals(cntUserCreate, 1)
 
@@ -199,7 +198,7 @@ class OdataTest {
             Author = objUser
         )
 
-        val cntVoteCreate = dsVote.createObjects(objVote)
+        val cntVoteCreate = dsCommon.createObjects(objVote)
 
         Assert.assertEquals(cntVoteCreate, 1)
 
@@ -210,7 +209,7 @@ class OdataTest {
             Author = objUser
         )
 
-        val cntVoteUpdate = dsVote.updateObjects(objVote2)
+        val cntVoteUpdate = dsCommon.updateObjects(objVote2)
 
         Assert.assertEquals(cntVoteUpdate, 1)
 
@@ -221,23 +220,22 @@ class OdataTest {
             )
             .top(10)
 
-        val voteObjsRead = dsVote.readObjects(querySettings)
+        val voteObjsRead = dsCommon.readObjects(NetworkVote::class, querySettings)
 
         Assert.assertTrue(voteObjsRead.isNotEmpty())
 
-        val cntVoteDelete = dsVote.deleteObjects(objVote)
+        val cntVoteDelete = dsCommon.deleteObjects(objVote)
 
         Assert.assertEquals(cntVoteDelete, 1)
 
-        val cntUserDelete = dsUser.deleteObjects(objUser)
+        val cntUserDelete = dsCommon.deleteObjects(objUser)
 
         Assert.assertEquals(cntUserDelete, 1)
     }
 
     @Test
     fun voteDatetimeFilterTest() {
-        val dsUser = ApplicationUserOdataDataSource()
-        val dsVote = VoteOdataDataSource()
+        val dsCommon = OdataDataSourceCommon()
         val dateNow = Date()
         val dateNowMinusOneMinute = Date(dateNow.time - 60 * 1000)
 
@@ -249,7 +247,7 @@ class OdataTest {
             CreateTime = dateNow
         )
 
-        val cntUserCreate = dsUser.createObjects(objUser)
+        val cntUserCreate = dsCommon.createObjects(objUser)
 
         Assert.assertEquals(cntUserCreate, 1)
 
@@ -261,7 +259,7 @@ class OdataTest {
             CreateTime = dateNow
         )
 
-        val cntVoteCreate = dsVote.createObjects(objVote)
+        val cntVoteCreate = dsCommon.createObjects(objVote)
 
         Assert.assertEquals(cntVoteCreate, 1)
 
@@ -272,15 +270,15 @@ class OdataTest {
             )
             .top(10)
 
-        val voteObjsRead = dsVote.readObjects(querySettings)
+        val voteObjsRead = dsCommon.readObjects(NetworkVote::class, querySettings)
 
         Assert.assertTrue(voteObjsRead.isNotEmpty())
 
-        val cntVoteDelete = dsVote.deleteObjects(objVote)
+        val cntVoteDelete = dsCommon.deleteObjects(objVote)
 
         Assert.assertEquals(cntVoteDelete, 1)
 
-        val cntUserDelete = dsUser.deleteObjects(objUser)
+        val cntUserDelete = dsCommon.deleteObjects(objUser)
 
         Assert.assertEquals(cntUserDelete, 1)
     }

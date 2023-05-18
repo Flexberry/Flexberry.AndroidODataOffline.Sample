@@ -3,30 +3,35 @@ package com.flexberry.androidodataofflinesample.data.network.datasource
 import com.flexberry.androidodataofflinesample.data.enums.VoteType
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkApplicationUser
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkVote
+import java.util.Dictionary
 
 class OdataDataSourceTypeManager {
     companion object {
-        private val odataTypeMap: List<OdataDataSourceTypeInfo> = listOf(
+        private val odataTypeMap  = listOf(
             OdataDataSourceTypeInfo(
-                NetworkApplicationUser::class.simpleName!!,
-                "EmberFlexberryDummy",
-                "ApplicationUsers"),
+                kotlinClass = NetworkApplicationUser::class,
+                namespace = "EmberFlexberryDummy",
+                odataTypeName = "ApplicationUsers",
+                details = listOf("Votes")),
             OdataDataSourceTypeInfo(
-                NetworkVote::class.simpleName!!,
-                "EmberFlexberryDummy",
-                "Votes"),
+                kotlinClass = NetworkVote::class,
+                namespace = "EmberFlexberryDummy",
+                odataTypeName = "Votes"
+            ),
             OdataDataSourceTypeInfo(
-                VoteType::class.simpleName!!,
-                "EmberFlexberryDummy",
-                "VoteType",
-                true)
+                kotlinClass = VoteType::class,
+                namespace = "EmberFlexberryDummy",
+                odataTypeName = "VoteType",
+                isEnum = true)
         )
 
-        fun getInfoByTypeName(typeName: String?): OdataDataSourceTypeInfo? {
+        private val odataDataSources: Dictionary<String, Any>? = null
+
+        fun getInfoByTypeName(typeName: String?): OdataDataSourceTypeInfo<*>? {
             return odataTypeMap.firstOrNull { x -> x.typeName == typeName }
         }
 
-        fun getInfoByOdataTypeName(odataTypeName: String?): OdataDataSourceTypeInfo? {
+        fun getInfoByOdataTypeName(odataTypeName: String?): OdataDataSourceTypeInfo<*>? {
             return odataTypeMap.firstOrNull { x -> x.odataTypeName == odataTypeName
                     || x.fullOdataTypeName == odataTypeName }
         }
