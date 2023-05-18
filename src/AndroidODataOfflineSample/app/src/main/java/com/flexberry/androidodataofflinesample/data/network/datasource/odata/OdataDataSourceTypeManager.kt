@@ -1,4 +1,4 @@
-package com.flexberry.androidodataofflinesample.data.network.datasource
+package com.flexberry.androidodataofflinesample.data.network.datasource.odata
 
 import com.flexberry.androidodataofflinesample.data.enums.VoteType
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkApplicationUser

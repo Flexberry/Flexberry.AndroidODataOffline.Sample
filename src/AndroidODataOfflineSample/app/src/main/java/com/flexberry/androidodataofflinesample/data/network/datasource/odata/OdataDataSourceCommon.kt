@@ -1,4 +1,4 @@
-package com.flexberry.androidodataofflinesample.data.network.datasource
+package com.flexberry.androidodataofflinesample.data.network.datasource.odata
 
 import android.util.Log
 import com.flexberry.androidodataofflinesample.data.query.Filter

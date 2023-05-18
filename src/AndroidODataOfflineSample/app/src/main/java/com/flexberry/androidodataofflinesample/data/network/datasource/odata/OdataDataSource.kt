@@ -1,4 +1,4 @@
-package com.flexberry.androidodataofflinesample.data.network.datasource
+package com.flexberry.androidodataofflinesample.data.network.datasource.odata
 
 import com.flexberry.androidodataofflinesample.data.network.interfaces.NetworkDataSource
 import com.flexberry.androidodataofflinesample.data.query.QuerySettings

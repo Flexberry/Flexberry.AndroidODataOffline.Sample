@@ -2,7 +2,7 @@ package com.flexberry.androidodataofflinesample
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.flexberry.androidodataofflinesample.data.enums.VoteType
-import com.flexberry.androidodataofflinesample.data.network.datasource.OdataDataSourceCommon
+import com.flexberry.androidodataofflinesample.data.network.datasource.odata.OdataDataSourceCommon
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkApplicationUser
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkVote
 import com.flexberry.androidodataofflinesample.data.query.Filter
