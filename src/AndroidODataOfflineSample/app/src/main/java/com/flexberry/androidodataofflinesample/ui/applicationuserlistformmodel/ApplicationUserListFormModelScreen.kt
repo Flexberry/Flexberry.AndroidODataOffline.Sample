@@ -1,7 +1,6 @@
 package com.flexberry.androidodataofflinesample.ui.applicationuserlistformmodel
 
 import android.content.res.Configuration
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -11,18 +10,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -38,16 +34,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.flexberry.androidodataofflinesample.data.model.ApplicationUser
 import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampleTheme
+import com.flexberry.androidodataofflinesample.ui.theme.bottomMenu
 
 @Composable
 fun ApplicationUserListFormModelScreen(
@@ -68,42 +61,8 @@ fun ApplicationUserListFormModelScreen(
                 }
             }
         }
-        val tileSize = with(LocalDensity.current) {80.dp.toPx()}
-        Box(
-            modifier = modifier
-                .fillMaxWidth()
-                .height(160.dp)
-                .padding(top = 20.dp, bottom = 0.dp)
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            Color(
-                                red = MaterialTheme.colorScheme.background.red,
-                                green = MaterialTheme.colorScheme.background.green,
-                                blue = MaterialTheme.colorScheme.background.blue,
-                                alpha = 0f
-                            ),
-                            MaterialTheme.colorScheme.background
-                        ),
-                        endY = tileSize
-                    )
-                )
-                .align(Alignment.BottomCenter),
-            contentAlignment = Alignment.Center
-        ) {
-            Button(
-                modifier = modifier.size(80.dp),
-                shape = RoundedCornerShape(10),
-                onClick = { viewModel::addUser }
-            ) {
-                Text(
-                    text = "+",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontSize = 48.sp
-                )
-            }
-        }
-
+        
+        bottomMenu(addItemFun = viewModel::addUser)
     }
 
 }
@@ -141,9 +100,8 @@ fun ListItem(
                     icon = if(user.activated) Icons.Default.Check else Icons.Default.Close
                 )
             }
-
-
         }
+
         var isExpandedMenu by remember { mutableStateOf(false) }
         Box(
             modifier = Modifier
