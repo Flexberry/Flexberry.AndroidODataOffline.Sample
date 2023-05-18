@@ -1,6 +1,7 @@
 package com.flexberry.androidodataofflinesample.data.network.datasource
 
 import android.util.Log
+import com.flexberry.androidodataofflinesample.data.network.interfaces.NetworkDataSource
 import com.flexberry.androidodataofflinesample.data.query.Filter
 import com.flexberry.androidodataofflinesample.data.query.FilterType
 import com.flexberry.androidodataofflinesample.data.query.OrderType
@@ -18,7 +19,7 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.javaField
 
-open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
+open class OdataDataSource<T : Any> (private val odataObjectClass: KClass<T>) : NetworkDataSource<T>
 {
     private class UrlParamNames {
         companion object {
@@ -37,12 +38,12 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
     private val odataTypeInfo = OdataDataSourceTypeManager.getInfoByTypeName(odataObjectClass.simpleName)!!
     private val odataObjectName = odataTypeInfo.fullOdataTypeName
 
-    fun createObjects(vararg dataObjects: T): Int {
+    override fun createObjects(vararg dataObjects: T): Int {
         return createObjects(dataObjects.asList())
     }
 
-    fun createObjects(listObjects: List<T>): Int {
-        var cnt = 0
+    override fun createObjects(listObjects: List<T>): Int {
+        var objectsCount = 0
 
         listObjects.forEach { obj ->
             var jsonObject = Gson().toJson(obj)
@@ -59,7 +60,7 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
             DataOutputStream(connection.outputStream).use { it.writeBytes(jsonObject) }
 
             if (connection.responseCode == 201) {
-                cnt++;
+                objectsCount++;
             }
             else {
                 Log.e("ERROR", "Failed to create object. Failed Connection.")
@@ -69,10 +70,10 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
             connection.disconnect()
         }
 
-        return cnt;
+        return objectsCount;
     }
 
-    fun readObjects(querySettings: QuerySettings? = null): List<T> {
+    override fun readObjects(querySettings: QuerySettings?): List<T> {
         var queryParamsValue = ""
         val queryParams = mutableListOf<String>()
         val expandValue = getRequestExtension()
@@ -90,7 +91,7 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
         }
 
         val url = URL("$odataUrl/$odataObjectName$queryParamsValue")
-        val lstResult = mutableListOf<T>()
+        val resultList = mutableListOf<T>()
         val connection  = url.openConnection() as HttpURLConnection
 
         if(connection.responseCode == 200)
@@ -107,7 +108,7 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
                 try {
                     val objectValue = Gson().fromJson(objectJson, odataObjectClass.java)
 
-                    lstResult.add(objectValue)
+                    resultList.add(objectValue)
                 }
                 catch (e: Exception) {
                     Log.e("ERROR", "Error in odata request", e)
@@ -123,15 +124,15 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
             Log.d("URL", url.toString())
         }
 
-        return lstResult;
+        return resultList;
     }
 
-    fun updateObjects(vararg dataObjects: T): Int {
+    override fun updateObjects(vararg dataObjects: T): Int {
         return updateObjects(dataObjects.asList())
     }
 
-    fun updateObjects(listObjects: List<T>): Int {
-        var cnt = 0
+    override fun updateObjects(listObjects: List<T>): Int {
+        var objectsCount = 0
 
         listObjects.forEach { obj ->
             var jsonObject = Gson().toJson(obj)
@@ -152,7 +153,7 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
             DataOutputStream(connection.outputStream).use { it.writeBytes(jsonObject) }
 
             if (connection.responseCode == 204) {
-                cnt++
+                objectsCount++
             }
             else {
                 Log.e("ERROR", "Filed to update object $pkValue. Failed Connection.")
@@ -162,15 +163,15 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
             connection.disconnect()
         }
 
-        return cnt
+        return objectsCount
     }
 
-    fun deleteObjects(vararg dataObjects: T): Int {
+    override fun deleteObjects(vararg dataObjects: T): Int {
         return deleteObjects(dataObjects.asList())
     }
 
-    fun deleteObjects(listObjects: List<T>): Int {
-        var cnt = 0
+    override fun deleteObjects(listObjects: List<T>): Int {
+        var objectsCount = 0
 
         listObjects.forEach { obj ->
             val pkValue = primaryKeyProperty.get(obj)
@@ -181,7 +182,7 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
             connection.requestMethod = "DELETE";
 
             if (connection.responseCode == 204) {
-                cnt++
+                objectsCount++
             } else {
                 Log.e("ERROR", "Filed to delete object $pkValue. Failed Connection.")
                 Log.d("OBJECT", obj.toString())
@@ -190,7 +191,7 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
             connection.disconnect()
         }
 
-        return cnt
+        return objectsCount
     }
 
     private fun convertMasters(jsonObject: String): String {
@@ -228,7 +229,7 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
 
     /// TODO: тут в будущем появится параметр в виде предатавления объекта.
     private fun getRequestExtension(): String? {
-        val lstRes = mutableListOf<String>()
+        val resultList = mutableListOf<String>()
 
         odataObjectClass.declaredMemberProperties.forEach { prop ->
             val propName = prop.name
@@ -238,7 +239,7 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
             if (odataTypeInfo != null && !odataTypeInfo.isEnum) {
                 val elem = "$propName(${UrlParamNames.select}=$primaryKeyPropertyName)"
 
-                lstRes.add(elem)
+                resultList.add(elem)
             }
         }
 
@@ -246,11 +247,11 @@ open class OdataDataSource<T : Any>(private val odataObjectClass: KClass<T>)
         if (odataObjectClass.simpleName == "NetworkVote") {
             val elem = "Suggestion(${UrlParamNames.select}=$primaryKeyPropertyName)"
 
-            lstRes.add(elem)
+            resultList.add(elem)
         }
 
-        return if (lstRes.any()) {
-            "${UrlParamNames.expand}=${lstRes.joinToString(",")}"
+        return if (resultList.any()) {
+            "${UrlParamNames.expand}=${resultList.joinToString(",")}"
         } else {
             null
         }
