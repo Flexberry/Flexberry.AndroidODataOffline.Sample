@@ -10,7 +10,7 @@ class ApplicationUserRepository @Inject constructor(
 )
     // TODO через конструктор репозитория будут внедряться local и network DataSources.
     // private val exampleNetworkDataSource: ExampleNetworkDataSource
-    // private val exampleLocalDataSource: ExampleLocalDataSource
+    //private val ApplicationUserLocalDataSource: ApplicationUserRoomDataSource
 {
     // Будут отдельные методы для Remote и Network DB на получение данных.
     // Методы будут доставать данные соотв из Local и Network датасоурсов, но возвращать всегда в виде представлений (базовых моделей).
@@ -18,9 +18,9 @@ class ApplicationUserRepository @Inject constructor(
     fun getApplicationUsersOnline(): Flow<List<ApplicationUser>> =
         exampleNetworkDataSource.getApplicationUsers()
             .map { it.map(NetworkApplicationUser::.asEntity.asExternalModel) }
+    */
+    //fun getApplicationUsersOffline(): Flow<List<ApplicationUserEntity>> =
+    //    ApplicationUserLocalDataSource.ApplicationUserDao().getApplicationUsers();
+            //.map { it.map(ApplicationUserEntity::asExternalModel) }
 
-    fun getApplicationUsersOffline(): Flow<List<ApplicationUser>> =
-        exampleLocalDataSource.getApplicationUsers()
-            .map { it.map(ApplicationUserEntity::asExternalModel) }
-     */
 }

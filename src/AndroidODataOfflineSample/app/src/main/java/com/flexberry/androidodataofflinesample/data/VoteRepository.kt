@@ -18,10 +18,9 @@ class VoteRepository @Inject constructor(
     fun getVotesOnline(): Flow<List<Vote>> =
         exampleNetworkDataSource.getVotes()
             .map { it.map(NetworkVote::.asEntity.asExternalModel) }
+    */
 
-    fun getVotesOffline(): Flow<List<Vote>> =
-        exampleLocalDataSource.getVotes()
-            .map { it.map(VoteEntity::asExternalModel) }
-
-     */
+    //fun getVotesOffline(): Flow<List<VoteEntity>> =
+        //VoteLocalDataSource.VoteDao().getVotes();
+            //.map { it.map(VoteEntity::asExternalModel) }
 }
