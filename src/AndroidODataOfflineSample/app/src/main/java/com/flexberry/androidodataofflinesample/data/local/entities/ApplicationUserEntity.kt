@@ -14,53 +14,53 @@ data class ApplicationUserEntity(
     val primarykey : UUID,
 
     @ColumnInfo(name = "CreateTime")
-    val createTime: Timestamp,
+    val createTime: Timestamp? = null,
 
     @ColumnInfo(name = "Creator")
-    val creator: String,
+    val creator: String? = null,
 
     @ColumnInfo(name = "EditTime")
-    val editTime: Timestamp,
+    val editTime: Timestamp? = null,
 
     @ColumnInfo(name = "Editor")
-    val editor: String,
+    val editor: String? = null,
 
     @ColumnInfo(name = "Name")
-    val name: String,
+    val name: String? = null,
 
     @ColumnInfo(name = "Email")
-    val email: String,
+    var email: String? = null,
 
     @ColumnInfo(name = "Phone1")
-    val phone1: String,
+    val phone1: String? = null,
 
     @ColumnInfo(name = "Phone2")
-    val phone2: String,
+    val phone2: String? = null,
 
     @ColumnInfo(name = "Phone3")
-    val phone3: String,
+    val phone3: String? = null,
 
     @ColumnInfo(name = "Activated")
-    val activated: Boolean,
+    val activated: Boolean? = null,
 
     @ColumnInfo(name = "VK")
-    val vK: String,
+    val vK: String? = null,
 
     @ColumnInfo(name = "Facebook")
-    val facebook: String,
+    val facebook: String? = null,
 
     @ColumnInfo(name = "Twitter")
-    val twitter: String,
+    val twitter: String? = null,
 
     @ColumnInfo(name = "Birthday")
-    val birthday: Date,
+    val birthday: Date? = null,
 
     @ColumnInfo(name = "Gender")
-    val gender: String,
+    val gender: String? = null,
 
     @ColumnInfo(name = "Vip")
-    val vip: Boolean,
+    val vip: Boolean? = null,
 
     @ColumnInfo(name = "Karma")
-    val karma: Double
+    val karma: Double? = null
 )

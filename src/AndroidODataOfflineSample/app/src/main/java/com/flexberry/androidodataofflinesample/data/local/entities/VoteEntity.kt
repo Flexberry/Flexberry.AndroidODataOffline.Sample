@@ -14,20 +14,20 @@ data class VoteEntity(
     val primarykey : UUID,
 
     @ColumnInfo(name = "CreateTime")
-    val createTime: Timestamp,
+    val createTime: Timestamp? = null,
 
     @ColumnInfo(name = "Creator")
-    val creator: String,
+    val creator: String? = null,
 
     @ColumnInfo(name = "EditTime")
-    val editTime: Timestamp,
+    val editTime: Timestamp? = null,
 
     @ColumnInfo(name = "Editor")
-    val editor: String,
+    val editor: String? = null,
 
     @ColumnInfo(name = "VoteType")
-    val voteType: VoteType,
+    var voteType: VoteType? = null,
 
-    @ColumnInfo(name = "ApplicationUserId")
-    val applicationUserId: UUID
+    @ColumnInfo(name = "ApplicationUser")
+    val applicationUserId: UUID? = null
 )
