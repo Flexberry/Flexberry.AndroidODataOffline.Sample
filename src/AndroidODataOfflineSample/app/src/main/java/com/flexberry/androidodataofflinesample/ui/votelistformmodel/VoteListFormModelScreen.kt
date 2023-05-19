@@ -86,14 +86,14 @@ fun ListItem(
                 .padding(all = 16.dp)
         ) {
             Text(
-                text = vote.creator,
+                text = vote.creator ?: "",
                 style = MaterialTheme.typography.titleLarge
             )
             Spacer(modifier = modifier.height(8.dp))
             ItemData(text = vote.createTime.toString())
 
             if (isExpandedItem) {
-                ItemData(text = vote.editor)
+                ItemData(text = vote.editor ?: "")
                 ItemData(text = vote.editTime.toString())
                 ItemData(
                     text = "",

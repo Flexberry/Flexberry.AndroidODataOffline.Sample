@@ -1,6 +1,8 @@
 package com.flexberry.androidodataofflinesample.data
 
 import com.flexberry.androidodataofflinesample.data.di.VoteNetworkDatasource
+import com.flexberry.androidodataofflinesample.data.model.Vote
+import com.flexberry.androidodataofflinesample.data.model.asDataModel
 import com.flexberry.androidodataofflinesample.data.network.interfaces.NetworkDataSource
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkVote
 import javax.inject.Inject
@@ -14,11 +16,13 @@ class VoteRepository @Inject constructor(
 {
     // Будут отдельные методы для Remote и Network DB на получение данных.
     // Методы будут доставать данные соотв из Local и Network датасоурсов, но возвращать всегда в виде представлений (базовых моделей).
-    /*
-    fun getVotesOnline(): Flow<List<Vote>> =
-        exampleNetworkDataSource.getVotes()
-            .map { it.map(NetworkVote::.asEntity.asExternalModel) }
-    */
+
+    /**
+     * Получение списка голосов в режиме онлайн.
+     *
+     * @return [List] of [Vote].
+     */
+    fun getVotesOnline() = networkDataSource.readObjects().map { it.asDataModel() }
 
     //fun getVotesOffline(): Flow<List<VoteEntity>> =
         //VoteLocalDataSource.VoteDao().getVotes();

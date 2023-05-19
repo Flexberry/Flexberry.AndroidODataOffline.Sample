@@ -87,7 +87,7 @@ fun ListItem(
                 .padding(all = 16.dp)
         ) {
             Text(
-                text = user.name,
+                text = user.name ?: "",
                 style = MaterialTheme.typography.titleLarge
             )
             Spacer(modifier = modifier.height(8.dp))
@@ -95,10 +95,10 @@ fun ListItem(
 
             if (isExpandedItem) {
                 ItemData(text = user.email)
-                ItemData(text = user.phone1)
+                ItemData(text = user.phone1 ?: "")
                 ItemData(
                     text = "Активный ",
-                    icon = if(user.activated) Icons.Default.Check else Icons.Default.Close
+                    icon = if(user.activated == true) Icons.Default.Check else Icons.Default.Close
                 )
             }
         }
