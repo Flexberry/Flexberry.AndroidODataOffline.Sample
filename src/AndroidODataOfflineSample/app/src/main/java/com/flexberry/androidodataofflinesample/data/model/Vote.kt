@@ -1,7 +1,8 @@
 package com.flexberry.androidodataofflinesample.data.model
 
 import com.flexberry.androidodataofflinesample.data.enums.VoteType
-import java.sql.Timestamp
+import com.flexberry.androidodataofflinesample.data.network.models.NetworkVote
+import java.util.Date
 import java.util.UUID
 
 /**
@@ -9,10 +10,20 @@ import java.util.UUID
  */
 data class Vote(
     val primarykey : UUID,
-    val createTime: Timestamp,
-    val creator: String,
-    val editTime: Timestamp,
-    val editor: String,
-    val voteType: VoteType,
-    val applicationUser: ApplicationUser
+    val createTime: Date? = null,
+    val creator: String? = null,
+    val editTime: Date? = null,
+    val editor: String? = null,
+    val voteType: VoteType? = null,
+    val author: ApplicationUser
+)
+
+fun NetworkVote.asLocalModel() = Vote(
+    primarykey = this.__PrimaryKey,
+    createTime = this.CreateTime,
+    creator = this.Creator,
+    editTime = this.EditTime,
+    editor = this.Editor,
+    voteType = this.VoteType,
+    author = this.Author.asLocalModel()
 )
