@@ -186,6 +186,7 @@ open class OdataDataSourceCommon {
      * Вычитать объекты.
      *
      * @param querySettings Параметры ограничения.
+     * @param kotlinClass Класс объекта.
      * @return Список объектов.
      */
     fun readObjects(kotlinClass: KClass<*>, querySettings: QuerySettings? = null): List<Any> {
@@ -442,7 +443,7 @@ open class OdataDataSourceCommon {
      *
      * @param odataObjectClass Класс объекта.
      */
-    /// TODO: тут в будущем появится параметр в виде предатавления объекта.
+    /// TODO: тут в будущем появится параметр в виде представления объекта.
     private fun getRequestExtension(odataObjectClass: KClass<*>): String? {
         val resultList = mutableListOf<String>()
 
