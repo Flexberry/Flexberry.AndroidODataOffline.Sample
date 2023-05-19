@@ -14,9 +14,3 @@ data class AppDataEntity(
     @ColumnInfo(name = "IsOnline")
     val isOnline: Boolean
 )
-
-/*
-fun AppDataEntity.asExternalModel() = AppData(
-    primarykey = primarykey,
-    isOnline = isOnline
-)*/
