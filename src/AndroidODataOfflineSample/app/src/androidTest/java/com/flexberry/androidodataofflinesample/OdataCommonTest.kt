@@ -209,6 +209,9 @@ class OdataCommonTest {
         dsUser.createObjects(objUser)
     }
 
+    /**
+     * Тест создания уже созданного объекта [NetworkApplicationUser].
+     */
     @Test
     fun ApplicationUserCreateSavedTest() {
         val dataSource = OdataDataSourceCommon()
@@ -229,6 +232,9 @@ class OdataCommonTest {
         Assert.assertEquals(cntDelete, 1)
     }
 
+    /**
+     * Тест обновления несуществующего объекта [NetworkApplicationUser].
+     */
     @Test
     fun ApplicationUserUpdateNewTest() {
         val dataSource = OdataDataSourceCommon()
@@ -244,6 +250,9 @@ class OdataCommonTest {
         Assert.assertEquals(cntUpdated, 1)
     }
 
+    /**
+     * Тест удаления несуществующего объекта [NetworkApplicationUser].
+     */
     @Test
     fun ApplicationUserDeleteUnsavedTest() {
         val dataSource = OdataDataSourceCommon()
