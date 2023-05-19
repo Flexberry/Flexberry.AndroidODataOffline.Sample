@@ -5,9 +5,9 @@ import java.util.Date
 import java.util.UUID
 
 /**
- * Представление внешнего уровня для ApplicationUser.
+ * Представление внешнего уровня для [ApplicationUser].
  */
-data class ApplicationUser(
+data class ApplicationUser (
     val primarykey : UUID,
     val createTime: Date? = null,
     val creator: String? = null,
@@ -29,24 +29,37 @@ data class ApplicationUser(
     val votes: List<Vote>? = null
 )
 
-fun NetworkApplicationUser.asLocalModel() = ApplicationUser(
-    primarykey = this.__PrimaryKey,
-    createTime = this.CreateTime,
-    creator = this.Creator,
-    editTime = this.EditTime,
-    editor = this.Editor,
-    name = this.Name,
-    email = this.EMail,
-    phone1 = this.Phone1,
-    phone2 = this.Phone2,
-    phone3 = this.Phone3,
-    activated = this.Activated,
-    vK = this.VK,
-    facebook = this.Facebook,
-    twitter = this.Twitter,
-    birthday = this.Birthday,
-    gender = this.Gender,
-    vip = this.Vip,
-    karma = this.Karma,
-    votes = this.Votes?.map { vote -> vote.asLocalModel() },
-)
+/**
+ * Преобразование [NetworkApplicationUser] в [ApplicationUser].
+ */
+fun NetworkApplicationUser.asLocalModel() = networkApplicationUserAsLocalModel(this)
+
+/**
+ * Преобразование [NetworkApplicationUser] в [ApplicationUser].
+ * Необходимо для подавления ошибки о рекурсивности вызовов преобразования.
+ *
+ * @param dataObject Объект данных.
+ */
+private fun networkApplicationUserAsLocalModel(dataObject: NetworkApplicationUser): ApplicationUser {
+    return ApplicationUser(
+        primarykey = dataObject.__PrimaryKey,
+        createTime = dataObject.CreateTime,
+        creator = dataObject.Creator,
+        editTime = dataObject.EditTime,
+        editor = dataObject.Editor,
+        name = dataObject.Name,
+        email = dataObject.EMail,
+        phone1 = dataObject.Phone1,
+        phone2 = dataObject.Phone2,
+        phone3 = dataObject.Phone3,
+        activated = dataObject.Activated,
+        vK = dataObject.VK,
+        facebook = dataObject.Facebook,
+        twitter = dataObject.Twitter,
+        birthday = dataObject.Birthday,
+        gender = dataObject.Gender,
+        vip = dataObject.Vip,
+        karma = dataObject.Karma,
+        votes = dataObject.Votes?.map { vote -> vote.asLocalModel() },
+    )
+}

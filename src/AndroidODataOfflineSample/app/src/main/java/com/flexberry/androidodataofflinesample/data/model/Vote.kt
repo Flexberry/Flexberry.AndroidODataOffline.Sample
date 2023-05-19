@@ -6,9 +6,9 @@ import java.util.Date
 import java.util.UUID
 
 /**
- * Представление внешнего уровня для Vote.
+ * Представление внешнего уровня для [Vote].
  */
-data class Vote(
+data class Vote (
     val primarykey : UUID,
     val createTime: Date? = null,
     val creator: String? = null,
@@ -18,12 +18,25 @@ data class Vote(
     val author: ApplicationUser
 )
 
-fun NetworkVote.asLocalModel() = Vote(
-    primarykey = this.__PrimaryKey,
-    createTime = this.CreateTime,
-    creator = this.Creator,
-    editTime = this.EditTime,
-    editor = this.Editor,
-    voteType = this.VoteType,
-    author = this.Author.asLocalModel()
-)
+/**
+ * Преобразование [NetworkVote] в [Vote].
+ */
+fun NetworkVote.asLocalModel() = networkVoteAsLocalModel(this)
+
+/**
+ * Преобразование [NetworkVote] в [Vote].
+ * Необходимо для подавления ошибки о рекурсивности вызовов преобразования.
+ *
+ * @param dataObject Объект данных.
+ */
+private fun networkVoteAsLocalModel(dataObject: NetworkVote): Vote {
+    return Vote(
+        primarykey = dataObject.__PrimaryKey,
+        createTime = dataObject.CreateTime,
+        creator = dataObject.Creator,
+        editTime = dataObject.EditTime,
+        editor = dataObject.Editor,
+        voteType = dataObject.VoteType,
+        author = dataObject.Author.asLocalModel()
+    )
+}
