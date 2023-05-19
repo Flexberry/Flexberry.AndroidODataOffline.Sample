@@ -8,7 +8,7 @@ import java.util.UUID
  * Представление внешнего уровня для [ApplicationUser].
  */
 data class ApplicationUser (
-    val primarykey : UUID,
+    val primarykey: UUID,
     val createTime: Date? = null,
     val creator: String? = null,
     val editTime: Date? = null,

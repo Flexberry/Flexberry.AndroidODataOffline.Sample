@@ -9,7 +9,7 @@ import java.util.UUID
  * Представление внешнего уровня для [Vote].
  */
 data class Vote (
-    val primarykey : UUID,
+    val primarykey: UUID,
     val createTime: Date? = null,
     val creator: String? = null,
     val editTime: Date? = null,
