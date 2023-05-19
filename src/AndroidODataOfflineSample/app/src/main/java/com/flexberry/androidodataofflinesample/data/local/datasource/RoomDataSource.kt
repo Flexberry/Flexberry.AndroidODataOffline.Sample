@@ -44,10 +44,8 @@ open class RoomDataSource<T: Any>() {
             elements.add(orderValueFull)
         }
 
-        // В postgresql нет top. Limit ok?
         elements.add(if (this.topValue != null) " LIMIT ${this.topValue}" else "")
 
-        // В postgresql нет skip. Offset ok?
         elements.add(if (this.skipValue != null) " OFFSET ${this.skipValue}" else "")
 
         return elements
@@ -109,10 +107,10 @@ open class RoomDataSource<T: Any>() {
             FilterType.GreaterOrEqual -> ">="
             FilterType.Less -> "<"
             FilterType.LessOrEqual -> "<="
-            FilterType.Has -> "has" // ?
-            FilterType.Contains -> "contains" // ?
-            FilterType.StartsWith -> "startswith" // ?
-            FilterType.EndsWith -> "endswith" // ?
+            FilterType.Has -> "has" // TODO for sqlite
+            FilterType.Contains -> "contains" // TODO for sqlite
+            FilterType.StartsWith -> "startswith" // TODO for sqlite
+            FilterType.EndsWith -> "endswith" // TODO for sqlite
             FilterType.And -> "and"
             FilterType.Or -> "or"
             FilterType.Not -> "not"

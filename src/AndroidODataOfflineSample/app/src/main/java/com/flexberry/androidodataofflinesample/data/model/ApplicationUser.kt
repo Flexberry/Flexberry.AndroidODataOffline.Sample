@@ -25,5 +25,6 @@ data class ApplicationUser(
     val birthday: Date,
     val gender: String,
     val vip: Boolean,
-    val karma: Double
+    val karma: Double,
+    val votes: List<Vote>
 )
