@@ -32,6 +32,19 @@ class OdataCommonTest {
     }
 
     /**
+     * Тест типизированной вычитки всех объектов типа [NetworkApplicationUser].
+     */
+    @Test
+    fun applicationUserTypedReadTest() {
+        val ds = OdataDataSourceCommon()
+        val objs = ds.readObjects<NetworkApplicationUser>()
+
+        if (objs.any()) {
+            Assert.assertTrue(objs.any { x -> x.Name != null })
+        }
+    }
+
+    /**
      * Тест создания, обновления, удаления объкетов типа [NetworkApplicationUser].
      */
     @Test

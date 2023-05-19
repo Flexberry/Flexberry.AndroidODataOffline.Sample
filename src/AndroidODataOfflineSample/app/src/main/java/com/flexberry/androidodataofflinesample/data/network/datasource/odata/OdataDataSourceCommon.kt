@@ -263,6 +263,17 @@ open class OdataDataSourceCommon {
     }
 
     /**
+     * Вычитать объекты.
+     *
+     * @param T Тип объекта.
+     * @param querySettings Параметры ограничения.
+     * @return Список объектов.
+     */
+    inline fun <reified T: Any> readObjects(querySettings: QuerySettings? = null) : List<T> {
+        return readObjects(T::class, querySettings) as List<T>
+    }
+
+    /**
      * Обновить объекты.
      *
      * @param dataObjects Объекты данных.
