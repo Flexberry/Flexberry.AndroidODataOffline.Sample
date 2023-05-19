@@ -213,7 +213,7 @@ class OdataCommonTest {
      * Тест создания уже созданного объекта [NetworkApplicationUser].
      */
     @Test
-    fun ApplicationUserCreateSavedTest() {
+    fun applicationUserCreateSavedTest() {
         val dataSource = OdataDataSourceCommon()
         val objUser = NetworkApplicationUser(
             __PrimaryKey = UUID.randomUUID(),
@@ -236,7 +236,7 @@ class OdataCommonTest {
      * Тест обновления несуществующего объекта [NetworkApplicationUser].
      */
     @Test
-    fun ApplicationUserUpdateNewTest() {
+    fun applicationUserUpdateNewTest() {
         val dataSource = OdataDataSourceCommon()
         val objUser = NetworkApplicationUser(
             __PrimaryKey = UUID.randomUUID(),
@@ -254,7 +254,7 @@ class OdataCommonTest {
      * Тест удаления несуществующего объекта [NetworkApplicationUser].
      */
     @Test
-    fun ApplicationUserDeleteUnsavedTest() {
+    fun applicationUserDeleteUnsavedTest() {
         val dataSource = OdataDataSourceCommon()
         val objUser = NetworkApplicationUser(
             __PrimaryKey = UUID.randomUUID(),
