@@ -209,6 +209,56 @@ class OdataCommonTest {
         dsUser.createObjects(objUser)
     }
 
+    @Test
+    fun ApplicationUserCreateSavedTest() {
+        val dataSource = OdataDataSourceCommon()
+        val objUser = NetworkApplicationUser(
+            __PrimaryKey = UUID.randomUUID(),
+            Name = "Test from android. CreateSaved.",
+            EMail = "CreateSaved@save.com",
+            Creator = "Android",
+        )
+
+        dataSource.createObjects(objUser)
+        val cntCreated = dataSource.createObjects(objUser)
+
+        Assert.assertEquals(cntCreated, 1)
+
+        val cntDelete = dataSource.deleteObjects(objUser)
+
+        Assert.assertEquals(cntDelete, 1)
+    }
+
+    @Test
+    fun ApplicationUserUpdateNewTest() {
+        val dataSource = OdataDataSourceCommon()
+        val objUser = NetworkApplicationUser(
+            __PrimaryKey = UUID.randomUUID(),
+            Name = "Test from android. UpdateNew.",
+            EMail = "UpdateNew@save.com",
+            Creator = "Android",
+        )
+
+        val cntUpdated = dataSource.updateObjects(objUser)
+
+        Assert.assertEquals(cntUpdated, 1)
+    }
+
+    @Test
+    fun ApplicationUserDeleteUnsavedTest() {
+        val dataSource = OdataDataSourceCommon()
+        val objUser = NetworkApplicationUser(
+            __PrimaryKey = UUID.randomUUID(),
+            Name = "Test from android. DeleteUnsaved.",
+            EMail = "DeleteUnsaved@save.com",
+            Creator = "Android",
+        )
+
+        val cntDeleted = dataSource.deleteObjects(objUser)
+
+        Assert.assertEquals(cntDeleted, 1)
+    }
+
     /**
      * Тест создания, обновления, удаления объектов типа [NetworkVote].
      */
