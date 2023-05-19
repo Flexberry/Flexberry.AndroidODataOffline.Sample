@@ -34,6 +34,7 @@ class VoteRepository @Inject constructor(
      * @return [List] of [Vote].
      */
     fun getVotesOffline(): List<Vote> {
+        // Тут нужно взять данные из локального источника данных.
         return emptyList()
     }
 
@@ -43,6 +44,6 @@ class VoteRepository @Inject constructor(
      * @param dataObjects Список объектов.
      */
     fun updateVotesOffline(dataObjects: List<Vote>) {
-
+        // Тут нужно отправить данные в локальный источник данных.
     }
 }

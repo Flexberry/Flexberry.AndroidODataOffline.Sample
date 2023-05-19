@@ -34,6 +34,7 @@ class ApplicationUserRepository @Inject constructor(
      * @return [List] of [ApplicationUser].
      */
     fun getApplicationUsersOffline(): List<ApplicationUser> {
+        // Тут нужно взять данные из локального источника данных.
         return emptyList()
     }
 
@@ -43,6 +44,6 @@ class ApplicationUserRepository @Inject constructor(
      * @param dataObjects Список объектов.
      */
     fun updateApplicationUsersOffline(dataObjects: List<ApplicationUser>) {
-
+        // Тут нужно отправить данные в локальный источник данных.
     }
 }
