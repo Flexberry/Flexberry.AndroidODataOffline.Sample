@@ -4,6 +4,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.flexberry.androidodataofflinesample.data.enums.VoteType
 import com.flexberry.androidodataofflinesample.data.network.datasource.ApplicationUserOdataDataSource
 import com.flexberry.androidodataofflinesample.data.network.datasource.VoteOdataDataSource
+import com.flexberry.androidodataofflinesample.data.network.datasource.odata.OdataDataSource
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkApplicationUser
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkVote
 import com.flexberry.androidodataofflinesample.data.query.Filter
@@ -14,9 +15,14 @@ import org.junit.runner.RunWith
 import java.util.Date
 import java.util.UUID
 
-
+/**
+ * Тесты для [OdataDataSource].
+ */
 @RunWith(AndroidJUnit4::class)
 class OdataTest {
+    /**
+     * Тест вычитки всех объектов через [ApplicationUserOdataDataSource].
+     */
     @Test
     fun applicationUserReadTest() {
         val ds = ApplicationUserOdataDataSource()
@@ -27,6 +33,9 @@ class OdataTest {
         }
     }
 
+    /**
+     * Тест создания, обновления, удаления объкетов через [ApplicationUserOdataDataSource].
+     */
     @Test
     fun applicationUserCreateUpdateDeleteTest() {
         val ds = ApplicationUserOdataDataSource()
@@ -64,6 +73,9 @@ class OdataTest {
         Assert.assertEquals(cntDelete, 2)
     }
 
+    /**
+     * Тест фильтра по имени + сортировка, через [ApplicationUserOdataDataSource].
+     */
     @Test
     fun applicationUserFilterTest() {
         val ds = ApplicationUserOdataDataSource()
@@ -78,6 +90,9 @@ class OdataTest {
         }
     }
 
+    /**
+     * Тест фильтра по полю типа [Boolean] через [ApplicationUserOdataDataSource].
+     */
     @Test
     fun applicationUserBooleanFilterTest() {
         val dsUser = ApplicationUserOdataDataSource()
@@ -109,6 +124,9 @@ class OdataTest {
         Assert.assertEquals(cntDelete, 1)
     }
 
+    /**
+     * Тест фильтра по полю типа [Double] через [ApplicationUserOdataDataSource].
+     */
     @Test
     fun applicationUserDoubleFilterTest() {
         val dsUser = ApplicationUserOdataDataSource()
@@ -148,6 +166,9 @@ class OdataTest {
         Assert.assertEquals(cntDelete, 2)
     }
 
+    /**
+     * Тест сохранения объекта с детейлом через [ApplicationUserOdataDataSource].
+     */
     @Test
     fun applicationUserWithVotesCreateDeleteTest() {
         val dsUser = ApplicationUserOdataDataSource()
@@ -176,6 +197,9 @@ class OdataTest {
         dsUser.createObjects(objUser)
     }
 
+    /**
+     * Тест создания, обновления, удаления объектов через [VoteOdataDataSource].
+     */
     @Test
     fun voteCreateReadUpdateFilterDeleteTest() {
         val dsUser = ApplicationUserOdataDataSource()
@@ -234,6 +258,9 @@ class OdataTest {
         Assert.assertEquals(cntUserDelete, 1)
     }
 
+    /**
+     * Тест фильтра по полю типа [Date] через [VoteOdataDataSource].
+     */
     @Test
     fun voteDatetimeFilterTest() {
         val dsUser = ApplicationUserOdataDataSource()

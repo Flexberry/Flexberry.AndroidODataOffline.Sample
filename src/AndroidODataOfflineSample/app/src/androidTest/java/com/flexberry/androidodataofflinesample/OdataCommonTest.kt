@@ -13,9 +13,14 @@ import org.junit.runner.RunWith
 import java.util.Date
 import java.util.UUID
 
-
+/**
+ * Тесты для [OdataDataSourceCommon].
+ */
 @RunWith(AndroidJUnit4::class)
 class OdataCommonTest {
+    /**
+     * Тест вычитки всех объектов типа [NetworkApplicationUser].
+     */
     @Test
     fun applicationUserReadTest() {
         val ds = OdataDataSourceCommon()
@@ -26,6 +31,9 @@ class OdataCommonTest {
         }
     }
 
+    /**
+     * Тест создания, обновления, удаления объкетов типа [NetworkApplicationUser].
+     */
     @Test
     fun applicationUserCreateUpdateDeleteTest() {
         val ds = OdataDataSourceCommon()
@@ -63,6 +71,9 @@ class OdataCommonTest {
         Assert.assertEquals(cntDelete, 2)
     }
 
+    /**
+     * Тест фильтра по имени + сортировка, для типа [NetworkApplicationUser].
+     */
     @Test
     fun applicationUserFilterTest() {
         val ds = OdataDataSourceCommon()
@@ -78,6 +89,9 @@ class OdataCommonTest {
         }
     }
 
+    /**
+     * Тест фильтра по полю типа [Boolean] для типа [NetworkApplicationUser].
+     */
     @Test
     fun applicationUserBooleanFilterTest() {
         val dsUser = OdataDataSourceCommon()
@@ -109,6 +123,9 @@ class OdataCommonTest {
         Assert.assertEquals(cntDelete, 1)
     }
 
+    /**
+     * Тест фильтра по полю типа [Double] для типа [NetworkApplicationUser].
+     */
     @Test
     fun applicationUserDoubleFilterTest() {
         val dsUser = OdataDataSourceCommon()
@@ -148,6 +165,9 @@ class OdataCommonTest {
         Assert.assertEquals(cntDelete, 2)
     }
 
+    /**
+     * Тест сохранения объекта [NetworkApplicationUser] с детейлом [NetworkVote].
+     */
     @Test
     fun applicationUserWithVotesCreateDeleteTest() {
         val dsUser = OdataDataSourceCommon()
@@ -176,6 +196,9 @@ class OdataCommonTest {
         dsUser.createObjects(objUser)
     }
 
+    /**
+     * Тест создания, обновления, удаления объектов типа [NetworkVote].
+     */
     @Test
     fun voteCreateReadUpdateFilterDeleteTest() {
         val dsCommon = OdataDataSourceCommon()
@@ -233,6 +256,9 @@ class OdataCommonTest {
         Assert.assertEquals(cntUserDelete, 1)
     }
 
+    /**
+     * Тест фильтра по полю типа [Date] для типа [NetworkVote].
+     */
     @Test
     fun voteDatetimeFilterTest() {
         val dsCommon = OdataDataSourceCommon()
