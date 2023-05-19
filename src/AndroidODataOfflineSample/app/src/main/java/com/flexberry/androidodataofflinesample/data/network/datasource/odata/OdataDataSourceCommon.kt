@@ -1,6 +1,7 @@
 package com.flexberry.androidodataofflinesample.data.network.datasource.odata
 
 import android.util.Log
+import com.flexberry.androidodataofflinesample.BuildConfig
 import com.flexberry.androidodataofflinesample.data.query.Filter
 import com.flexberry.androidodataofflinesample.data.query.FilterType
 import com.flexberry.androidodataofflinesample.data.query.OrderType
@@ -98,7 +99,7 @@ open class OdataDataSourceCommon {
     /**
      * OData URL.
      */
-    private val odataUrl = "http://stands-backend.flexberry.net/odata"
+    private val odataUrl = BuildConfig.ODATA_BACKEND_URL
 
     /**
      * Имя свойства первичного ключа.

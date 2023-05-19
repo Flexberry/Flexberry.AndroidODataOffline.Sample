@@ -21,7 +21,7 @@ data class Vote (
 /**
  * Преобразование [NetworkVote] в [Vote].
  */
-fun NetworkVote.asLocalModel() = networkVoteAsLocalModel(this)
+fun NetworkVote.asDataModel() = networkVoteAsDataModel(this)
 
 /**
  * Преобразование [NetworkVote] в [Vote].
@@ -29,7 +29,7 @@ fun NetworkVote.asLocalModel() = networkVoteAsLocalModel(this)
  *
  * @param dataObject Объект данных.
  */
-private fun networkVoteAsLocalModel(dataObject: NetworkVote): Vote {
+private fun networkVoteAsDataModel(dataObject: NetworkVote): Vote {
     return Vote(
         primarykey = dataObject.__PrimaryKey,
         createTime = dataObject.CreateTime,
@@ -37,6 +37,6 @@ private fun networkVoteAsLocalModel(dataObject: NetworkVote): Vote {
         editTime = dataObject.EditTime,
         editor = dataObject.Editor,
         voteType = dataObject.VoteType,
-        author = dataObject.Author.asLocalModel()
+        author = dataObject.Author.asDataModel()
     )
 }

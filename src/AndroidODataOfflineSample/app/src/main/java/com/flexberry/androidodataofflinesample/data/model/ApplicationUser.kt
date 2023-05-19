@@ -32,7 +32,7 @@ data class ApplicationUser (
 /**
  * Преобразование [NetworkApplicationUser] в [ApplicationUser].
  */
-fun NetworkApplicationUser.asLocalModel() = networkApplicationUserAsLocalModel(this)
+fun NetworkApplicationUser.asDataModel() = networkApplicationUserAsDataModel(this)
 
 /**
  * Преобразование [NetworkApplicationUser] в [ApplicationUser].
@@ -40,7 +40,7 @@ fun NetworkApplicationUser.asLocalModel() = networkApplicationUserAsLocalModel(t
  *
  * @param dataObject Объект данных.
  */
-private fun networkApplicationUserAsLocalModel(dataObject: NetworkApplicationUser): ApplicationUser {
+private fun networkApplicationUserAsDataModel(dataObject: NetworkApplicationUser): ApplicationUser {
     return ApplicationUser(
         primarykey = dataObject.__PrimaryKey,
         createTime = dataObject.CreateTime,
@@ -60,6 +60,6 @@ private fun networkApplicationUserAsLocalModel(dataObject: NetworkApplicationUse
         gender = dataObject.Gender,
         vip = dataObject.Vip,
         karma = dataObject.Karma,
-        votes = dataObject.Votes?.map { vote -> vote.asLocalModel() },
+        votes = dataObject.Votes?.map { vote -> vote.asDataModel() },
     )
 }
