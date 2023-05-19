@@ -9,23 +9,40 @@ import javax.inject.Inject
 
 class ApplicationUserRepository @Inject constructor(
     @ApplicationUserNetworkDataSource private val networkDataSource: NetworkDataSource<NetworkApplicationUser>
-)
-    // TODO через конструктор репозитория будут внедряться local и network DataSources.
-    // private val exampleNetworkDataSource: ExampleNetworkDataSource
-    //private val ApplicationUserLocalDataSource: ApplicationUserRoomDataSource
-{
-    // Будут отдельные методы для Remote и Network DB на получение данных.
-    // Методы будут доставать данные соотв из Local и Network датасоурсов, но возвращать всегда в виде представлений (базовых моделей).
-
+) {
     /**
      * Получение списка пользователей в режиме онлайн.
      *
      * @return [List] of [ApplicationUser].
      */
-    fun getApplicationUsersOnline() = networkDataSource.readObjects().map { it.asDataModel() }
+    fun getApplicationUsersOnline(): List<ApplicationUser> {
+        return networkDataSource.readObjects().map { it.asDataModel() }
+    }
 
-    //fun getApplicationUsersOffline(): Flow<List<ApplicationUserEntity>> =
-    //    ApplicationUserLocalDataSource.ApplicationUserDao().getApplicationUsers();
-            //.map { it.map(ApplicationUserEntity::asExternalModel) }
+    /**
+     * Сохранение пользователей в режиме онлайн.
+     *
+     * @param dataObjects Список объектов.
+     */
+    fun updateApplicationUsersOnline(dataObjects: List<ApplicationUser>) {
+        networkDataSource.updateObjects(dataObjects.map { it.asNetworkModel() })
+    }
 
+    /**
+     * Получение списка пользователей в режиме оффлайн.
+     *
+     * @return [List] of [ApplicationUser].
+     */
+    fun getApplicationUsersOffline(): List<ApplicationUser> {
+        return emptyList()
+    }
+
+    /**
+     * Сохранение пользователей в режиме оффлайн.
+     *
+     * @param dataObjects Список объектов.
+     */
+    fun updateApplicationUsersOffline(dataObjects: List<ApplicationUser>) {
+
+    }
 }

@@ -16,7 +16,22 @@ data class Vote (
     val editor: String? = null,
     val voteType: VoteType? = null,
     val author: ApplicationUser
-)
+) {
+    /**
+     * Преобразование [Vote] в [NetworkVote].
+     */
+    fun asNetworkModel(): NetworkVote {
+        return NetworkVote(
+            __PrimaryKey = primarykey,
+            CreateTime = createTime,
+            Creator = creator,
+            EditTime = editTime,
+            Editor = editor,
+            VoteType = voteType,
+            Author = author.asNetworkModel()
+        )
+    }
+}
 
 /**
  * Преобразование [NetworkVote] в [Vote].
