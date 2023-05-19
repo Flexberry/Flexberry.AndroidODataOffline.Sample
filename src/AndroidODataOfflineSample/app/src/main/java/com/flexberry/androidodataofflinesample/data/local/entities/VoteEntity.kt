@@ -31,13 +31,3 @@ data class VoteEntity(
     @ColumnInfo(name = "ApplicationUser")
     val applicationUserId: UUID? = null
 )
-
-/*
-fun VoteEntity.asExternalModel() = Vote(
-    primarykey = primarykey,
-    createTime = createTime,
-    creator = creator,
-    editTime = editTime,
-    editor = editor,
-    voteType = voteType
-)*/

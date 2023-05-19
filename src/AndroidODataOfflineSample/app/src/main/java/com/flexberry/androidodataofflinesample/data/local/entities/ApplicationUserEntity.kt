@@ -64,24 +64,3 @@ data class ApplicationUserEntity(
     @ColumnInfo(name = "Karma")
     val karma: Double? = null
 )
-
-/*fun ApplicationUserEntity.asExternalModel() = ApplicationUser(
-    primarykey = primarykey,
-    createTime = createTime,
-    creator = creator,
-    editTime = editTime,
-    editor = editor,
-    name = name,
-    email = email,
-    phone1 = phone1,
-    phone2 = phone2,
-    phone3 = phone3,
-    activated = activated,
-    vK = vK,
-    facebook = facebook,
-    twitter = twitter,
-    birthday = birthday,
-    gender = gender,
-    vip = vip,
-    karma = karma
-)*/

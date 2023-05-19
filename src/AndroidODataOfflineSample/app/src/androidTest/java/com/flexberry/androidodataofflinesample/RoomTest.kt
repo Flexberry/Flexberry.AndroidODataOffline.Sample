@@ -57,7 +57,7 @@ class RoomTest {
 
         // Вычитка
         val data = ds.readObjects()
-        println("result:".plus(data))
+        println(data)
         if (data.any()) {
             Assert.assertTrue(data.any { x -> x.isOnline })
         }
@@ -114,7 +114,7 @@ class RoomTest {
             )
 
         val data = ds.readObjects(querySettings)
-        println("result:".plus(data))
+        println(data)
         Assert.assertTrue(data.isNotEmpty())
 
         // Обновление
@@ -173,7 +173,7 @@ class RoomTest {
             .orderBy("Name")
 
         val data = ds.readObjects(querySettings)
-        println("result:".plus(data))
+        println(data)
         Assert.assertTrue(data.isNotEmpty())
 
         // Обновление
