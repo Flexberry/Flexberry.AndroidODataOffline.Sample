@@ -1,16 +1,16 @@
 package com.flexberry.androidodataofflinesample.ui.votelistformmodel
 
 import androidx.lifecycle.ViewModel
-import com.flexberry.androidodataofflinesample.ApplicationStateManager
+import com.flexberry.androidodataofflinesample.ApplicationState
 import com.flexberry.androidodataofflinesample.data.VoteRepository
-import com.flexberry.androidodataofflinesample.data.di.ApplicationState
+import com.flexberry.androidodataofflinesample.data.di.AppState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class VoteListFormViewModel @Inject constructor(
     private val repository: VoteRepository,
-    @ApplicationState private val applicationState: ApplicationStateManager
+    @AppState private val applicationState: ApplicationState
 ) : ViewModel() {
     fun addVote():Unit {
         // добавление нового пользователя

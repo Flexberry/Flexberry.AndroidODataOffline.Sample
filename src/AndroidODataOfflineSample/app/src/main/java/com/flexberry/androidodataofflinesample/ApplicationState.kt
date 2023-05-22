@@ -3,7 +3,7 @@ package com.flexberry.androidodataofflinesample
 /**
  * Состояние приложения.
  */
-class ApplicationStateManager(
+class ApplicationState(
 ) {
     /**
      * Режим онлайн включен.

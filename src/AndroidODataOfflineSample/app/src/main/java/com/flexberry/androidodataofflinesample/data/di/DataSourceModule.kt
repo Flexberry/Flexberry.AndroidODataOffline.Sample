@@ -2,7 +2,7 @@ package com.flexberry.androidodataofflinesample.data.di
 
 import android.content.Context
 import androidx.room.Room
-import com.flexberry.androidodataofflinesample.ApplicationStateManager
+import com.flexberry.androidodataofflinesample.ApplicationState
 import com.flexberry.androidodataofflinesample.data.local.datasource.AppDataRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.ApplicationUserRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.LocalDatabase
@@ -46,7 +46,7 @@ annotation class VoteLocalDatasource
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class ApplicationState
+annotation class AppState
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -89,9 +89,9 @@ object DataSourceModule {
             .build()
     }
 
-    @ApplicationState
+    @AppState
     @Provides
-    fun provideApplicationState(): ApplicationStateManager {
-        return ApplicationStateManager()
+    fun provideApplicationState(): ApplicationState {
+        return ApplicationState()
     }
 }
