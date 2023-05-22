@@ -1,5 +1,7 @@
 package com.flexberry.androidodataofflinesample.ui.mainmodel
 
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.flexberry.androidodataofflinesample.ApplicationState
 import com.flexberry.androidodataofflinesample.data.AppDataRepository
@@ -10,11 +12,21 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val repository: AppDataRepository,
-    @AppState private val applicationState: ApplicationState
+    @AppState val applicationState: ApplicationState
 ) : ViewModel() {
-    data class MainViewModelState (val isOnline: Boolean)
+    val btnText: MutableLiveData<String> = MutableLiveData("Offline")
 
-    val state = MainViewModelState(isOnline = false)
+    init {
+        applicationState.isOnline.observeForever { newValue ->
+            btnText.postValue(
+                if (newValue) {
+                    "Online"
+                } else {
+                    "Offline"
+                }
+            )
+        }
+    }
 
     fun appUserButton():Unit {
         // Функционал для кнопки "ApplicationUser"
@@ -25,6 +37,6 @@ class MainViewModel @Inject constructor(
     }
 
     fun offlineButton():Unit {
-        // Функционал для кнопки "Offline"
+        applicationState.setOnline(applicationState.isOnline.value == false)
     }
 }

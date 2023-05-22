@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.MutableLiveData
 import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampleTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -73,7 +74,7 @@ fun MainScreen( modifier: Modifier = Modifier, viewModel: MainViewModel = viewMo
             mainButton(
                 modifier = modifier.size(100.dp),
                 fontSize = 18.sp,
-                text = "Offline",
+                text = viewModel::btnText.get().value ?: "",
                 onClick = viewModel::offlineButton,
                 rounded = 50
             )
