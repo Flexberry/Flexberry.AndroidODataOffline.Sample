@@ -27,7 +27,34 @@ data class ApplicationUser (
     val vip: Boolean? = null,
     val karma: Double? = null,
     val votes: List<Vote>? = null
-)
+) {
+    /**
+     * Преобразование [ApplicationUser] в [NetworkApplicationUser].
+     */
+    fun asNetworkModel(): NetworkApplicationUser {
+        return NetworkApplicationUser(
+            __PrimaryKey = primarykey,
+            CreateTime = createTime,
+            Creator = creator,
+            EditTime = editTime,
+            Editor = editor,
+            Name = name,
+            EMail = email,
+            Phone1 = phone1,
+            Phone2 = phone2,
+            Phone3 = phone3,
+            Activated = activated,
+            VK = vK,
+            Facebook = facebook,
+            Twitter = twitter,
+            Birthday = birthday,
+            Gender = gender,
+            Vip = vip,
+            Karma = karma,
+            Votes = votes?.map { it.asNetworkModel() },
+        )
+    }
+}
 
 /**
  * Преобразование [NetworkApplicationUser] в [ApplicationUser].

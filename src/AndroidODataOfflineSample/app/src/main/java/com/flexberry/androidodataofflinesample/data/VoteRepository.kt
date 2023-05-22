@@ -13,22 +13,41 @@ import javax.inject.Inject
 class VoteRepository @Inject constructor(
     @VoteNetworkDatasource private val networkDataSource: NetworkDataSource<NetworkVote>,
     @VoteLocalDatasource private val localDataSource:LocalDataSource<VoteEntity>
-)
-    // TODO через конструктор репозитория будут внедряться local и network DataSources.
-    // private val exampleNetworkDataSource: ExampleNetworkDataSource
-    // private val exampleLocalDataSource: ExampleLocalDataSource
-{
-    // Будут отдельные методы для Remote и Network DB на получение данных.
-    // Методы будут доставать данные соотв из Local и Network датасоурсов, но возвращать всегда в виде представлений (базовых моделей).
-
+) {
     /**
      * Получение списка голосов в режиме онлайн.
      *
      * @return [List] of [Vote].
      */
-    fun getVotesOnline() = networkDataSource.readObjects().map { it.asDataModel() }
+    fun getVotesOnline(): List<Vote> {
+        return networkDataSource.readObjects().map { it.asDataModel() }
+    }
 
-    //fun getVotesOffline(): Flow<List<VoteEntity>> =
-        //VoteLocalDataSource.VoteDao().getVotes();
-            //.map { it.map(VoteEntity::asExternalModel) }
+    /**
+     * Сохранение голосов в режиме онлайн.
+     *
+     * @param dataObjects Список объектов.
+     */
+    fun updateVotesOnline(dataObjects: List<Vote>) {
+        networkDataSource.updateObjects(dataObjects.map { it.asNetworkModel() })
+    }
+
+    /**
+     * Получение списка голосов в режиме оффлайн.
+     *
+     * @return [List] of [Vote].
+     */
+    fun getVotesOffline(): List<Vote> {
+        // Тут нужно взять данные из локального источника данных.
+        return emptyList()
+    }
+
+    /**
+     * Сохранение голосов в режиме оффлайн.
+     *
+     * @param dataObjects Список объектов.
+     */
+    fun updateVotesOffline(dataObjects: List<Vote>) {
+        // Тут нужно отправить данные в локальный источник данных.
+    }
 }
