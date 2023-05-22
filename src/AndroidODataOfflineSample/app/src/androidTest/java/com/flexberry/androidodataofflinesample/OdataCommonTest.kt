@@ -62,9 +62,9 @@ class OdataCommonTest {
             Creator = "Android"
         )
 
-        val cntCreate = ds.createObjects(obj1, obj2)
+        val countCreate = ds.createObjects(obj1, obj2)
 
-        Assert.assertEquals(cntCreate, 2)
+        Assert.assertEquals(countCreate, 2)
 
         val obj3 = NetworkApplicationUser(
             __PrimaryKey = obj2.__PrimaryKey,
@@ -73,13 +73,13 @@ class OdataCommonTest {
             Editor = obj2.Creator
         )
 
-        val cntUpdate = ds.updateObjects(obj3)
+        val countUpdate = ds.updateObjects(obj3)
 
-        Assert.assertEquals(cntUpdate, 1)
+        Assert.assertEquals(countUpdate, 1)
 
-        val cntDelete = ds.deleteObjects(obj1, obj2)
+        val countDelete = ds.deleteObjects(obj1, obj2)
 
-        Assert.assertEquals(cntDelete, 2)
+        Assert.assertEquals(countDelete, 2)
     }
 
     /**
@@ -113,9 +113,9 @@ class OdataCommonTest {
             Activated = false
         )
 
-        val cntCreate = dsUser.createObjects(objUser)
+        val countCreate = dsUser.createObjects(objUser)
 
-        Assert.assertEquals(cntCreate, 1)
+        Assert.assertEquals(countCreate, 1)
 
         val querySettings = QuerySettings()
             .filter(
@@ -128,9 +128,9 @@ class OdataCommonTest {
 
         Assert.assertTrue(userObjsRead.isNotEmpty())
 
-        val cntDelete = dsUser.deleteObjects(objUser)
+        val countDelete = dsUser.deleteObjects(objUser)
 
-        Assert.assertEquals(cntDelete, 1)
+        Assert.assertEquals(countDelete, 1)
     }
 
     /**
@@ -153,9 +153,9 @@ class OdataCommonTest {
             Karma = -12.34
         )
 
-        val cntCreate = dsUser.createObjects(objUser1, objUser2)
+        val countCreate = dsUser.createObjects(objUser1, objUser2)
 
-        Assert.assertEquals(cntCreate, 2)
+        Assert.assertEquals(countCreate, 2)
 
         val querySettings = QuerySettings()
             .filter(
@@ -168,9 +168,9 @@ class OdataCommonTest {
 
         Assert.assertTrue(userObjsRead.isNotEmpty())
 
-        val cntDelete = dsUser.deleteObjects(objUser1, objUser2)
+        val countDelete = dsUser.deleteObjects(objUser1, objUser2)
 
-        Assert.assertEquals(cntDelete, 2)
+        Assert.assertEquals(countDelete, 2)
     }
 
     /**
@@ -214,13 +214,13 @@ class OdataCommonTest {
         )
 
         dataSource.createObjects(objUser)
-        val cntCreated = dataSource.createObjects(objUser)
+        val countCreated = dataSource.createObjects(objUser)
 
-        Assert.assertEquals(cntCreated, 1)
+        Assert.assertEquals(countCreated, 1)
 
-        val cntDelete = dataSource.deleteObjects(objUser)
+        val countDelete = dataSource.deleteObjects(objUser)
 
-        Assert.assertEquals(cntDelete, 1)
+        Assert.assertEquals(countDelete, 1)
     }
 
     /**
@@ -235,9 +235,9 @@ class OdataCommonTest {
             Creator = "Android",
         )
 
-        val cntUpdated = dataSource.updateObjects(objUser)
+        val countUpdated = dataSource.updateObjects(objUser)
 
-        Assert.assertEquals(cntUpdated, 1)
+        Assert.assertEquals(countUpdated, 1)
 
         val dataObjects = dataSource.readObjects<NetworkApplicationUser>(
             QuerySettings()
@@ -247,9 +247,9 @@ class OdataCommonTest {
 
         Assert.assertEquals(dataObjects.size, 1)
 
-        val cntDelete = dataSource.deleteObjects(objUser)
+        val countDelete = dataSource.deleteObjects(objUser)
 
-        Assert.assertEquals(cntDelete, 1)
+        Assert.assertEquals(countDelete, 1)
     }
 
     /**
@@ -264,9 +264,9 @@ class OdataCommonTest {
             Creator = "Android",
         )
 
-        val cntDeleted = dataSource.deleteObjects(objUser)
+        val countDeleted = dataSource.deleteObjects(objUser)
 
-        Assert.assertEquals(cntDeleted, 1)
+        Assert.assertEquals(countDeleted, 1)
     }
 
     /**
@@ -282,9 +282,9 @@ class OdataCommonTest {
             Creator = "Android"
         )
 
-        val cntUserCreate = dsCommon.createObjects(objUser)
+        val countUserCreate = dsCommon.createObjects(objUser)
 
-        Assert.assertEquals(cntUserCreate, 1)
+        Assert.assertEquals(countUserCreate, 1)
 
         val objVote = NetworkVote(
             VoteType = VoteType.Like,
@@ -292,9 +292,9 @@ class OdataCommonTest {
             Author = objUser
         )
 
-        val cntVoteCreate = dsCommon.createObjects(objVote)
+        val countVoteCreate = dsCommon.createObjects(objVote)
 
-        Assert.assertEquals(cntVoteCreate, 1)
+        Assert.assertEquals(countVoteCreate, 1)
 
         val objVote2 = NetworkVote(
             __PrimaryKey = objVote.__PrimaryKey,
@@ -303,9 +303,9 @@ class OdataCommonTest {
             Author = objUser
         )
 
-        val cntVoteUpdate = dsCommon.updateObjects(objVote2)
+        val countVoteUpdate = dsCommon.updateObjects(objVote2)
 
-        Assert.assertEquals(cntVoteUpdate, 1)
+        Assert.assertEquals(countVoteUpdate, 1)
 
         val querySettings = QuerySettings()
             .filter(
@@ -318,13 +318,13 @@ class OdataCommonTest {
 
         Assert.assertTrue(voteObjsRead.isNotEmpty())
 
-        val cntVoteDelete = dsCommon.deleteObjects(objVote)
+        val countVoteDelete = dsCommon.deleteObjects(objVote)
 
-        Assert.assertEquals(cntVoteDelete, 1)
+        Assert.assertEquals(countVoteDelete, 1)
 
-        val cntUserDelete = dsCommon.deleteObjects(objUser)
+        val countUserDelete = dsCommon.deleteObjects(objUser)
 
-        Assert.assertEquals(cntUserDelete, 1)
+        Assert.assertEquals(countUserDelete, 1)
     }
 
     /**
@@ -343,9 +343,9 @@ class OdataCommonTest {
             CreateTime = dateNow
         )
 
-        val cntUserCreate = dsCommon.createObjects(objUser)
+        val countUserCreate = dsCommon.createObjects(objUser)
 
-        Assert.assertEquals(cntUserCreate, 1)
+        Assert.assertEquals(countUserCreate, 1)
 
         val objVote = NetworkVote(
             VoteType = VoteType.Like,
@@ -354,9 +354,9 @@ class OdataCommonTest {
             CreateTime = dateNow
         )
 
-        val cntVoteCreate = dsCommon.createObjects(objVote)
+        val countVoteCreate = dsCommon.createObjects(objVote)
 
-        Assert.assertEquals(cntVoteCreate, 1)
+        Assert.assertEquals(countVoteCreate, 1)
 
         val querySettings = QuerySettings()
             .filter(
@@ -369,12 +369,12 @@ class OdataCommonTest {
 
         Assert.assertTrue(voteObjsRead.isNotEmpty())
 
-        val cntVoteDelete = dsCommon.deleteObjects(objVote)
+        val countVoteDelete = dsCommon.deleteObjects(objVote)
 
-        Assert.assertEquals(cntVoteDelete, 1)
+        Assert.assertEquals(countVoteDelete, 1)
 
-        val cntUserDelete = dsCommon.deleteObjects(objUser)
+        val countUserDelete = dsCommon.deleteObjects(objUser)
 
-        Assert.assertEquals(cntUserDelete, 1)
+        Assert.assertEquals(countUserDelete, 1)
     }
 }
