@@ -60,9 +60,12 @@ open class RoomDataSource<T: Any>() {
             FilterType.Greater,
             FilterType.GreaterOrEqual,
             FilterType.Less,
-            FilterType.LessOrEqual,
-            FilterType.Has -> {
+            FilterType.LessOrEqual -> {
                 result = "$paramName ${filterType.getRoomDataSourceValue()} '$paramValue'"
+            }
+
+            FilterType.Has -> {
+                result = "$paramName ${filterType.getRoomDataSourceValue()} '%$paramValue%'"
             }
 
             FilterType.Contains,
@@ -107,7 +110,7 @@ open class RoomDataSource<T: Any>() {
             FilterType.GreaterOrEqual -> ">="
             FilterType.Less -> "<"
             FilterType.LessOrEqual -> "<="
-            FilterType.Has -> "has" // TODO for sqlite
+            FilterType.Has -> "like" // TODO for sqlite
             FilterType.Contains -> "contains" // TODO for sqlite
             FilterType.StartsWith -> "startswith" // TODO for sqlite
             FilterType.EndsWith -> "endswith" // TODO for sqlite

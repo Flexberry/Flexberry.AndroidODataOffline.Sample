@@ -3,7 +3,9 @@ package com.flexberry.androidodataofflinesample.data.local.datasource
 import android.util.Log
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.flexberry.androidodataofflinesample.data.local.entities.VoteEntity
+import com.flexberry.androidodataofflinesample.data.local.entities.relations.VoteWithUser
 import com.flexberry.androidodataofflinesample.data.query.QuerySettings
+import java.util.UUID
 
 class VoteRoomDataSource(private val db: LocalDatabase) : RoomDataSource<VoteEntity>() {
     private fun VoteDao() = db.getVoteDao()
@@ -38,5 +40,9 @@ class VoteRoomDataSource(private val db: LocalDatabase) : RoomDataSource<VoteEnt
 
     override fun deleteObjects(listObjects: List<VoteEntity>): Int {
         return VoteDao().deleteObjects(listObjects)
+    }
+
+    fun readObjectWithMaster(pks: List<UUID>) : List<VoteWithUser?> {
+        return VoteDao().getObjectsWithMaster(pks)
     }
 }
