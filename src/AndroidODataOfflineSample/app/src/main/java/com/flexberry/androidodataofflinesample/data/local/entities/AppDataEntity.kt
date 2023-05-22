@@ -5,7 +5,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.UUID
 
-@Entity(tableName = "AppData")
+private const val TABLE_NAME = "AppData"
+@Entity(tableName = TABLE_NAME)
 data class AppDataEntity(
     @PrimaryKey
     @ColumnInfo(name = "__primaryKey")
@@ -13,4 +14,8 @@ data class AppDataEntity(
 
     @ColumnInfo(name = "IsOnline")
     val isOnline: Boolean
-)
+) {
+    companion object {
+        const val tableName: String = TABLE_NAME
+    }
+}

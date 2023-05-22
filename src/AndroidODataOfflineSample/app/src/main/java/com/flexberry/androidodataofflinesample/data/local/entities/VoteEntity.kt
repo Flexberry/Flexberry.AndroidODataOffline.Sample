@@ -7,6 +7,7 @@ import com.flexberry.androidodataofflinesample.data.enums.VoteType
 import java.sql.Timestamp
 import java.util.UUID
 
+private const val TABLE_NAME = "Vote"
 @Entity(tableName = "Vote")
 data class VoteEntity(
     @PrimaryKey
@@ -30,4 +31,8 @@ data class VoteEntity(
 
     @ColumnInfo(name = "ApplicationUser")
     val applicationUserId: UUID? = null
-)
+) {
+    companion object {
+        const val tableName: String = TABLE_NAME
+    }
+}

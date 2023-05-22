@@ -7,6 +7,7 @@ import java.sql.Date
 import java.sql.Timestamp
 import java.util.UUID
 
+private const val TABLE_NAME = "ApplicationUser"
 @Entity(tableName = "ApplicationUser")
 data class ApplicationUserEntity(
     @PrimaryKey
@@ -63,4 +64,8 @@ data class ApplicationUserEntity(
 
     @ColumnInfo(name = "Karma")
     val karma: Double? = null
-)
+) {
+    companion object {
+        const val tableName: String = TABLE_NAME
+    }
+}
