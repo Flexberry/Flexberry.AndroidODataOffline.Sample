@@ -12,15 +12,22 @@ import com.flexberry.androidodataofflinesample.ui.mainmodel.MainScreen
 import com.flexberry.androidodataofflinesample.ui.mainmodel.MainViewModel
 import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampleTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+import com.flexberry.androidodataofflinesample.data.di.ApplicationOnlineSwithcer
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity @Inject constructor(
+    @ApplicationOnlineSwithcer private val onlineSwithcer: OnlineSwithcer
+): ComponentActivity() {
 
     // Внедрение viewModel через hilt.
     private val mainViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        onlineSwithcer.mainViewModel = mainViewModel
+
         setContent {
             AndroidODataOfflineSampleTheme {
                 // A surface container using the 'background' color from the theme

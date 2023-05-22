@@ -11,6 +11,8 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
     data class MainViewModelState (val isOnline: Boolean)
 
+    val state = MainViewModelState(isOnline = false)
+
     fun appUserButton():Unit {
         // Функционал для кнопки "ApplicationUser"
     }

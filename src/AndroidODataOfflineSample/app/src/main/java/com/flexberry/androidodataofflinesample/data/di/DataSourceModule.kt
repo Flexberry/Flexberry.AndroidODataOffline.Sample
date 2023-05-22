@@ -2,6 +2,7 @@ package com.flexberry.androidodataofflinesample.data.di
 
 import android.content.Context
 import androidx.room.Room
+import com.flexberry.androidodataofflinesample.OnlineSwithcer
 import com.flexberry.androidodataofflinesample.data.local.datasource.AppDataRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.ApplicationUserRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.LocalDatabase
@@ -43,6 +44,10 @@ annotation class ApplicationUserLocalDataSource
 @Retention(AnnotationRetention.BINARY)
 annotation class VoteLocalDatasource
 
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class ApplicationOnlineSwithcer
+
 @Module
 @InstallIn(SingletonComponent::class)
 object DataSourceModule {
@@ -82,5 +87,11 @@ object DataSourceModule {
         return Room.inMemoryDatabaseBuilder(appContext, LocalDatabase::class.java)
             .allowMainThreadQueries()
             .build()
+    }
+
+    @ApplicationOnlineSwithcer
+    @Provides
+    fun provideApplicationOnlineSwithcer(): OnlineSwithcer {
+        return OnlineSwithcer()
     }
 }
