@@ -51,9 +51,8 @@ class RoomTest {
         val appData2 = AppDataEntity(UUID.randomUUID(),false)
 
         // Добавление
-        val insertCount = ds.createObjects(mutableListOf(appData1, appData2)).first()
-        println(insertCount)
-        Assert.assertEquals(insertCount, 1)
+        val insertCount = ds.createObjects(mutableListOf(appData1, appData2))
+        Assert.assertEquals(insertCount, 2)
 
         // Вычитка
         val data = ds.readObjects()
@@ -103,9 +102,8 @@ class RoomTest {
         )
 
         // Добавление
-        val insertCount = ds.createObjects(mutableListOf(vote1, vote2)).first()
-        println(insertCount)
-        Assert.assertEquals(insertCount, 1)
+        val insertCount = ds.createObjects(mutableListOf(vote1, vote2))
+        Assert.assertEquals(insertCount, 2)
 
         // Вычитка
         val querySettings = QuerySettings()
@@ -164,9 +162,8 @@ class RoomTest {
         )
 
         // Добавление
-        val insertCount = ds.createObjects(mutableListOf(user1, user2, user3)).first()
-        println(insertCount)
-        Assert.assertEquals(insertCount, 1)
+        val insertCount = ds.createObjects(mutableListOf(user1, user2, user3))
+        Assert.assertEquals(insertCount, 3)
 
         // Вычитка
         val querySettings = QuerySettings()

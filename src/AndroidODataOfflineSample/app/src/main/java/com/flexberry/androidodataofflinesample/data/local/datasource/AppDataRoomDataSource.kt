@@ -4,12 +4,15 @@ import android.util.Log
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.flexberry.androidodataofflinesample.data.local.entities.AppDataEntity
 import com.flexberry.androidodataofflinesample.data.query.QuerySettings
+import javax.inject.Inject
 
-class AppDataRoomDataSource(private val db: LocalDatabase) : RoomDataSource<AppDataEntity>() {
+class AppDataRoomDataSource @Inject constructor(
+    private val db: LocalDatabase
+    ) : RoomDataSource<AppDataEntity>() {
     private fun AppDataDao() = db.getAppDataDao()
 
-    override fun createObjects(listObjects: List<AppDataEntity>): List<Long> {
-        return AppDataDao().insertObjects(listObjects)
+    override fun createObjects(listObjects: List<AppDataEntity>): Int {
+        return AppDataDao().insertObjects(listObjects).size
     }
 
     override fun readObjects(querySettings: QuerySettings?): List<AppDataEntity> {
