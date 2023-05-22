@@ -51,7 +51,7 @@ class RoomTest {
         val appData2 = AppDataEntity(UUID.randomUUID(),false)
 
         // Добавление
-        val insertCount = ds.createObjects(mutableListOf(appData1, appData2))
+        val insertCount = ds.createObjects(listOf(appData1, appData2))
         Assert.assertEquals(insertCount, 2)
 
         // Вычитка
@@ -64,7 +64,7 @@ class RoomTest {
         // Обновление
         val appData3 = AppDataEntity(appData1.primarykey, false)
         val appData4 = AppDataEntity(appData2.primarykey, true)
-        val updateCount = ds.updateObjects(mutableListOf(appData3, appData4))
+        val updateCount = ds.updateObjects(listOf(appData3, appData4))
         println(updateCount)
         Assert.assertEquals(updateCount, 2)
 
@@ -74,7 +74,7 @@ class RoomTest {
         Assert.assertTrue(!checkUpdated[0].isOnline && checkUpdated[1].isOnline)
 
         // Удаление
-        val deletedCount = ds.deleteObjects(mutableListOf(appData1))
+        val deletedCount = ds.deleteObjects(listOf(appData1))
         println(deletedCount)
         Assert.assertEquals(deletedCount, 1)
 
@@ -102,7 +102,7 @@ class RoomTest {
         )
 
         // Добавление
-        val insertCount = ds.createObjects(mutableListOf(vote1, vote2))
+        val insertCount = ds.createObjects(listOf(vote1, vote2))
         Assert.assertEquals(insertCount, 2)
 
         // Вычитка
@@ -117,7 +117,7 @@ class RoomTest {
 
         // Обновление
         vote1.voteType = VoteType.Dislike
-        val updateCount = ds.updateObjects(mutableListOf(vote1))
+        val updateCount = ds.updateObjects(listOf(vote1))
         println(updateCount)
         Assert.assertEquals(updateCount, 1)
 
@@ -127,7 +127,7 @@ class RoomTest {
         Assert.assertTrue(checkUpdated.first { x -> x.primarykey == vote1.primarykey }?.voteType == VoteType.Dislike)
 
         // Удаление
-        val deletedCount = ds.deleteObjects(mutableListOf(vote1))
+        val deletedCount = ds.deleteObjects(listOf(vote1))
         println(deletedCount)
         Assert.assertEquals(deletedCount, 1)
 
@@ -162,7 +162,7 @@ class RoomTest {
         )
 
         // Добавление
-        val insertCount = ds.createObjects(mutableListOf(user1, user2, user3))
+        val insertCount = ds.createObjects(listOf(user1, user2, user3))
         Assert.assertEquals(insertCount, 3)
 
         // Вычитка
@@ -175,7 +175,7 @@ class RoomTest {
 
         // Обновление
         user1.email = "mouse@mail.ru"
-        val updateCount = ds.updateObjects(mutableListOf(user1))
+        val updateCount = ds.updateObjects(listOf(user1))
         println(updateCount)
         Assert.assertEquals(updateCount, 1)
 
@@ -185,7 +185,7 @@ class RoomTest {
         Assert.assertTrue(checkUpdated.first { x -> x.primarykey == user1.primarykey }?.email == "mouse@mail.ru")
 
         // Удаление
-        val deletedCount = ds.deleteObjects(mutableListOf(user1, user2))
+        val deletedCount = ds.deleteObjects(listOf(user1, user2))
         println(deletedCount)
         Assert.assertEquals(deletedCount, 2)
 
