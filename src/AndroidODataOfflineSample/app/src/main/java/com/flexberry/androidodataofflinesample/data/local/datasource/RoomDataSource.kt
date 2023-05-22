@@ -1,24 +1,37 @@
 package com.flexberry.androidodataofflinesample.data.local.datasource
 
+import com.flexberry.androidodataofflinesample.data.local.interfaces.LocalDataSource
 import com.flexberry.androidodataofflinesample.data.query.Filter
 import com.flexberry.androidodataofflinesample.data.query.FilterType
 import com.flexberry.androidodataofflinesample.data.query.OrderType
 import com.flexberry.androidodataofflinesample.data.query.QuerySettings
 
-open class RoomDataSource<T: Any>() {
-    open fun createObjects(listObjects: List<T>): List<Long> {
-        return emptyList();
+open class RoomDataSource<T: Any>() : LocalDataSource<T> {
+    override fun createObjects(vararg dataObjects: T): Int {
+        return this.createObjects(dataObjects.asList())
     }
 
-    open fun readObjects(querySettings: QuerySettings? = null): List<T> {
-        return mutableListOf();
-    }
-
-    open fun updateObjects(listObjects: List<T>): Int {
+    override fun createObjects(listObjects: List<T>): Int {
         return 0;
     }
 
-    open fun deleteObjects(listObjects: List<T>): Int {
+    override fun readObjects(querySettings: QuerySettings?): List<T> {
+        return mutableListOf();
+    }
+
+    override fun updateObjects(vararg dataObjects: T): Int {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateObjects(listObjects: List<T>): Int {
+        return 0;
+    }
+
+    override fun deleteObjects(vararg dataObjects: T): Int {
+        return 0;
+    }
+
+    override fun deleteObjects(listObjects: List<T>): Int {
         return 0;
     }
 

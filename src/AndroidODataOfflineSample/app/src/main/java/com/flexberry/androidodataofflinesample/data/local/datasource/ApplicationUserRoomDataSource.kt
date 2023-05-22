@@ -6,12 +6,15 @@ import com.flexberry.androidodataofflinesample.data.local.entities.ApplicationUs
 import com.flexberry.androidodataofflinesample.data.local.entities.relations.ApplicationUserWithVotes
 import com.flexberry.androidodataofflinesample.data.query.QuerySettings
 import java.util.UUID
+import javax.inject.Inject
 
-class ApplicationUserRoomDataSource(private val db: LocalDatabase) : RoomDataSource<ApplicationUserEntity>() {
+class ApplicationUserRoomDataSource @Inject constructor(
+    private val db: LocalDatabase
+) : RoomDataSource<ApplicationUserEntity>() {
     private fun ApplicationUserDao() = db.getApplicationUserDao()
 
-    override fun createObjects(listObjects: List<ApplicationUserEntity>): List<Long> {
-        return ApplicationUserDao().insertObjects(listObjects)
+    override fun createObjects(listObjects: List<ApplicationUserEntity>): Int {
+        return ApplicationUserDao().insertObjects(listObjects).size
     }
 
     override fun readObjects(querySettings: QuerySettings?): List<ApplicationUserEntity> {
