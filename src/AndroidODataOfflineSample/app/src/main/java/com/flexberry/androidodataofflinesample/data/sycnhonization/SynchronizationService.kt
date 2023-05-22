@@ -15,21 +15,21 @@ class SynchronizationService @Inject constructor(
      * Взять данные из внешнего репозитория и положить их в локальный репозиторий.
      */
     fun sendRemoteDataToLocal() {
-        val currentApplicationUsersData = applicationUserRepository.getApplicationUsersOnline()
-        applicationUserRepository.updateApplicationUsersOffline(currentApplicationUsersData)
+        val applicationUsersData = applicationUserRepository.getApplicationUsersOnline()
+        applicationUserRepository.updateApplicationUsersOffline(applicationUsersData)
 
-        val currentVotesData = voteRepository.getVotesOnline()
-        voteRepository.updateVotesOffline(currentVotesData)
+        val votesData = voteRepository.getVotesOnline()
+        voteRepository.updateVotesOffline(votesData)
     }
 
     /**
      * Взять данные из локального репозитория и положить их во внешний репозиторий.
      */
     fun sendLocalDataToRemote() {
-        val localApplicationUserData = applicationUserRepository.getApplicationUsersOffline()
-        applicationUserRepository.updateApplicationUsersOnline(localApplicationUserData)
+        val applicationUsersData = applicationUserRepository.getApplicationUsersOffline()
+        applicationUserRepository.updateApplicationUsersOnline(applicationUsersData)
 
-        val localVoteData = voteRepository.getVotesOffline()
-        voteRepository.updateVotesOnline(localVoteData)
+        val votesData = voteRepository.getVotesOffline()
+        voteRepository.updateVotesOnline(votesData)
     }
 }
