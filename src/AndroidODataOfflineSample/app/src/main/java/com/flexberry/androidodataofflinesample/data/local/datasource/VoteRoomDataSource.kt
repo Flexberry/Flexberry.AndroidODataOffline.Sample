@@ -4,12 +4,15 @@ import android.util.Log
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.flexberry.androidodataofflinesample.data.local.entities.VoteEntity
 import com.flexberry.androidodataofflinesample.data.query.QuerySettings
+import javax.inject.Inject
 
-class VoteRoomDataSource(private val db: LocalDatabase) : RoomDataSource<VoteEntity>() {
+class VoteRoomDataSource @Inject constructor(
+    private val db: LocalDatabase
+) : RoomDataSource<VoteEntity>() {
     private fun VoteDao() = db.getVoteDao()
 
-    override fun createObjects(listObjects: List<VoteEntity>): List<Long> {
-        return VoteDao().insertObjects(listObjects)
+    override fun createObjects(listObjects: List<VoteEntity>): Int {
+        return VoteDao().insertObjects(listObjects).size
     }
 
     override fun readObjects(querySettings: QuerySettings?): List<VoteEntity> {

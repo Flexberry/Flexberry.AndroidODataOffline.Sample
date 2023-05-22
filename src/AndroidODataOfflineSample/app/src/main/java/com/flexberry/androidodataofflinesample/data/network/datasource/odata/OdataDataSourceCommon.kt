@@ -301,10 +301,8 @@ open class OdataDataSourceCommon {
             val odataTypeInfo = OdataDataSourceTypeManager.getInfoByTypeName(odataObjectSimpleName)!!
             // Имя объекта в OData.
             val odataObjectName = odataTypeInfo.fullOdataTypeName
-            // Свойство primaryKey.
-            val primaryKeyProperty = dataObject::class.members.first {it.name == primaryKeyPropertyName } as KProperty1<Any, UUID>
             // Значение primaryKey.
-            val pkValue = primaryKeyProperty.get(dataObject)
+            val pkValue = getPkValue(dataObject)
             // Url запроса.
             val url = URL("$odataUrl/$odataObjectName($pkValue)")
             // Преобразуем объект в JSON.
@@ -364,10 +362,8 @@ open class OdataDataSourceCommon {
             val odataTypeInfo = OdataDataSourceTypeManager.getInfoByTypeName(odataObjectSimpleName)!!
             // Имя объекта в OData.
             val odataObjectName = odataTypeInfo.fullOdataTypeName
-            // Свойство primaryKey.
-            val primaryKeyProperty = dataObject::class.members.first {it.name == primaryKeyPropertyName } as KProperty1<Any, UUID>
             // Значение primaryKey.
-            val pkValue = primaryKeyProperty.get(dataObject)
+            val pkValue = getPkValue(dataObject)
             // Url запроса.
             val url = URL("$odataUrl/$odataObjectName($pkValue)")
             // Соединение.
@@ -404,23 +400,18 @@ open class OdataDataSourceCommon {
         // Берем свойства, которые являются мастерами.
         odataObjectClass.declaredMemberProperties.forEach { prop ->
             val propName = prop.name
-            val propType = prop.javaField?.type
-            val propTypeName = propType?.simpleName
+            val propTypeName = prop.javaField?.type?.simpleName
             val odataTypeInfo = OdataDataSourceTypeManager.getInfoByTypeName(propTypeName)
 
             if (odataTypeInfo != null && !odataTypeInfo.isEnum) {
                 // Мастеровой объект.
                 val masterObject = (prop as KProperty1<Any, *>).get(dataObject)
 
-                if (masterObject != null && propType != null) {
-                    // Если у него есть свойство primaryKey.
-                    val pkProperty = propType.kotlin.declaredMemberProperties
-                        .firstOrNull { x -> x.name == primaryKeyPropertyName }
+                if (masterObject != null) {
+                    val pkValue = getPkValue(masterObject)
 
                     // Если есть значение primaryKey.
-                    if (pkProperty != null) {
-                        val pkValue = (pkProperty as KProperty1<Any, UUID>).get(masterObject)
-
+                    if (pkValue != null) {
                         // Добавляем в JSON.
                         jsonValue.put(
                             "$propName@odata.bind",
@@ -474,6 +465,19 @@ open class OdataDataSourceCommon {
         } else {
             null
         }
+    }
+
+    /**
+     * Получить значение первичного ключа в объекте.
+     *
+     * @param dataObject Объект данных.
+     * @return primaryKey: [UUID]
+     */
+    private fun getPkValue(dataObject: Any): UUID? {
+        val primaryKeyProperty =
+            dataObject::class.members.firstOrNull { it.name == primaryKeyPropertyName } as KProperty1<Any, UUID>?
+
+        return primaryKeyProperty?.get(dataObject)
     }
 
     /**

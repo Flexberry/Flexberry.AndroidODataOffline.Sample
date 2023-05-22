@@ -1,8 +1,6 @@
 package com.flexberry.androidodataofflinesample
 
 import android.os.Bundle
-import android.os.StrictMode
-import android.os.StrictMode.ThreadPolicy
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -34,10 +32,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-
-        // Настройки безопасности для выполнения http запросов. Разрешить все.
-        // TODO Возможно это нужно перенести в AndroidOdataOfflineSampleApplication : Application()
-        val policy = ThreadPolicy.Builder().permitAll().build()
-        StrictMode.setThreadPolicy(policy)
     }
 }
