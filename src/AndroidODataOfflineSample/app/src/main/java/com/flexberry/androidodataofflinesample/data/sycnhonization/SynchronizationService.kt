@@ -5,7 +5,7 @@ import com.flexberry.androidodataofflinesample.data.VoteRepository
 import javax.inject.Inject
 
 /**
- * Сервис синхронизации данных между локальным и удаленным репозиториями.
+ * Сервис синхронизации между локальным и удаленным источниками данных.
  */
 class SynchronizationService @Inject constructor(
     private val applicationUserRepository: ApplicationUserRepository,
@@ -15,21 +15,21 @@ class SynchronizationService @Inject constructor(
      * Взять данные из внешнего репозитория и положить их в локальный репозиторий.
      */
     fun sendRemoteDataToLocal() {
-        val applicationUserData = applicationUserRepository.getApplicationUsersOnline()
-        applicationUserRepository.updateApplicationUsersOffline(applicationUserData)
+        val currentApplicationUsersData = applicationUserRepository.getApplicationUsersOnline()
+        applicationUserRepository.updateApplicationUsersOffline(currentApplicationUsersData)
 
-        val voteData = voteRepository.getVotesOnline()
-        voteRepository.updateVotesOffline(voteData)
+        val currentVotesData = voteRepository.getVotesOnline()
+        voteRepository.updateVotesOffline(currentVotesData)
     }
 
     /**
      * Взять данные из локального репозитория и положить их во внешний репозиторий.
      */
     fun sendLocalDataToRemote() {
-        val applicationUserData = applicationUserRepository.getApplicationUsersOffline()
-        applicationUserRepository.updateApplicationUsersOnline(applicationUserData)
+        val localApplicationUserData = applicationUserRepository.getApplicationUsersOffline()
+        applicationUserRepository.updateApplicationUsersOnline(localApplicationUserData)
 
-        val voteData = voteRepository.getVotesOffline()
-        voteRepository.updateVotesOnline(voteData)
+        val localVoteData = voteRepository.getVotesOffline()
+        voteRepository.updateVotesOnline(localVoteData)
     }
 }
