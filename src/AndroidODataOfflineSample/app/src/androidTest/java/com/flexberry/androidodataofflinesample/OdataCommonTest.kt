@@ -238,6 +238,18 @@ class OdataCommonTest {
         val cntUpdated = dataSource.updateObjects(objUser)
 
         Assert.assertEquals(cntUpdated, 1)
+
+        val dataObjects = dataSource.readObjects<NetworkApplicationUser>(
+            QuerySettings()
+                .filter(Filter.equalFilter("__PrimaryKey", objUser.__PrimaryKey))
+                .top(10)
+        )
+
+        Assert.assertEquals(dataObjects.size, 1)
+
+        val cntDelete = dataSource.deleteObjects(objUser)
+
+        Assert.assertEquals(cntDelete, 1)
     }
 
     /**
