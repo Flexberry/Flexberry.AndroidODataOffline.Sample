@@ -9,7 +9,7 @@ import java.util.UUID
  */
 @Suppress("kotlin:S117")
 data class NetworkVote(
-    val __PrimaryKey : UUID,
+    val __PrimaryKey : UUID = UUID.randomUUID(),
     val CreateTime: Date? = null,
     val Creator: String? = null,
     val EditTime: Date? = null,

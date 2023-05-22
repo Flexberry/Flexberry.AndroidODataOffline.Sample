@@ -1,6 +1,9 @@
 package com.flexberry.androidodataofflinesample.data
 
+import com.flexberry.androidodataofflinesample.data.di.VoteLocalDatasource
 import com.flexberry.androidodataofflinesample.data.di.VoteNetworkDatasource
+import com.flexberry.androidodataofflinesample.data.local.entities.VoteEntity
+import com.flexberry.androidodataofflinesample.data.local.interfaces.LocalDataSource
 import com.flexberry.androidodataofflinesample.data.model.Vote
 import com.flexberry.androidodataofflinesample.data.model.asDataModel
 import com.flexberry.androidodataofflinesample.data.network.interfaces.NetworkDataSource
@@ -8,7 +11,8 @@ import com.flexberry.androidodataofflinesample.data.network.models.NetworkVote
 import javax.inject.Inject
 
 class VoteRepository @Inject constructor(
-    @VoteNetworkDatasource private val networkDataSource: NetworkDataSource<NetworkVote>
+    @VoteNetworkDatasource private val networkDataSource: NetworkDataSource<NetworkVote>,
+    @VoteLocalDatasource private val localDataSource:LocalDataSource<VoteEntity>
 ) {
     /**
      * Получение списка голосов в режиме онлайн.
