@@ -12,7 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
@@ -33,7 +36,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
-import kotlin.reflect.KFunction0
 
 private val DarkColorScheme = darkColorScheme(
         primary = LightGrey,
@@ -94,7 +96,11 @@ fun AndroidODataOfflineSampleTheme(
 }
 
 @Composable
-fun listFormBottomMenu(modifier: Modifier = Modifier, addItemFun: KFunction0<Unit>?) {
+fun listFormBottomMenu(
+    modifier: Modifier = Modifier,
+    onAddItemButtonClicked: (() -> Unit)? = null,
+    onBackButtonClicked: (() -> Unit)? = null
+) {
     val tileSize = with(LocalDensity.current) {80.dp.toPx()}
     Box(modifier = modifier.fillMaxSize()){
         Box(
@@ -119,16 +125,43 @@ fun listFormBottomMenu(modifier: Modifier = Modifier, addItemFun: KFunction0<Uni
                 .align(Alignment.BottomCenter),
             contentAlignment = Alignment.Center
         ) {
-            Button(
-                modifier = modifier.size(80.dp),
-                shape = RoundedCornerShape(10),
-                onClick = { addItemFun }
-            ) {
-                Text(
-                    text = "+",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontSize = 48.sp
-                )
+            if (onAddItemButtonClicked != null) {
+                Button(
+                    modifier = modifier.size(80.dp),
+                    shape = RoundedCornerShape(10),
+                    onClick = onAddItemButtonClicked
+                ) {
+                    Text(
+                        text = "+",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontSize = 48.sp
+                    )
+                }
+            }
+
+
+        }
+
+        Box(
+            modifier = modifier
+            .fillMaxWidth()
+            .height(160.dp)
+            .padding(top = 20.dp, bottom = 0.dp, start = 20.dp)
+            .align(Alignment.BottomCenter),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            if (onBackButtonClicked != null) {
+                Button(
+                    modifier = modifier.size(80.dp),
+                    shape = RoundedCornerShape(50),
+                    onClick = onBackButtonClicked
+                ) {
+                    Icon(
+                        modifier = modifier.size(40.dp),
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "На главную",
+                    )
+                }
             }
         }
     }
@@ -147,6 +180,6 @@ fun listFormBottomMenu(modifier: Modifier = Modifier, addItemFun: KFunction0<Uni
 @Composable
 fun ListItemsPreview() {
     AndroidODataOfflineSampleTheme {
-        listFormBottomMenu(addItemFun = null)
+        listFormBottomMenu()
     }
 }

@@ -18,14 +18,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampleTheme
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 @Composable
-fun MainScreen( modifier: Modifier = Modifier, viewModel: MainViewModel = viewModel() ) {
+fun MainScreen(modifier: Modifier = Modifier, viewModel: MainViewModel = hiltViewModel() ) {
     Column(
-        modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(
                 vertical = 40.dp,
@@ -48,7 +48,7 @@ fun MainScreen( modifier: Modifier = Modifier, viewModel: MainViewModel = viewMo
                 fontSize = 24.sp,
                 text = "ApplicationUser",
                 rounded = 10,
-                onClick = viewModel::appUserButton
+                onClick = viewModel::onApplicationUserButtonClicked
             )
         }
         Row(
@@ -61,11 +61,11 @@ fun MainScreen( modifier: Modifier = Modifier, viewModel: MainViewModel = viewMo
                 fontSize = 24.sp,
                 text = "Vote",
                 rounded = 10,
-                onClick = viewModel::voteButton
+                onClick = viewModel::onVoteButtonClicked
             )
         }
         Row(
-            Modifier.weight(1f).fillMaxSize(),
+            modifier = modifier.weight(1f).fillMaxSize(),
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.spacedBy(32.dp, alignment = Alignment.End)
         )
@@ -74,7 +74,7 @@ fun MainScreen( modifier: Modifier = Modifier, viewModel: MainViewModel = viewMo
                 modifier = modifier.size(100.dp),
                 fontSize = 18.sp,
                 text = "Offline",
-                onClick = viewModel::offlineButton,
+                onClick = viewModel::onOfflineButtonClicked,
                 rounded = 50
             )
         }

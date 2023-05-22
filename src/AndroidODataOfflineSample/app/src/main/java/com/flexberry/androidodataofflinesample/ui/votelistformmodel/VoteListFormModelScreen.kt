@@ -35,7 +35,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.flexberry.androidodataofflinesample.R
 import com.flexberry.androidodataofflinesample.data.enums.VoteType
 import com.flexberry.androidodataofflinesample.data.model.Vote
@@ -46,8 +46,8 @@ import com.flexberry.androidodataofflinesample.ui.theme.listFormBottomMenu
 @Composable
 fun VoteListFormModelScreen(
     modifier: Modifier = Modifier,
-    viewModel: VoteListFormViewModel = viewModel(),
-    votes: List<Vote>
+    viewModel: VoteListFormViewModel = hiltViewModel(),
+    votes: List<Vote> = emptyList()
 ) {
     Box(
         modifier = modifier.fillMaxWidth(),
@@ -63,14 +63,17 @@ fun VoteListFormModelScreen(
             }
         }
 
-        listFormBottomMenu(addItemFun = viewModel::addVote)
+        listFormBottomMenu(
+            onAddItemButtonClicked = { viewModel.onAddVoteButtonClicked() },
+            onBackButtonClicked = { viewModel.onBackButtonClicked() }
+        )
     }
 }
 
 @Composable
 fun ListItem(
     vote: Vote,
-    viewModel: VoteListFormViewModel = viewModel(),
+    viewModel: VoteListFormViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
     var isExpandedItem by remember { mutableStateOf(false) }
@@ -127,7 +130,7 @@ fun ListItem(
                 ) {
                 DropdownMenuItem(
                     text = { Text("Редактировать") },
-                    onClick = { viewModel::editVote },
+                    onClick = { viewModel::onEditVoteClicked },
                     leadingIcon = {
                         Icon(imageVector = Icons.Default.Edit, contentDescription = null)
                     },
@@ -135,7 +138,7 @@ fun ListItem(
                 Divider()
                 DropdownMenuItem(
                     text = { Text("Удалить") },
-                    onClick = { viewModel::deleteVote },
+                    onClick = { viewModel::onDeleteVoteClicked },
                     leadingIcon = {
                         Icon(imageVector = Icons.Default.Delete, contentDescription = null)
                     },
