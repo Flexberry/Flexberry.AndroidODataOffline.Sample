@@ -15,7 +15,6 @@ class VoteListFormViewModel @Inject constructor(
 
     fun onAddVoteButtonClicked():Unit {
         // добавление нового пользователя
-       // appNavigator.tryNavigateBack()
     }
 
     fun onEditVoteClicked():Unit {
