@@ -5,6 +5,9 @@ import com.flexberry.androidodataofflinesample.OnlineSwithcer
 
 /**
  * Общий класс списковых форм.
+ *
+ * @param readonly Режим только чтение для формы.
+ * @param onlineSwithcer Менеджер режимов онлайн/оффлайн.
  */
 open class ListFromViewModel(
     private val readonly: Boolean,
