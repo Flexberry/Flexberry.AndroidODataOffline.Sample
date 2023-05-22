@@ -159,5 +159,15 @@ class Filter(
         fun notFilter(filterParam: Filter): Filter {
             return Filter(FilterType.Not, listOf(filterParam))
         }
+
+        /**
+         * Ограничение типа IN. Параметр должен быть равен одному из значений.
+         *
+         * @param paramName Имя параметра.
+         * @param paramValues Набор значений параметра.
+         */
+        fun inFilter(paramName: String, paramValues: List<Any>): Filter {
+            return orFilter(paramValues.map { equalFilter(paramName, it) })
+        }
     }
 }
