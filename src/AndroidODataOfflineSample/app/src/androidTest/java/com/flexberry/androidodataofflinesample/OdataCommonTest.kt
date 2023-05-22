@@ -51,14 +51,12 @@ class OdataCommonTest {
     fun applicationUserCreateUpdateDeleteTest() {
         val ds = OdataDataSourceCommon()
         val obj1 = NetworkApplicationUser(
-            __PrimaryKey = UUID.randomUUID(),
             Name = "Test from android",
             EMail = "q@q.q",
             Creator = "Android"
         )
 
         val obj2 = NetworkApplicationUser(
-            __PrimaryKey = UUID.randomUUID(),
             Name = "Test from android 2",
             EMail = "q@q.q",
             Creator = "Android"
@@ -109,7 +107,6 @@ class OdataCommonTest {
     fun applicationUserBooleanFilterTest() {
         val dsUser = OdataDataSourceCommon()
         val objUser = NetworkApplicationUser(
-            __PrimaryKey = UUID.randomUUID(),
             Name = "Test from android. Boolean test",
             EMail = "b@b.b",
             Creator = "Android",
@@ -143,7 +140,6 @@ class OdataCommonTest {
     fun applicationUserDoubleFilterTest() {
         val dsUser = OdataDataSourceCommon()
         val objUser1 = NetworkApplicationUser(
-            __PrimaryKey = UUID.randomUUID(),
             Name = "Test from android. Double test 1",
             EMail = "double@test.com",
             Creator = "Android",
@@ -151,7 +147,6 @@ class OdataCommonTest {
         )
 
         val objUser2 = NetworkApplicationUser(
-            __PrimaryKey = UUID.randomUUID(),
             Name = "Test from android. Double test 2",
             EMail = "double2@test.com",
             Creator = "Android",
@@ -185,7 +180,6 @@ class OdataCommonTest {
     fun applicationUserWithVotesCreateDeleteTest() {
         val dsUser = OdataDataSourceCommon()
         val objUser = NetworkApplicationUser(
-            __PrimaryKey = UUID.randomUUID(),
             Name = "Test from android. Save with detail.",
             EMail = "detail@save.com",
             Creator = "Android",
@@ -193,13 +187,11 @@ class OdataCommonTest {
 
         objUser.Votes = listOf(
             NetworkVote(
-                __PrimaryKey = UUID.randomUUID(),
                 VoteType = VoteType.Like,
                 Creator = "Android",
                 Author = objUser
             ),
             NetworkVote(
-                __PrimaryKey = UUID.randomUUID(),
                 VoteType = VoteType.Dislike,
                 Creator = "Android",
                 Author = objUser
@@ -216,7 +208,6 @@ class OdataCommonTest {
     fun applicationUserCreateSavedTest() {
         val dataSource = OdataDataSourceCommon()
         val objUser = NetworkApplicationUser(
-            __PrimaryKey = UUID.randomUUID(),
             Name = "Test from android. CreateSaved.",
             EMail = "CreateSaved@save.com",
             Creator = "Android",
@@ -239,7 +230,6 @@ class OdataCommonTest {
     fun applicationUserUpdateNewTest() {
         val dataSource = OdataDataSourceCommon()
         val objUser = NetworkApplicationUser(
-            __PrimaryKey = UUID.randomUUID(),
             Name = "Test from android. UpdateNew.",
             EMail = "UpdateNew@save.com",
             Creator = "Android",
@@ -257,7 +247,6 @@ class OdataCommonTest {
     fun applicationUserDeleteUnsavedTest() {
         val dataSource = OdataDataSourceCommon()
         val objUser = NetworkApplicationUser(
-            __PrimaryKey = UUID.randomUUID(),
             Name = "Test from android. DeleteUnsaved.",
             EMail = "DeleteUnsaved@save.com",
             Creator = "Android",
@@ -276,7 +265,6 @@ class OdataCommonTest {
         val dsCommon = OdataDataSourceCommon()
 
         val objUser = NetworkApplicationUser(
-            __PrimaryKey = UUID.randomUUID(),
             Name = "Test from android read",
             EMail = "r@r.r",
             Creator = "Android"
@@ -287,7 +275,6 @@ class OdataCommonTest {
         Assert.assertEquals(cntUserCreate, 1)
 
         val objVote = NetworkVote(
-            __PrimaryKey = UUID.randomUUID(),
             VoteType = VoteType.Like,
             Creator = "Android",
             Author = objUser
@@ -338,7 +325,6 @@ class OdataCommonTest {
         val dateNowMinusOneMinute = Date(dateNow.time - 60 * 1000)
 
         val objUser = NetworkApplicationUser(
-            __PrimaryKey = UUID.randomUUID(),
             Name = "Test from android, filter test",
             EMail = "f@f.f",
             Creator = "Android",
@@ -350,7 +336,6 @@ class OdataCommonTest {
         Assert.assertEquals(cntUserCreate, 1)
 
         val objVote = NetworkVote(
-            __PrimaryKey = UUID.randomUUID(),
             VoteType = VoteType.Like,
             Creator = "Android",
             Author = objUser,
