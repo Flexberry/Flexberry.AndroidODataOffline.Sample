@@ -18,6 +18,8 @@ class MainViewModel @Inject constructor(
     @AppState val applicationState: ApplicationState
 ) : ViewModel() {
     init {
+        repository.initSettings()
+
         // Пример слежки за изменением онлайна.
         snapshotFlow { applicationState.isOnline.value }
             .onEach { isOnline ->
@@ -38,7 +40,8 @@ class MainViewModel @Inject constructor(
     fun offlineButton():Unit {
         val newValue = !applicationState.isOnline.value;
 
-        repository.setOnlineFlag(newValue)
-        applicationState.setOnline(newValue)
+        if (repository.setOnlineFlag(newValue)) {
+            applicationState.setOnline(newValue)
+        }
     }
 }
