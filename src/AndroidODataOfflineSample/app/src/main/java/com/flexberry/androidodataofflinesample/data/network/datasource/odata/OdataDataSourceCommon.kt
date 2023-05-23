@@ -6,6 +6,7 @@ import com.flexberry.androidodataofflinesample.data.query.Filter
 import com.flexberry.androidodataofflinesample.data.query.FilterType
 import com.flexberry.androidodataofflinesample.data.query.OrderType
 import com.flexberry.androidodataofflinesample.data.query.QuerySettings
+import com.flexberry.androidodataofflinesample.data.query.View
 import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.google.gson.Gson
@@ -190,7 +191,7 @@ open class OdataDataSourceCommon {
      * @param kotlinClass Класс объекта.
      * @return Список объектов.
      */
-    fun readObjects(kotlinClass: KClass<*>, querySettings: QuerySettings? = null): List<Any> {
+    fun readObjects(kotlinClass: KClass<*>, view: View? = null, querySettings: QuerySettings? = null): List<Any> {
         // Имя типа объекта.
         val odataObjectSimpleName = kotlinClass.simpleName
         // Информация о типе объекта.
@@ -200,11 +201,11 @@ open class OdataDataSourceCommon {
         // Итоговые параметры запроса.
         val queryParams = mutableListOf<String>()
         // Значение расширения для вычитываемых свойств.
-        val expandValue = getRequestExtension(kotlinClass)
+        val expandValue = getRequestExtension(kotlinClass, view)
 
         // Добавляем настройки вычитки.
         if (querySettings != null) {
-            queryParams.add(querySettings.getOdataDataSourceValue())
+            queryParams.add(querySettings.getOdataDataSourceValue(view))
         }
 
         // Добавляем расширение вычитки.
@@ -264,6 +265,10 @@ open class OdataDataSourceCommon {
         return resultList
     }
 
+    fun readObjects(kotlinClass: KClass<*>, querySettings: QuerySettings? = null): List<Any> {
+        return readObjects(kotlinClass, null, querySettings)
+    }
+
     /**
      * Вычитать объекты.
      *
@@ -271,8 +276,12 @@ open class OdataDataSourceCommon {
      * @param querySettings Параметры ограничения.
      * @return Список объектов.
      */
+    inline fun <reified T: Any> readObjects(view: View? = null, querySettings: QuerySettings? = null) : List<T> {
+        return readObjects(T::class, view, querySettings) as List<T>
+    }
+
     inline fun <reified T: Any> readObjects(querySettings: QuerySettings? = null) : List<T> {
-        return readObjects(T::class, querySettings) as List<T>
+        return readObjects<T>(null, querySettings)
     }
 
     /**
@@ -436,35 +445,59 @@ open class OdataDataSourceCommon {
      * @param odataObjectClass Класс объекта.
      */
     /// TODO: тут в будущем появится параметр в виде представления объекта.
-    private fun getRequestExtension(odataObjectClass: KClass<*>): String? {
+    private fun getRequestExtension(odataObjectClass: KClass<*>, view: View? = null): String? {
         val resultList = mutableListOf<String>()
 
-        // Берем всех мастеров объекта.
-        odataObjectClass.declaredMemberProperties.forEach { prop ->
-            val propName = prop.name
-            val propType = prop.javaField?.type?.simpleName
-            val odataTypeInfo = OdataDataSourceTypeManager.getInfoByTypeName(propType)
+        if (view != null) {
+            resultList.add(getViewExtension(
+                view.propertiesTree.listProperties
+                    .filter { it.children != null }))
 
-            if (odataTypeInfo != null && !odataTypeInfo.isEnum) {
-                // Добавляем расширение, чтобы нам вернули primaryKey каждого мастера.
-                val elem = "$propName(${UrlParamNames.select}=$primaryKeyPropertyName)"
+            view.detailViews.forEach { (detailName, detailView) ->
+                val detailExpand = getViewExtension(detailView.propertiesTree.listProperties)
 
-                resultList.add(elem)
+                resultList.add("$detailName(${UrlParamNames.select}=$detailExpand)")
+            }
+        } else {
+            // Берем всех мастеров объекта.
+            odataObjectClass.declaredMemberProperties.forEach { prop ->
+                val propName = prop.name
+                val propType = prop.javaField?.type?.simpleName
+                val odataTypeInfo = OdataDataSourceTypeManager.getInfoByTypeName(propType)
+
+                if (odataTypeInfo != null && !odataTypeInfo.isEnum) {
+                    // Добавляем расширение, чтобы нам вернули primaryKey каждого мастера.
+                    val elem = "$propName(${UrlParamNames.select}=$primaryKeyPropertyName)"
+
+                    resultList.add(elem)
+                }
             }
         }
 
-        // TODO: Костыль!!!
-        if (odataObjectClass.simpleName == "NetworkVote") {
-            val elem = "Suggestion(${UrlParamNames.select}=$primaryKeyPropertyName)"
-
-            resultList.add(elem)
-        }
-
         return if (resultList.any()) {
-            "${UrlParamNames.expand}=${resultList.joinToString(",")}"
+            "${UrlParamNames.expand}=${resultList.filter { it.isNotEmpty() }.joinToString(",")}"
         } else {
             null
         }
+    }
+
+    private fun getViewExtension(tree: List<View.PropertyTreeNode>): String {
+        val resultList = mutableListOf<String>()
+
+        tree.forEach { node ->
+            if (node.children == null) {
+                resultList.add(node.Name)
+            } else {
+                val childExtension = getViewExtension(node.children.listProperties)
+                resultList.add("${node.Name}(${UrlParamNames.select}=$childExtension)")
+            }
+        }
+
+        if (!resultList.contains(primaryKeyPropertyName)) {
+            resultList.add(primaryKeyPropertyName)
+        }
+
+        return resultList.filter { it.isNotEmpty() }.joinToString(",")
     }
 
     /**
@@ -503,11 +536,16 @@ open class OdataDataSourceCommon {
      *
      * @return Строковое значение.
      */
-    private fun QuerySettings.getOdataDataSourceValue(): String {
+    private fun QuerySettings.getOdataDataSourceValue(view: View? = null): String {
         val elements: MutableList<String> = mutableListOf()
 
         if (this.selectList != null) {
             val selectValue = this.selectList!!.joinToString(",")
+            elements.add("${UrlParamNames.select}=$selectValue")
+        } else if (view != null) {
+            val selectValue = view.propertiesTree.listProperties
+                .filter { it.children == null }
+                .joinToString(",") { it.Name }
             elements.add("${UrlParamNames.select}=$selectValue")
         }
 
