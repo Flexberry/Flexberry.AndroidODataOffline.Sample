@@ -56,10 +56,6 @@ annotation class ApplicationUserLocalDataSource
 @Retention(AnnotationRetention.BINARY)
 annotation class VoteLocalDatasource
 
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class AppState
-
 @Module
 @InstallIn(SingletonComponent::class)
 object DataSourceModule {
@@ -111,11 +107,5 @@ object DataSourceModule {
         return Room.inMemoryDatabaseBuilder(appContext, LocalDatabase::class.java)
             .allowMainThreadQueries()
             .build()
-    }
-
-    @AppState
-    @Provides
-    fun provideApplicationState(): ApplicationState {
-        return ApplicationState()
     }
 }
