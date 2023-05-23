@@ -12,6 +12,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,7 +24,14 @@ import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampl
 
 
 @Composable
-fun MainScreen(modifier: Modifier = Modifier, viewModel: MainViewModel = hiltViewModel() ) {
+fun MainScreen(
+    modifier: Modifier = Modifier,
+    viewModel: MainViewModel = viewModel(),
+) {
+    val uiStateOnline = remember {
+        viewModel.applicationState.isOnline
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -65,7 +73,9 @@ fun MainScreen(modifier: Modifier = Modifier, viewModel: MainViewModel = hiltVie
             )
         }
         Row(
-            modifier = modifier.weight(1f).fillMaxSize(),
+            Modifier
+                .weight(1f)
+                .fillMaxSize(),
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.spacedBy(32.dp, alignment = Alignment.End)
         )
@@ -73,8 +83,8 @@ fun MainScreen(modifier: Modifier = Modifier, viewModel: MainViewModel = hiltVie
             mainButton(
                 modifier = modifier.size(100.dp),
                 fontSize = 18.sp,
-                text = "Offline",
-                onClick = viewModel::onOfflineButtonClicked,
+                text = if (uiStateOnline.value) { "Online" } else { "Offline" },
+                onClick = viewModel::offlineButton,
                 rounded = 50
             )
         }

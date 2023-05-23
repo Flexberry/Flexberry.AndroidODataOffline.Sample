@@ -9,7 +9,7 @@ import com.flexberry.androidodataofflinesample.ui.mainmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity: ComponentActivity() {
 
     // Внедрение viewModel через hilt.
     private val mainViewModel: MainViewModel by viewModels()
