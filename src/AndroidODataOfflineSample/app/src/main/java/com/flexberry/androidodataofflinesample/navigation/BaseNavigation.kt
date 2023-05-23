@@ -1,19 +1,14 @@
 package com.flexberry.androidodataofflinesample.navigation
 
 import android.app.Activity
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.flexberry.androidodataofflinesample.ui.applicationuserlistformmodel.ApplicationUserListFormModelScreen
 import com.flexberry.androidodataofflinesample.ui.mainmodel.MainScreen
-import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampleTheme
 import com.flexberry.androidodataofflinesample.ui.votelistformmodel.VoteListFormModelScreen
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
