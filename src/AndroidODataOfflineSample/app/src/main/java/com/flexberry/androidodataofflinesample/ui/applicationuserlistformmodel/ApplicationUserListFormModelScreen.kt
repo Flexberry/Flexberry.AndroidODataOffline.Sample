@@ -37,7 +37,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.flexberry.androidodataofflinesample.data.model.ApplicationUser
 import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampleTheme
 import com.flexberry.androidodataofflinesample.ui.theme.listFormBottomMenu
@@ -46,8 +46,8 @@ import com.flexberry.androidodataofflinesample.ui.theme.listFormBottomMenu
 @Composable
 fun ApplicationUserListFormModelScreen(
     modifier: Modifier = Modifier,
-    viewModel: ApplicationUserListFormViewModel = viewModel(),
-    users: List<ApplicationUser>
+    viewModel: ApplicationUserListFormViewModel = hiltViewModel(),
+    users: List<ApplicationUser> = emptyList()
 ) {
     Box(
         modifier = modifier.fillMaxWidth(),
@@ -63,7 +63,10 @@ fun ApplicationUserListFormModelScreen(
             }
         }
 
-        listFormBottomMenu(addItemFun = viewModel::addUser)
+        listFormBottomMenu(
+            onAddItemButtonClicked = { viewModel.onAddUserButtonClicked() },
+            onBackButtonClicked = { viewModel.onBackButtonClicked() }
+        )
     }
 
 }
@@ -71,7 +74,7 @@ fun ApplicationUserListFormModelScreen(
 @Composable
 fun ListItem(
     user: ApplicationUser,
-    viewModel: ApplicationUserListFormViewModel = viewModel(),
+    viewModel: ApplicationUserListFormViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
     var isExpandedItem by remember { mutableStateOf(false) }
@@ -124,7 +127,7 @@ fun ListItem(
                 ) {
                 DropdownMenuItem(
                     text = { Text("Редактировать") },
-                    onClick = { viewModel::editUser },
+                    onClick = { viewModel::onEditUserClicked },
                     leadingIcon = {
                         Icon(imageVector = Icons.Default.Edit, contentDescription = null)
                     },
@@ -132,7 +135,7 @@ fun ListItem(
                 Divider()
                 DropdownMenuItem(
                     text = { Text("Удалить") },
-                    onClick = { viewModel::deleteUser },
+                    onClick = { viewModel::onDeleteUserClicked },
                     leadingIcon = {
                         Icon(imageVector = Icons.Default.Delete, contentDescription = null)
                     },
