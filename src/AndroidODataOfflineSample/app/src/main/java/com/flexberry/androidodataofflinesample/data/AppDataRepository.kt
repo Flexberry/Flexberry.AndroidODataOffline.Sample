@@ -10,6 +10,11 @@ class AppDataRepository @Inject constructor(
     @AppDataLocalDataSource private val localDataSource: LocalDataSource<AppDataEntity>
 )
 {
+    /**
+     * Установить флаг онлайн для данных приложения.
+     *
+     * @param isOnline Флаг онлайн.
+     */
     fun setOnlineFlag(isOnline: Boolean) {
         val appDatas = localDataSource.readObjects()
 

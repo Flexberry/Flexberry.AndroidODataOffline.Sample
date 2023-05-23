@@ -2,7 +2,6 @@ package com.flexberry.androidodataofflinesample.data.di
 
 import android.content.Context
 import androidx.room.Room
-import com.flexberry.androidodataofflinesample.ApplicationState
 import com.flexberry.androidodataofflinesample.data.local.datasource.AppDataRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.ApplicationUserRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.LocalDatabase
