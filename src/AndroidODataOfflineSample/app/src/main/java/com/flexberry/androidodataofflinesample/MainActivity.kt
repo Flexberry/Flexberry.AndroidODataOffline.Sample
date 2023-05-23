@@ -12,10 +12,9 @@ import com.flexberry.androidodataofflinesample.ui.mainmodel.MainScreen
 import com.flexberry.androidodataofflinesample.ui.mainmodel.MainViewModel
 import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampleTheme
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity @Inject constructor(): ComponentActivity() {
+class MainActivity: ComponentActivity() {
 
     // Внедрение viewModel через hilt.
     private val mainViewModel: MainViewModel by viewModels()
