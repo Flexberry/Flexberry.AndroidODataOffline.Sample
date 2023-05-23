@@ -48,6 +48,6 @@ class ApplicationUserRepository @Inject constructor(
      * @param dataObjects Список объектов.
      */
     fun updateApplicationUsersOffline(dataObjects: List<ApplicationUser>) {
-        // Тут нужно отправить данные в локальный источник данных.
+        localDataSource.updateObjects(dataObjects.map { it.asLocalModel() })
     }
 }

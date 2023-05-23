@@ -1,6 +1,8 @@
 package com.flexberry.androidodataofflinesample.data.model
 
+import com.flexberry.androidodataofflinesample.data.local.entities.ApplicationUserEntity
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkApplicationUser
+import java.sql.Timestamp
 import java.util.Date
 import java.util.UUID
 
@@ -52,6 +54,32 @@ data class ApplicationUser (
             Vip = vip,
             Karma = karma,
             Votes = votes?.map { it.asNetworkModel() },
+        )
+    }
+
+    /**
+     * Преобразование [ApplicationUser] в [ApplicationUserEntity].
+     */
+    fun asLocalModel(): ApplicationUserEntity {
+        return ApplicationUserEntity(
+            primarykey = primarykey,
+            createTime = createTime?.let { Timestamp(it.time) },
+            creator = creator,
+            editTime = editTime?.let { Timestamp(it.time) },
+            editor = editor,
+            name = name,
+            email = email,
+            phone1 = phone1,
+            phone2 = phone2,
+            phone3 = phone3,
+            activated = activated,
+            vK = vK,
+            facebook = facebook,
+            twitter = twitter,
+            birthday = birthday?.let { java.sql.Date(it.time) },
+            gender = gender,
+            vip = vip,
+            karma = karma,
         )
     }
 }
