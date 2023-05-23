@@ -2,6 +2,8 @@ package com.flexberry.androidodataofflinesample.data.network.datasource.odata
 
 import com.flexberry.androidodataofflinesample.data.enums.VoteType
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkApplicationUser
+import com.flexberry.androidodataofflinesample.data.network.models.NetworkDetail
+import com.flexberry.androidodataofflinesample.data.network.models.NetworkMaster
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkVote
 
 /**
@@ -27,7 +29,17 @@ class OdataDataSourceTypeManager {
                 kotlinClass = VoteType::class,
                 namespace = "EmberFlexberryDummy",
                 odataTypeName = "VoteType",
-                isEnum = true)
+                isEnum = true),
+            OdataDataSourceTypeInfo(
+                kotlinClass = NetworkMaster::class,
+                namespace = "EmberFlexberryDummy",
+                odataTypeName = "Masters",
+                details = listOf("Detail")),
+            OdataDataSourceTypeInfo(
+                kotlinClass = NetworkDetail::class,
+                namespace = "EmberFlexberryDummy",
+                odataTypeName = "Details"
+            ),
         )
 
         /**
