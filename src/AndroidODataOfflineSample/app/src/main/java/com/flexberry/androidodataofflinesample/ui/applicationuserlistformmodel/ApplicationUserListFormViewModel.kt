@@ -12,8 +12,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ApplicationUserListFormViewModel @Inject constructor(
     private val repository: ApplicationUserRepository,
-    @AppState private val applicationState: ApplicationState
-    private val repository: ApplicationUserRepository,
+    @AppState private val applicationState: ApplicationState,
     private val appNavigator: AppNavigator
 ) : ViewModel() {
 

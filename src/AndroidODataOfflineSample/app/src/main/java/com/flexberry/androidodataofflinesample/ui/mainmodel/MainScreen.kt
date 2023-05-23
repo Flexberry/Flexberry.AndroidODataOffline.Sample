@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -26,7 +27,7 @@ import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampl
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
-    viewModel: MainViewModel = viewModel(),
+    viewModel: MainViewModel = hiltViewModel(),
 ) {
     val uiStateOnline = remember {
         viewModel.applicationState.isOnline
@@ -80,12 +81,19 @@ fun MainScreen(
             horizontalArrangement = Arrangement.spacedBy(32.dp, alignment = Alignment.End)
         )
         {
+            var buttonText = "Offline"
+            var buttonTextColor = MaterialTheme.colorScheme.onSecondary
+            if (uiStateOnline.value) {
+                buttonText = "Online"
+                buttonTextColor = MaterialTheme.colorScheme.onPrimary
+            }
             mainButton(
                 modifier = modifier.size(100.dp),
                 fontSize = 18.sp,
-                text = if (uiStateOnline.value) { "Online" } else { "Offline" },
-                onClick = viewModel::offlineButton,
-                rounded = 50
+                text = buttonText,
+                textColor = buttonTextColor,
+                rounded = 50,
+                onClick = viewModel::onOfflineButtonClicked
             )
         }
     }
@@ -96,8 +104,9 @@ fun mainButton(
     modifier: Modifier,
     fontSize: TextUnit,
     text: String,
+    textColor: Color = MaterialTheme.colorScheme.onPrimary,
+    rounded: Int = 0,
     onClick: () -> Unit,
-    rounded: Int = 0
     ) {
     Button(
         modifier = modifier,
@@ -107,7 +116,8 @@ fun mainButton(
         Text(
             text = text,
             style = MaterialTheme.typography.titleLarge,
-            fontSize = fontSize
+            fontSize = fontSize,
+            color = textColor
         )
     }
 }

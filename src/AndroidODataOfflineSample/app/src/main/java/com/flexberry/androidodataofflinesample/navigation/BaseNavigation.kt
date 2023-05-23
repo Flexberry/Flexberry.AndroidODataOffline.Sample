@@ -28,26 +28,19 @@ fun BaseNavigation(
         navigationChannel = navigationViewModel.navigationChannel,
         navHostController = navController
     )
-    AndroidODataOfflineSampleTheme {
-        // A surface container using the 'background' color from the theme
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            BaseNavHost(
-                navController = navController,
-                startDestination = Destination.MainScreen
-            ) {
-                baseComposable(destination = Destination.MainScreen) {
-                    MainScreen()
-                }
-                baseComposable(destination = Destination.ApplicationUserListFormModelScreen) {
-                    ApplicationUserListFormModelScreen()
-                }
-                baseComposable(destination = Destination.VoteListFormModelScreen) {
-                    VoteListFormModelScreen()
-                }
-            }
+
+    BaseNavHost(
+        navController = navController,
+        startDestination = Destination.MainScreen
+    ) {
+        baseComposable(destination = Destination.MainScreen) {
+            MainScreen()
+        }
+        baseComposable(destination = Destination.ApplicationUserListFormModelScreen) {
+            ApplicationUserListFormModelScreen()
+        }
+        baseComposable(destination = Destination.VoteListFormModelScreen) {
+            VoteListFormModelScreen()
         }
     }
 }

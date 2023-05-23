@@ -12,9 +12,8 @@ import javax.inject.Inject
 @HiltViewModel
 class VoteListFormViewModel @Inject constructor(
     private val repository: VoteRepository,
+    @AppState private val applicationState: ApplicationState,
     private val appNavigator: AppNavigator
-    private val repository: VoteRepository,
-    @AppState private val applicationState: ApplicationState
 ) : ViewModel() {
 
     fun onAddVoteButtonClicked():Unit {

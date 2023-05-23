@@ -17,8 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val repository: AppDataRepository,
-    @AppState val applicationState: ApplicationState
-    private val repository: AppDataRepository,
+    @AppState val applicationState: ApplicationState,
     private val appNavigator: AppNavigator
 ) : ViewModel() {
     init {
@@ -33,8 +32,6 @@ class MainViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun appUserButton():Unit {
-        // Функционал для кнопки "ApplicationUser"
     fun onApplicationUserButtonClicked():Unit {
         appNavigator.tryNavigateTo(Destination.ApplicationUserListFormModelScreen())
     }
@@ -43,13 +40,11 @@ class MainViewModel @Inject constructor(
         appNavigator.tryNavigateTo(Destination.VoteListFormModelScreen())
     }
 
-    fun offlineButton():Unit {
+    fun onOfflineButtonClicked():Unit {
         val newValue = !applicationState.isOnline.value;
 
         if (repository.setOnlineFlag(newValue)) {
             applicationState.setOnline(newValue)
         }
-    fun onOfflineButtonClicked():Unit {
-        // Функционал для кнопки "Offline"
     }
 }
