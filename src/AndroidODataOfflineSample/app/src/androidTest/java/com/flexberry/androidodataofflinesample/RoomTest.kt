@@ -9,10 +9,15 @@ import com.flexberry.androidodataofflinesample.data.local.datasource.LocalDataba
 import com.flexberry.androidodataofflinesample.data.local.datasource.AppDataRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.VoteRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.ApplicationUserRoomDataSource
+import com.flexberry.androidodataofflinesample.data.local.datasource.DetailRoomDataSource
+import com.flexberry.androidodataofflinesample.data.local.datasource.MasterRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.entities.AppDataEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.ApplicationUserEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.VoteEntity
 import com.flexberry.androidodataofflinesample.data.local.datasource.RoomDataSource
+import com.flexberry.androidodataofflinesample.data.local.entities.DetailEntity
+import com.flexberry.androidodataofflinesample.data.local.entities.MasterEntity
+import com.flexberry.androidodataofflinesample.data.local.entities.MasterWithRelations
 import com.flexberry.androidodataofflinesample.data.query.Filter
 import com.flexberry.androidodataofflinesample.data.query.QuerySettings
 import org.junit.After
@@ -344,4 +349,79 @@ class RoomTest {
         println(getObjectWithMaster)
         Assert.assertTrue(getObjectWithMaster.any { x -> x?.user?.primarykey == user1.primarykey})
     }*/
+
+    @Test
+    @Throws(Exception::class)
+    fun masterCreateReadTest() {
+        val dsMaster = MasterRoomDataSource(db)
+
+        val master1 = MasterEntity(
+            name = "master1 dskfhsdfgh"
+        )
+
+        val countMastersCreated = dsMaster.createObjects(master1)
+
+        Assert.assertEquals(countMastersCreated, 1)
+
+        val masters = dsMaster.readObjects(
+            QuerySettings()
+                .filter(Filter.equalFilter("name", "master1 dskfhsdfgh"))
+                .top(10)
+        )
+
+        Assert.assertEquals(masters.size, 1)
+
+        val countMastersDeleted = dsMaster.deleteObjects(master1)
+
+        Assert.assertEquals(countMastersDeleted, 1)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun masterWithDetailsCreateReadDeleteTest() {
+        val dsMaster = MasterRoomDataSource(db)
+        val dsDetail = DetailRoomDataSource(db)
+
+        val master1 = MasterEntity(
+            name = "master1 sgdfvmncbfmnbsv"
+        )
+
+        val countMastersCreated = dsMaster.createObjects(master1)
+
+        Assert.assertEquals(countMastersCreated, 1)
+
+        val details = listOf(
+            DetailEntity(
+                name = "detail1 dfjshfkjsdfkdjshf",
+                masterId = master1.primarykey
+            ),
+            DetailEntity(
+                name = "detail1 qewrljnqwlqlwker",
+                masterId = master1.primarykey
+            ),
+        )
+
+        val countDetailsCreated = dsDetail.createObjects(details)
+
+        Assert.assertEquals(countDetailsCreated, 2)
+
+        val detailsReaded = dsDetail.readObjects(
+            QuerySettings()
+                .filter(Filter.inFilter("name", listOf(
+                    "detail1 dfjshfkjsdfkdjshf",
+                    "detail1 qewrljnqwlqlwker"
+                )))
+                .top(10)
+        )
+
+        Assert.assertEquals(detailsReaded.size, 2)
+
+        val countDetailsDeleted = dsDetail.deleteObjects(details)
+
+        Assert.assertEquals(countDetailsDeleted, 2)
+
+        val countMastersDeleted = dsMaster.deleteObjects(master1)
+
+        Assert.assertEquals(countMastersDeleted, 1)
+    }
 }
