@@ -11,9 +11,13 @@ import com.flexberry.androidodataofflinesample.data.local.entities.ApplicationUs
 import com.flexberry.androidodataofflinesample.data.local.entities.VoteEntity
 import com.flexberry.androidodataofflinesample.data.local.interfaces.LocalDataSource
 import com.flexberry.androidodataofflinesample.data.network.datasource.ApplicationUserOdataDataSource
+import com.flexberry.androidodataofflinesample.data.network.datasource.DetailOdataDataSource
+import com.flexberry.androidodataofflinesample.data.network.datasource.MasterOdataDataSource
 import com.flexberry.androidodataofflinesample.data.network.datasource.VoteOdataDataSource
 import com.flexberry.androidodataofflinesample.data.network.interfaces.NetworkDataSource
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkApplicationUser
+import com.flexberry.androidodataofflinesample.data.network.models.NetworkDetail
+import com.flexberry.androidodataofflinesample.data.network.models.NetworkMaster
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkVote
 import dagger.Module
 import dagger.Provides
@@ -30,6 +34,14 @@ annotation class ApplicationUserNetworkDataSource
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class VoteNetworkDatasource
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class MasterNetworkDataSource
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class DetailNetworkDatasource
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
@@ -56,6 +68,18 @@ object DataSourceModule {
     @Provides
     fun provideVoteNetworkDataSource(): NetworkDataSource<NetworkVote> {
         return VoteOdataDataSource()
+    }
+
+    @MasterNetworkDataSource
+    @Provides
+    fun provideMasterNetworkDataSource(): NetworkDataSource<NetworkMaster> {
+        return MasterOdataDataSource()
+    }
+
+    @DetailNetworkDatasource
+    @Provides
+    fun provideDetailNetworkDataSource(): NetworkDataSource<NetworkDetail> {
+        return DetailOdataDataSource()
     }
 
     @AppDataLocalDataSource

@@ -4,6 +4,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.flexberry.androidodataofflinesample.data.enums.VoteType
 import com.flexberry.androidodataofflinesample.data.network.datasource.odata.OdataDataSourceCommon
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkApplicationUser
+import com.flexberry.androidodataofflinesample.data.network.models.NetworkDetail
+import com.flexberry.androidodataofflinesample.data.network.models.NetworkMaster
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkVote
 import com.flexberry.androidodataofflinesample.data.query.Filter
 import com.flexberry.androidodataofflinesample.data.query.QuerySettings
@@ -11,7 +13,6 @@ import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.Date
-import java.util.UUID
 
 /**
  * Тесты для [OdataDataSourceCommon].
@@ -199,6 +200,14 @@ class OdataCommonTest {
         )
 
         dsUser.createObjects(objUser)
+
+        val objectsReaded = dsUser.readObjects<NetworkVote>(
+            QuerySettings()
+                .filter(Filter.equalFilter("Author.__PrimaryKey", objUser.__PrimaryKey))
+                .top(10)
+        )
+
+        Assert.assertEquals(objectsReaded.size, 2)
     }
 
     /**
@@ -376,5 +385,81 @@ class OdataCommonTest {
         val countUserDelete = dsCommon.deleteObjects(objUser)
 
         Assert.assertEquals(countUserDelete, 1)
+    }
+
+    /**
+     * Тест объектов [NetworkMaster]+[NetworkDetail]. Создание, обновление, чтение, удаление.
+     */
+    @Test
+    fun masterWithDetailCreateUpdateFilterDeleteTest() {
+        val dataSource = OdataDataSourceCommon()
+
+        // Создаем мастеров
+        val master1 = NetworkMaster(
+            Name = "test master1"
+        )
+        val master2 = NetworkMaster(
+            Name = "test master2"
+        )
+
+        // Задаем детейлы.
+        master1.Detail = listOf(
+            NetworkDetail(
+                Name = "test detail 1",
+                Master = master1
+            ),
+            NetworkDetail(
+                Name = "test detail 2",
+                Master = master1
+            )
+        )
+
+        // Сохраняем мастера.
+        val countMastersCreated = dataSource.createObjects(master1, master2)
+
+        Assert.assertEquals(countMastersCreated, 2)
+
+        // Мастер для обновления.
+        val master1Updated = NetworkMaster(
+            __PrimaryKey = master1.__PrimaryKey,
+            Name = "test master updated"
+        )
+
+        // Обновляем мастера.
+        val countMastersUpdated = dataSource.updateObjects(master1Updated)
+
+        Assert.assertEquals(countMastersUpdated, 1)
+
+        // Вычитываем мастера.
+        val masters = dataSource.readObjects<NetworkMaster>(
+            QuerySettings()
+                .filter(Filter.equalFilter("__PrimaryKey", master1.__PrimaryKey))
+                .top(10)
+        )
+
+        // Проверяем количество вычитанных мастеров.
+        Assert.assertEquals(masters.size, 1)
+        // Проверяем обновилось ли имя мастера.
+        Assert.assertEquals(masters[0].Name, "test master updated")
+
+        // Вычитываем детейлы.
+        val details = dataSource.readObjects<NetworkDetail>(
+            QuerySettings()
+                .filter(Filter.equalFilter("Master.__PrimaryKey", master1.__PrimaryKey))
+                .top(10)
+        )
+
+        // Проверяем количество детейлов.
+        Assert.assertEquals(details.size, 2)
+
+        // Удаляем детейлы и проверим количество.
+        val countDetailsDeleted = dataSource.deleteObjects(master1.Detail!!)
+
+        Assert.assertEquals(countDetailsDeleted, 2)
+
+        // Удаляем мастеров и проверим количество.
+        val countMastersDeleted = dataSource.deleteObjects(master1, master2)
+
+        Assert.assertEquals(countMastersDeleted, 2)
     }
 }
