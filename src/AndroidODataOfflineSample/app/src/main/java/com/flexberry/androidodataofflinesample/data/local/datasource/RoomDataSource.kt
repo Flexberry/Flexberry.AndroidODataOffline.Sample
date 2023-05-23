@@ -4,10 +4,12 @@ import android.util.Log
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.flexberry.androidodataofflinesample.data.local.dao.BaseDao
 import com.flexberry.androidodataofflinesample.data.local.interfaces.LocalDataSource
+import com.flexberry.androidodataofflinesample.data.network.datasource.odata.OdataDataSourceTypeManager
 import com.flexberry.androidodataofflinesample.data.query.Filter
 import com.flexberry.androidodataofflinesample.data.query.FilterType
 import com.flexberry.androidodataofflinesample.data.query.OrderType
 import com.flexberry.androidodataofflinesample.data.query.QuerySettings
+import kotlin.reflect.full.isSubclassOf
 
 /**
  * Источник данных Room.
@@ -154,7 +156,7 @@ open class RoomDataSource<T: Any>(val dao: BaseDao<T>,
             FilterType.GreaterOrEqual,
             FilterType.Less,
             FilterType.LessOrEqual -> {
-                result = "$paramName ${filterType.getRoomDataSourceValue()} '$paramValue'"
+                result = "$paramName ${filterType.getRoomDataSourceValue()} ${evaluateParamValueForFilter(paramValue)}"
             }
 
             FilterType.Has,
@@ -223,5 +225,23 @@ open class RoomDataSource<T: Any>(val dao: BaseDao<T>,
             FilterType.Or -> "or"
             FilterType.Not -> "not"
         }
+    }
+
+    /**
+     * Преобразовать значение параметра к строке для Room.
+     *
+     * @param paramValue Значение параметра.
+     * @return Строковое значение.
+     */
+    private fun evaluateParamValueForFilter(paramValue: Any?): String {
+        if (paramValue == null) return "null"
+
+        // String, Enum
+        if (paramValue is String || paramValue::class.isSubclassOf(Enum::class)) return "'$paramValue'"
+
+        // Boolean
+        if (paramValue is Boolean) return if (paramValue) "1" else "0"
+
+        return "$paramValue"
     }
 }
