@@ -36,6 +36,9 @@ class MainViewModel @Inject constructor(
     }
 
     fun offlineButton():Unit {
-        applicationState.setOnline(!applicationState.isOnline.value)
+        val newValue = !applicationState.isOnline.value;
+
+        repository.setOnlineFlag(newValue)
+        applicationState.setOnline(newValue)
     }
 }

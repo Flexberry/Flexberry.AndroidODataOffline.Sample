@@ -13,7 +13,7 @@ annotation class AppState
 
 @Module
 @InstallIn(SingletonComponent::class)
-class ApplicationModule {
+class StateModule {
     @AppState
     @Provides
     fun provideApplicationState(): ApplicationState {
