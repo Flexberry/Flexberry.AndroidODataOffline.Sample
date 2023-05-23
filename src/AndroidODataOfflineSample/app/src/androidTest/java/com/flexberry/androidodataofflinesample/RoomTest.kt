@@ -17,7 +17,6 @@ import com.flexberry.androidodataofflinesample.data.local.entities.VoteEntity
 import com.flexberry.androidodataofflinesample.data.local.datasource.RoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.entities.DetailEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.MasterEntity
-import com.flexberry.androidodataofflinesample.data.local.entities.MasterWithRelations
 import com.flexberry.androidodataofflinesample.data.query.Filter
 import com.flexberry.androidodataofflinesample.data.query.QuerySettings
 import org.junit.After
