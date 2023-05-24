@@ -19,7 +19,7 @@ class RoomDataBaseManager @Inject constructor(
     /**
      * Список [RoomDataBaseEntityInfo] типов.
      */
-    private val roomTypeMap = listOf(
+    private val roomDataBaseInfoMap = listOf(
         RoomDataBaseEntityInfo(
             kotlinClass = AppDataEntity::class,
             dao = db.getAppDataDao(),
@@ -49,12 +49,12 @@ class RoomDataBaseManager @Inject constructor(
     )
 
     /**
-     * Получить информацию о типе по его имени.
+     * Получить информацию о базе данных по его имени типа.
      *
      * @param typeName Имя типа.
      * @return [RoomDataBaseEntityInfo] указанного типа.
      */
-    fun getInfoByTypeName(typeName: String?): RoomDataBaseEntityInfo<*>? {
-        return roomTypeMap.firstOrNull { x -> x.typeName == typeName }
+    fun getDataBaseInfoForTypeName(typeName: String?): RoomDataBaseEntityInfo<*>? {
+        return roomDataBaseInfoMap.firstOrNull { x -> x.typeName == typeName }
     }
 }

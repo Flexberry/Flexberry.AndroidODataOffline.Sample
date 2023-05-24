@@ -43,14 +43,14 @@ open class RoomDataSourceCommon @Inject constructor(
             // Имя типа сущности.
             val entityObjectSimpleName = entityObject::class.simpleName
             // Информация о типе сущности.
-            val entityObjectTypeInfo = dataBaseManager.getInfoByTypeName(entityObjectSimpleName)!!
+            val entityObjectDataBaseInfo = dataBaseManager.getDataBaseInfoForTypeName(entityObjectSimpleName)!!
 
-            countResult += entityObjectTypeInfo.insertObjects(listOf(entityObject))
+            countResult += entityObjectDataBaseInfo.insertObjectsToDataBase(listOf(entityObject))
 
             // Еще надо найти детейлы (атрибуты типа List<OdataType>).
             // И сохранить детейлы отдельно. Т.к. из json основного объекта они исключены.
             entityObject::class.declaredMemberProperties
-                .filter { x -> entityObjectTypeInfo.hasDetail(x.name) }
+                .filter { x -> entityObjectDataBaseInfo.hasDetail(x.name) }
                 .forEach { detailProperty ->
                     // Детейловое свойство.
                     val detailPropertyValue = (detailProperty as KProperty1<Any, List<*>?>).get(entityObject)
@@ -78,9 +78,9 @@ open class RoomDataSourceCommon @Inject constructor(
         // Имя типа сущности.
         val entityObjectSimpleName = kotlinClass.simpleName
         // Информация о типе сущности.
-        val entityObjectTypeInfo = dataBaseManager.getInfoByTypeName(entityObjectSimpleName)!!
+        val entityObjectDataBaseInfo = dataBaseManager.getDataBaseInfoForTypeName(entityObjectSimpleName)!!
         // Имя таблицы.
-        val tableName = entityObjectTypeInfo.tableName
+        val tableName = entityObjectDataBaseInfo.tableName
         // Параметры запроса.
         val queryParamsValue = querySettings?.getRoomDataSourceValue()
 
@@ -99,7 +99,7 @@ open class RoomDataSourceCommon @Inject constructor(
 
         val simpleSQLiteQuery = SimpleSQLiteQuery(finalQuery.toString());
 
-        return entityObjectTypeInfo.getObjects(simpleSQLiteQuery)
+        return entityObjectDataBaseInfo.getObjectsFromDataBase(simpleSQLiteQuery)
     }
 
     /**
@@ -126,9 +126,9 @@ open class RoomDataSourceCommon @Inject constructor(
             // Имя типа сущности.
             val entityObjectSimpleName = entityObject::class.simpleName
             // Информация о типе сущности.
-            val entityObjectTypeInfo = dataBaseManager.getInfoByTypeName(entityObjectSimpleName)!!
+            val entityObjectDataBaseInfo = dataBaseManager.getDataBaseInfoForTypeName(entityObjectSimpleName)!!
 
-            countResult += entityObjectTypeInfo.deleteObjects(listOf(entityObject))
+            countResult += entityObjectDataBaseInfo.deleteObjectsFromDataBase(listOf(entityObject))
         }
 
         return countResult
@@ -157,9 +157,9 @@ open class RoomDataSourceCommon @Inject constructor(
             // Имя типа сущности.
             val entityObjectSimpleName = entityObject::class.simpleName
             // Информация о типе сущности.
-            val entityObjectTypeInfo = dataBaseManager.getInfoByTypeName(entityObjectSimpleName)!!
+            val entityObjectDataBaseInfo = dataBaseManager.getDataBaseInfoForTypeName(entityObjectSimpleName)!!
 
-            countResult += entityObjectTypeInfo.updateObjects(listOf(entityObject))
+            countResult += entityObjectDataBaseInfo.updateObjectsInDataBase(listOf(entityObject))
         }
 
         return countResult

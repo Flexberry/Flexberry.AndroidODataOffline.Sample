@@ -30,7 +30,7 @@ class RoomDataBaseEntityInfo<T : Any> (
      * @param appData Список сущностей.
      * @return Количество вставленных сущностей.
      */
-    fun insertObjects(appData: List<Any>): Int {
+    fun insertObjectsToDataBase(appData: List<Any>): Int {
         return dao.insertObjects(appData as List<T>).size
     }
 
@@ -40,7 +40,7 @@ class RoomDataBaseEntityInfo<T : Any> (
      * @param query Запрос.
      * @return Список сущностей.
      */
-    fun getObjects(query: SimpleSQLiteQuery): List<T> {
+    fun getObjectsFromDataBase(query: SimpleSQLiteQuery): List<T> {
         return dao.getObjects(query)
     }
 
@@ -50,7 +50,7 @@ class RoomDataBaseEntityInfo<T : Any> (
      * @param appData Список сущностей.
      * @return Количество обновленных сущностей.
      */
-    fun updateObjects(appData: List<Any>): Int {
+    fun updateObjectsInDataBase(appData: List<Any>): Int {
         return dao.updateObjects(appData as List<T>)
     }
 
@@ -60,7 +60,7 @@ class RoomDataBaseEntityInfo<T : Any> (
      * @param appData Список сущностей.
      * @return Количество удаленных сущностей.
      */
-    fun deleteObjects(appData: List<Any>): Int {
+    fun deleteObjectsFromDataBase(appData: List<Any>): Int {
         return dao.deleteObjects(appData as List<T>)
     }
 
