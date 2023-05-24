@@ -59,7 +59,7 @@ class RoomTest {
     @Test
     @Throws(Exception::class)
     fun appDataCRUDTest() {
-        val ds = AppDataRoomDataSource(db)
+        val ds = AppDataRoomDataSource(typeManager)
 
         val appData1 = AppDataEntity(UUID.randomUUID(),true)
         val appData2 = AppDataEntity(UUID.randomUUID(),false)
@@ -112,7 +112,7 @@ class RoomTest {
     @Test
     @Throws(Exception::class)
     fun voteCRUDTest() {
-        val ds = VoteRoomDataSource(db)
+        val ds = VoteRoomDataSource(typeManager)
 
         var vote1 = VoteEntity(
             primarykey = UUID.randomUUID(),
@@ -169,7 +169,7 @@ class RoomTest {
     @Test
     @Throws(Exception::class)
     fun applicationUserCRUDTest() {
-        val ds = ApplicationUserRoomDataSource(db)
+        val ds = ApplicationUserRoomDataSource(typeManager)
 
         var user1 = ApplicationUserEntity(
             primarykey = UUID.randomUUID(),
@@ -230,7 +230,7 @@ class RoomTest {
     @Test
     @Throws(Exception::class)
     fun querySettingsTest() {
-        val ds = ApplicationUserRoomDataSource(db)
+        val ds = ApplicationUserRoomDataSource(typeManager)
 
         var user1 = ApplicationUserEntity(
             primarykey = UUID.randomUUID(),
@@ -274,7 +274,7 @@ class RoomTest {
     @Test
     @Throws(Exception::class)
     fun masterCreateReadTest() {
-        val dsMaster = MasterRoomDataSource(db)
+        val dsMaster = MasterRoomDataSource(typeManager)
         val master1name = "master1 dsk!!!fhsdfgh"
 
         val master1 = MasterEntity(

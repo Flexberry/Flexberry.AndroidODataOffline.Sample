@@ -1,8 +1,11 @@
 package com.flexberry.androidodataofflinesample.data.local.datasource.room
 
 import com.flexberry.androidodataofflinesample.data.local.datasource.LocalDatabase
+import com.flexberry.androidodataofflinesample.data.local.entities.AppDataEntity
+import com.flexberry.androidodataofflinesample.data.local.entities.ApplicationUserEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.DetailEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.MasterEntity
+import com.flexberry.androidodataofflinesample.data.local.entities.VoteEntity
 import javax.inject.Inject
 
 /**
@@ -18,6 +21,11 @@ class RoomDataSourceTypeManager @Inject constructor(
      */
     private val roomTypeMap = listOf(
         RoomDataSourceTypeInfo(
+            kotlinClass = AppDataEntity::class,
+            dao = db.getAppDataDao(),
+            tableName = AppDataEntity.tableName
+        ),
+        RoomDataSourceTypeInfo(
             kotlinClass = MasterEntity::class,
             dao = db.getMasterDao(),
             tableName = MasterEntity.tableName,
@@ -27,6 +35,16 @@ class RoomDataSourceTypeManager @Inject constructor(
             kotlinClass = DetailEntity::class,
             dao = db.getDetailDao(),
             tableName = DetailEntity.tableName
+        ),
+        RoomDataSourceTypeInfo(
+            kotlinClass = ApplicationUserEntity::class,
+            dao = db.getApplicationUserDao(),
+            tableName = ApplicationUserEntity.tableName
+        ),
+        RoomDataSourceTypeInfo(
+            kotlinClass = VoteEntity::class,
+            dao = db.getVoteDao(),
+            tableName = VoteEntity.tableName
         ),
     )
 

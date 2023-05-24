@@ -85,20 +85,20 @@ object DataSourceModule {
 
     @AppDataLocalDataSource
     @Provides
-    fun provideAppDataLocalDataSource(localDatabase: LocalDatabase): LocalDataSource<AppDataEntity> {
-        return AppDataRoomDataSource(localDatabase)
+    fun provideAppDataLocalDataSource(roomDataSourceTypeManager: RoomDataSourceTypeManager): LocalDataSource<AppDataEntity> {
+        return AppDataRoomDataSource(roomDataSourceTypeManager)
     }
 
     @ApplicationUserLocalDataSource
     @Provides
-    fun provideApplicationUserLocalDataSource(localDatabase: LocalDatabase): LocalDataSource<ApplicationUserEntity> {
-        return ApplicationUserRoomDataSource(localDatabase)
+    fun provideApplicationUserLocalDataSource(roomDataSourceTypeManager: RoomDataSourceTypeManager): LocalDataSource<ApplicationUserEntity> {
+        return ApplicationUserRoomDataSource(roomDataSourceTypeManager)
     }
 
     @VoteLocalDatasource
     @Provides
-    fun provideVoteLocalDatasource(localDatabase: LocalDatabase): LocalDataSource<VoteEntity> {
-        return VoteRoomDataSource(localDatabase)
+    fun provideVoteLocalDatasource(roomDataSourceTypeManager: RoomDataSourceTypeManager): LocalDataSource<VoteEntity> {
+        return VoteRoomDataSource(roomDataSourceTypeManager)
     }
 
     @Provides

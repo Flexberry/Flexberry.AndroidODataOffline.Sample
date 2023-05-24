@@ -8,6 +8,8 @@ import com.flexberry.androidodataofflinesample.data.query.Filter
 import com.flexberry.androidodataofflinesample.data.query.FilterType
 import com.flexberry.androidodataofflinesample.data.query.OrderType
 import com.flexberry.androidodataofflinesample.data.query.QuerySettings
+import javax.inject.Inject
+import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 
 /**
@@ -18,8 +20,12 @@ import kotlin.reflect.full.isSubclassOf
  * @param tableName Соответствующая таблица в БД.
  * @see [LocalDataSource].
  */
-open class RoomDataSource<T: Any>(val dao: BaseDao<T>,
-                                  private val tableName: String) : LocalDataSource<T> {
+open class RoomDataSource<T: Any> @Inject constructor(
+    private val entityObjectClass: KClass<T>,
+    typeManager: RoomDataSourceTypeManager
+) : LocalDataSource<T> {
+    private val roomDataSourceCommon = RoomDataSourceCommon(typeManager)
+
     /**
      * Создать объекты.
      *
@@ -37,7 +43,7 @@ open class RoomDataSource<T: Any>(val dao: BaseDao<T>,
      * @return Количество созданных объектов.
      */
     override fun createObjects(listObjects: List<T>): Int {
-        return dao.insertObjects(listObjects).size
+        return roomDataSourceCommon.createObjects(listObjects)
     }
 
     /**
@@ -47,23 +53,7 @@ open class RoomDataSource<T: Any>(val dao: BaseDao<T>,
      * @return Список объектов.
      */
     override fun readObjects(querySettings: QuerySettings?): List<T> {
-        var queryParamsValue = querySettings?.getRoomDataSourceValue()
-        Log.v("queryParamsValue", queryParamsValue.toString())
-
-        var finalQuery = StringBuilder()
-        finalQuery.append("SELECT * FROM $tableName")
-
-        queryParamsValue?.forEach{
-            if (!it.isNullOrEmpty()) {
-                finalQuery.append(it)
-            }
-        }
-
-        Log.v("finalQuery", finalQuery.toString())
-
-        val simpleSQLiteQuery = SimpleSQLiteQuery(finalQuery.toString());
-
-        return dao.getObjects(simpleSQLiteQuery)
+        return roomDataSourceCommon.readObjects(entityObjectClass, querySettings) as List<T>
     }
 
     /**
@@ -83,7 +73,7 @@ open class RoomDataSource<T: Any>(val dao: BaseDao<T>,
      * @return Количество обновленных объектов.
      */
     override fun updateObjects(listObjects: List<T>): Int {
-        return dao.updateObjects(listObjects)
+        return roomDataSourceCommon.updateObjects(listObjects)
     }
 
     /**
@@ -103,144 +93,6 @@ open class RoomDataSource<T: Any>(val dao: BaseDao<T>,
      * @return Количество удаленных объектов.
      */
     override fun deleteObjects(listObjects: List<T>): Int {
-        return dao.deleteObjects(listObjects)
-    }
-
-    /**
-     * Получить список строковых значений для [QuerySettings].
-     *
-     * @return Список строковых значений.
-     */
-    protected fun QuerySettings.getRoomDataSourceValue(): MutableList<String> {
-        val elements: MutableList<String> = mutableListOf()
-
-        if (this.selectList != null) {
-            val selectValue = this.selectList!!.joinToString(",")
-            val selectValueFull = if (selectValue.isNullOrEmpty()) "*" else selectValue
-            elements.add(selectValueFull)
-        }
-
-        if (this.filterValue != null) {
-            val filterVal = "${this.filterValue!!.getRoomDataSourceValue()}"
-            val filterValFull = if (filterVal.isNullOrEmpty()) "" else " WHERE $filterVal"
-            elements.add(filterValFull)
-        }
-
-        if (this.orderList != null) {
-            val orderValue = this.orderList!!
-                .joinToString(",") { x -> "${x.first} ${x.second.getRoomDataSourceValue()}"}
-            val orderValueFull = if (orderValue.isNullOrEmpty()) "" else " ORDER BY $orderValue"
-            elements.add(orderValueFull)
-        }
-
-        elements.add(if (this.topValue != null) " LIMIT ${this.topValue}" else "")
-
-        elements.add(if (this.skipValue != null) " OFFSET ${this.skipValue}" else "")
-
-        return elements
-    }
-
-    /**
-     * Получить строковое значение для [Filter].
-     *
-     * @return Строковое значение.
-     */
-    private fun Filter.getRoomDataSourceValue(): String {
-        var result = ""
-
-        when (this.filterType) {
-            FilterType.Equal,
-            FilterType.NotEqual,
-            FilterType.Greater,
-            FilterType.GreaterOrEqual,
-            FilterType.Less,
-            FilterType.LessOrEqual -> {
-                result = "$paramName ${filterType.getRoomDataSourceValue()} ${evaluateParamValueForFilter(paramValue)}"
-            }
-
-            FilterType.Has,
-            FilterType.Contains -> {
-                result = "$paramName ${filterType.getRoomDataSourceValue()} '%$paramValue%'"
-            }
-
-            FilterType.StartsWith -> {
-                result = "$paramName ${filterType.getRoomDataSourceValue()} '$paramValue%')"
-            }
-            FilterType.EndsWith -> {
-                result = "$paramName ${filterType.getRoomDataSourceValue()} '%$paramValue')"
-            }
-
-            FilterType.And -> {
-                result = filterParams
-                    ?.joinToString(" ${filterType.getRoomDataSourceValue()} ")
-                    { x -> x.getRoomDataSourceValue() }.toString()
-            }
-
-            FilterType.Or -> {
-                result = filterParams
-                    ?.joinToString(" ${filterType.getRoomDataSourceValue()} ")
-                    { x -> "(${x.getRoomDataSourceValue()})" }.toString()
-            }
-
-            FilterType.Not -> {
-                result = "${filterType.getRoomDataSourceValue()} ${filterParams?.get(0)
-                    ?.getRoomDataSourceValue()}"
-            }
-        }
-
-        return result
-    }
-
-    /**
-     * Получить строковое значение для [OrderType].
-     *
-     * @return Строковое значение.
-     */
-    private fun OrderType.getRoomDataSourceValue(): String {
-        return when (this) {
-            OrderType.Asc -> "asc"
-            OrderType.Desc -> "desc"
-        }
-    }
-
-    /**
-     * Получить строковое значение для [FilterType].
-     *
-     * @return Строковое значение.
-     */
-    private fun FilterType.getRoomDataSourceValue(): String {
-        return when (this) {
-            FilterType.Equal -> "="
-            FilterType.NotEqual -> "<>"
-            FilterType.Greater -> ">"
-            FilterType.GreaterOrEqual -> ">="
-            FilterType.Less -> "<"
-            FilterType.LessOrEqual -> "<="
-            FilterType.Has -> "like"
-            FilterType.Contains -> "like"
-            FilterType.StartsWith -> "like"
-            FilterType.EndsWith -> "like"
-            FilterType.And -> "and"
-            FilterType.Or -> "or"
-            FilterType.Not -> "not"
-        }
-    }
-
-    /**
-     * Преобразовать значение параметра к строке для Room.
-     *
-     * @param paramValue Значение параметра.
-     * @return Строковое значение.
-     */
-    private fun evaluateParamValueForFilter(paramValue: Any?): String {
-        if (paramValue == null) return "null"
-
-        // String, Enum
-        if (paramValue is String || paramValue::class.isSubclassOf(Enum::class)) return "'$paramValue'"
-
-        // Boolean
-        if (paramValue is Boolean) return if (paramValue) "1" else "0"
-
-        return "$paramValue"
+        return roomDataSourceCommon.deleteObjects(listObjects)
     }
 }
