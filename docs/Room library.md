@@ -136,3 +136,97 @@ abstract class LocalDatabase : RoomDatabase() {
 ```
 
 - *@TypeConverters* - аннотация для указания классов-конвертеров.
+
+## 6. Внедрение базы данных Room через Hilt
+
+В данном случае класс базы данных назван *LocalDatabase*, а следующая цепочка классов в совокупности отвечает за взаимодействие с БД:
+
+1) Интерфейс с описанием общих методов CRUD-операций
+```kotlin
+interface LocalDataSource<T> {
+    fun createObjects(vararg dataObjects: T): Int
+    fun createObjects(listObjects: List<T>): Int
+    fun readObjects(querySettings: QuerySettings? = null): List<T>
+    fun updateObjects(vararg dataObjects: T): Int
+    fun updateObjects(listObjects: List<T>): Int
+    fun deleteObjects(vararg dataObjects: T): Int
+    fun deleteObjects(listObjects: List<T>): Int
+}
+```
+
+2) Менеджер сущностей для Room. В конструктор передается LocalDatabase, с помощью которого будет получен конкретный dao для каждой сущности (в данный класс каждая новая сущность добавляется вручную в текущем проекте)
+```kotlin
+class RoomDataBaseManager @Inject constructor(
+    db: LocalDatabase
+) {
+    // ...
+    // dao = db.getMasterDao()
+    // ...
+}
+```
+
+3) Общий источник данных Room. В конструктор передается RoomDataBaseManager из п.2.
+```kotlin
+open class RoomDataSourceCommon @Inject constructor(
+    private val dataBaseManager: RoomDataBaseManager
+) {
+    // Реализованы метод createObjects, readObjects, updateObjects, deleteObjects
+}
+```
+
+4) Источник данных Room. Наследуется от интерфейса из п.1; Создается экземпляр класса RoomDataSourceCommon из п.3; Здесь T - конкретнный Entity-класс.
+```kotlin
+open class RoomDataSource<T: Any> @Inject constructor(
+    private val entityObjectClass: KClass<T>,
+    dataBaseManager: RoomDataBaseManager
+) : LocalDataSource<T> {
+    // Экземпляр RoomDataSourceCommon, в котором находится конечная реализация базовых методов
+    private val roomDataSourceCommon = RoomDataSourceCommon(dataBaseManager)
+    
+    // Override для методов из интерфейса из п.1. Вызов конечной реализации из roomDataSourceCommon
+    override fun createObjects(vararg dataObjects: T): Int {
+        return this.createObjects(dataObjects.asList())
+    }
+
+    // ...
+    // Аналогично для readObjects, updateObjects, deleteObjects
+}
+```
+5) DataSource класс для конкретной сущности. Наследуется от RoomDataSource из п.4
+```kotlin
+class MasterRoomDataSource @Inject constructor(
+    dataBaseManager: RoomDataBaseManager
+) : RoomDataSource<MasterEntity>(MasterEntity::class, dataBaseManager) {
+
+}
+```
+
+## 7. Пример CRUD-операций
+Рассмотрим создание, вычитку, обновление и удаление для *MasterEntity*
+1) Пусть у нас есть локальный DataSource из предыдущего пункта:
+```kotlin
+val ds = RoomDataSourceCommon(dataBaseManager)
+```
+2) Прежде всего необходимо создать объект:
+```kotlin
+val master = MasterEntity(
+    name = "MasterName"
+)
+```
+3) При создании записи в БД, метод возвращает количество созданных строк:
+```kotlin
+val countMastersCreated = ds.createObjects(master)
+```
+4) Изменим имя у данного объекта и обновим. При обновлении также возвращается целое число обновленных строк:
+```kotlin
+master.name = "Mister X"
+val countMastersUpdated = ds.updateObjects(master)
+```
+5) При вычитке объектов возвращается список нужного нам типа (в данном случае *MasterEntity*). Данный пример вернет все объекты из таблицы *Master*:
+```kotlin
+val masterEntityList = ds.readObjects()
+```
+6) При удалении записей также возвращается число удаленных строк:
+```kotlin
+val countMastersDeleted = ds.deleteObjects(master)
+```
