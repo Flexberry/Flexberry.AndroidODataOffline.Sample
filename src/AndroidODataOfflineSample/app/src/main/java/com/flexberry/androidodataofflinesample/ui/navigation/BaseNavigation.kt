@@ -8,7 +8,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.flexberry.androidodataofflinesample.ui.applicationuserlistformmodel.ApplicationUserListFormModelScreen
+import com.flexberry.androidodataofflinesample.ui.detaillistform.DetailListFormScreen
 import com.flexberry.androidodataofflinesample.ui.mainmodel.MainScreen
+import com.flexberry.androidodataofflinesample.ui.masterlistformmodel.MasterListFormScreen
 import com.flexberry.androidodataofflinesample.ui.votelistformmodel.VoteListFormModelScreen
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -37,6 +39,13 @@ fun BaseNavigation(
         baseComposable(destination = Destination.VoteListFormModelScreen) {
             VoteListFormModelScreen()
         }
+        baseComposable(destination = Destination.MasterListForm) {
+            MasterListFormScreen()
+        }
+        baseComposable(destination = Destination.DetailListForm) {
+            DetailListFormScreen()
+        }
+
     }
 }
 

@@ -32,12 +32,12 @@ class MainViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun onApplicationUserButtonClicked():Unit {
-        appNavigator.tryNavigateTo(Destination.ApplicationUserListFormModelScreen())
+    fun onMasterButtonClicked():Unit {
+        appNavigator.tryNavigateTo(Destination.MasterListForm())
     }
 
-    fun onVoteButtonClicked():Unit {
-        appNavigator.tryNavigateTo(Destination.VoteListFormModelScreen())
+    fun onDetailButtonClicked():Unit {
+        appNavigator.tryNavigateTo(Destination.DetailListForm())
     }
 
     fun onOfflineButtonClicked():Unit {

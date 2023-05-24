@@ -55,9 +55,9 @@ fun MainScreen(
             mainButton(
                 modifier = btnModifier,
                 fontSize = 24.sp,
-                text = "ApplicationUser",
+                text = "Master",
                 rounded = 10,
-                onClick = viewModel::onApplicationUserButtonClicked
+                onClick = viewModel::onMasterButtonClicked
             )
         }
         Row(
@@ -68,9 +68,9 @@ fun MainScreen(
             mainButton(
                 modifier = btnModifier,
                 fontSize = 24.sp,
-                text = "Vote",
+                text = "Detail",
                 rounded = 10,
-                onClick = viewModel::onVoteButtonClicked
+                onClick = viewModel::onDetailButtonClicked
             )
         }
         Row(
