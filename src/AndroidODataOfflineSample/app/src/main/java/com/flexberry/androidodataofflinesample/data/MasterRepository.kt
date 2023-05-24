@@ -1,6 +1,9 @@
 package com.flexberry.androidodataofflinesample.data
 
+import com.flexberry.androidodataofflinesample.data.di.MasterLocalDataSource
 import com.flexberry.androidodataofflinesample.data.di.MasterNetworkDataSource
+import com.flexberry.androidodataofflinesample.data.local.entities.MasterEntity
+import com.flexberry.androidodataofflinesample.data.local.interfaces.LocalDataSource
 import com.flexberry.androidodataofflinesample.data.model.Master
 import com.flexberry.androidodataofflinesample.data.model.asDataModel
 import com.flexberry.androidodataofflinesample.data.network.interfaces.NetworkDataSource
@@ -12,6 +15,7 @@ import javax.inject.Inject
  */
 class MasterRepository @Inject constructor(
     @MasterNetworkDataSource private val networkDataSource: NetworkDataSource<NetworkMaster>,
+    @MasterLocalDataSource private val localDataSource: LocalDataSource<MasterEntity>,
 ) {
     /**
      * Получение списка мастеров в режиме онлайн.
@@ -46,6 +50,6 @@ class MasterRepository @Inject constructor(
      * @param dataObjects Список объектов.
      */
     fun updateMastersOffline(dataObjects: List<Master>) {
-        //localDataSource.updateObjects(dataObjects.map { it.asLocalModel() })
+        localDataSource.updateObjects(dataObjects.map { it.asLocalModel() })
     }
 }
