@@ -111,7 +111,7 @@ object DataSourceModule {
 
     @Provides
     @Singleton
-    fun provideRoomDataSourceManager(localDatabase: LocalDatabase): RoomDataBaseManager {
+    fun provideRoomDataBaseManager(localDatabase: LocalDatabase): RoomDataBaseManager {
         return RoomDataBaseManager(localDatabase)
     }
 }
