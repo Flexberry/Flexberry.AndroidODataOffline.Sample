@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.flexberry.androidodataofflinesample.ApplicationState
 import com.flexberry.androidodataofflinesample.data.AppDataRepository
 import com.flexberry.androidodataofflinesample.data.di.AppState
+import com.flexberry.androidodataofflinesample.navigation.AppNavigator
+import com.flexberry.androidodataofflinesample.navigation.Destination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -15,7 +17,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val repository: AppDataRepository,
-    @AppState val applicationState: ApplicationState
+    @AppState val applicationState: ApplicationState,
+    private val appNavigator: AppNavigator
 ) : ViewModel() {
     init {
         repository.initSettings()
@@ -29,15 +32,15 @@ class MainViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun appUserButton():Unit {
-        // Функционал для кнопки "ApplicationUser"
+    fun onApplicationUserButtonClicked():Unit {
+        appNavigator.tryNavigateTo(Destination.ApplicationUserListFormModelScreen())
     }
 
-    fun voteButton():Unit {
-        // Функционал для кнопки "Vote"
+    fun onVoteButtonClicked():Unit {
+        appNavigator.tryNavigateTo(Destination.VoteListFormModelScreen())
     }
 
-    fun offlineButton():Unit {
+    fun onOfflineButtonClicked():Unit {
         val newValue = !applicationState.isOnline.value;
 
         if (repository.setOnlineFlag(newValue)) {
