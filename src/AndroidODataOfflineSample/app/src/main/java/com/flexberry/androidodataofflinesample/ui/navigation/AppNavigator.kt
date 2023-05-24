@@ -1,4 +1,4 @@
-package com.flexberry.androidodataofflinesample.navigation
+package com.flexberry.androidodataofflinesample.ui.navigation
 
 import kotlinx.coroutines.channels.Channel
 

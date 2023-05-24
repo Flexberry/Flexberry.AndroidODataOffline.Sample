@@ -1,4 +1,4 @@
-package com.flexberry.androidodataofflinesample.navigation
+package com.flexberry.androidodataofflinesample.ui.navigation
 
 sealed class Destination(protected val route: String, vararg params: String) {
     val fullRoute: String = if (params.isEmpty()) route else {

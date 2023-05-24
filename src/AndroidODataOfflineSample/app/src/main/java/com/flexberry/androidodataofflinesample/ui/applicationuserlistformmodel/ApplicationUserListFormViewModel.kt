@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import com.flexberry.androidodataofflinesample.ApplicationState
 import com.flexberry.androidodataofflinesample.data.ApplicationUserRepository
 import com.flexberry.androidodataofflinesample.data.di.AppState
-import com.flexberry.androidodataofflinesample.navigation.AppNavigator
-import com.flexberry.androidodataofflinesample.navigation.Destination
+import com.flexberry.androidodataofflinesample.ui.navigation.AppNavigator
+import com.flexberry.androidodataofflinesample.ui.navigation.Destination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

@@ -1,4 +1,4 @@
-package com.flexberry.androidodataofflinesample.navigation
+package com.flexberry.androidodataofflinesample.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
