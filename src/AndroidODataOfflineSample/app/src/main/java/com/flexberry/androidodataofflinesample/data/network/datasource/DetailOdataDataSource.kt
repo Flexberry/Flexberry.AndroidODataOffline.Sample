@@ -11,7 +11,7 @@ class DetailOdataDataSource: OdataDataSource<NetworkDetail>(NetworkDetail::class
     /**
      * Получить объекты [NetworkDetail] с детейлами (если будут) и мастерами.
      */
-    fun getDetailsFull(querySettings: QuerySettings?): List<NetworkDetail> {
+    fun getDetailsWithRelations(querySettings: QuerySettings?): List<NetworkDetail> {
         return this.readObjects(querySettings, NetworkDetail.Views.NetworkDetailE)
     }
 }

@@ -11,7 +11,7 @@ class MasterOdataDataSource: OdataDataSource<NetworkMaster>(NetworkMaster::class
     /**
      * Получить объекты [NetworkMaster] с детейлами и мастерами (если будут).
      */
-    fun getMastersFull(querySettings: QuerySettings?): List<NetworkMaster> {
+    fun getMastersWithRelations(querySettings: QuerySettings?): List<NetworkMaster> {
         return this.readObjects(querySettings, NetworkMaster.Views.NetworkMasterE)
     }
 }

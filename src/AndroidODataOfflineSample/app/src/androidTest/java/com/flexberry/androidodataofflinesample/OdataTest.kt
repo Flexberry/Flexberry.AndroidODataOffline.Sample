@@ -18,7 +18,6 @@ import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.Date
-import java.util.UUID
 
 /**
  * Тесты для [OdataDataSource].
@@ -347,7 +346,7 @@ class OdataTest {
         Assert.assertEquals(details.size, 2)
 
         // Вычитываем мастера по полному представлению.
-        val masters = masterDataSource.getMastersFull(
+        val masters = masterDataSource.getMastersWithRelations(
             QuerySettings()
                 .filter(Filter.equalFilter("__PrimaryKey", master1.__PrimaryKey))
                 .top(10)
@@ -360,7 +359,7 @@ class OdataTest {
         Assert.assertEquals(masters[0].Detail?.size ?: 0, 2)
 
         // Вычитываем детейлы по полному представлению.
-        val fullDetails = detailDataSource.getDetailsFull(
+        val fullDetails = detailDataSource.getDetailsWithRelations(
             QuerySettings()
                 .filter(Filter.equalFilter("Master.__PrimaryKey", master1.__PrimaryKey))
                 .top(10)
