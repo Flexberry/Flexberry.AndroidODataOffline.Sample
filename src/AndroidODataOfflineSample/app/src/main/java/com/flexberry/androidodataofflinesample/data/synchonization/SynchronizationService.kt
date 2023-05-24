@@ -1,4 +1,4 @@
-package com.flexberry.androidodataofflinesample.data.sycnhonization
+package com.flexberry.androidodataofflinesample.data.synchonization
 
 import com.flexberry.androidodataofflinesample.data.ApplicationUserRepository
 import com.flexberry.androidodataofflinesample.data.DetailRepository

@@ -9,9 +9,15 @@ import com.flexberry.androidodataofflinesample.data.local.datasource.LocalDataba
 import com.flexberry.androidodataofflinesample.data.local.datasource.AppDataRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.VoteRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.ApplicationUserRoomDataSource
+import com.flexberry.androidodataofflinesample.data.local.datasource.MasterRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.entities.AppDataEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.ApplicationUserEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.VoteEntity
+import com.flexberry.androidodataofflinesample.data.local.datasource.room.RoomDataSource
+import com.flexberry.androidodataofflinesample.data.local.datasource.room.RoomDataSourceCommon
+import com.flexberry.androidodataofflinesample.data.local.datasource.room.RoomDataBaseManager
+import com.flexberry.androidodataofflinesample.data.local.entities.DetailEntity
+import com.flexberry.androidodataofflinesample.data.local.entities.MasterEntity
 import com.flexberry.androidodataofflinesample.data.query.Filter
 import com.flexberry.androidodataofflinesample.data.query.QuerySettings
 import org.junit.After
@@ -20,12 +26,15 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
-import java.lang.Exception
 import java.util.UUID
 
+/**
+ * Тесты для [RoomDataSource].
+ */
 @RunWith(AndroidJUnit4::class)
 class RoomTest {
     private lateinit var db: LocalDatabase
+    private lateinit var dataBaseManager: RoomDataBaseManager
 
     @Before
     fun createDb() {
@@ -34,6 +43,8 @@ class RoomTest {
             // Позволяет выполнять запросы в основном потоке - только для теста
             .allowMainThreadQueries()
             .build()
+
+        dataBaseManager = RoomDataBaseManager(db)
     }
 
     @After
@@ -42,23 +53,34 @@ class RoomTest {
         db.close()
     }
 
+    /**
+     * Тест CRUD-операций для [AppDataEntity].
+     */
     @Test
     @Throws(Exception::class)
     fun appDataCRUDTest() {
-        val ds = AppDataRoomDataSource(db)
+        val ds = AppDataRoomDataSource(dataBaseManager)
 
         val appData1 = AppDataEntity(UUID.randomUUID(),true)
         val appData2 = AppDataEntity(UUID.randomUUID(),false)
 
         // Добавление
         val insertCount = ds.createObjects(listOf(appData1, appData2))
+        println(insertCount)
         Assert.assertEquals(insertCount, 2)
 
         // Вычитка
-        val data = ds.readObjects()
-        println(data)
-        if (data.any()) {
-            Assert.assertTrue(data.any { x -> x.isOnline })
+        val allObjects = ds.readObjects()
+        println(allObjects)
+
+        val querySettings = QuerySettings()
+            .filter(
+                Filter.equalFilter("IsOnline", false)
+            )
+        val filterData = ds.readObjects(querySettings)
+        println(filterData)
+        if (filterData.any()) {
+            Assert.assertTrue(filterData.any { x -> !x.isOnline })
         }
 
         // Обновление
@@ -84,10 +106,13 @@ class RoomTest {
         Assert.assertTrue(checkDeleted.count() == 1)
     }
 
+    /**
+     * Тест CRUD-операций для [VoteEntity].
+     */
     @Test
     @Throws(Exception::class)
     fun voteCRUDTest() {
-        val ds = VoteRoomDataSource(db)
+        val ds = VoteRoomDataSource(dataBaseManager)
 
         var vote1 = VoteEntity(
             primarykey = UUID.randomUUID(),
@@ -138,10 +163,13 @@ class RoomTest {
         Assert.assertTrue(checkDeleted.first()?.editor == "Caseberry")
     }
 
+    /**
+     * Тест CRUD-операций для [ApplicationUserEntity].
+     */
     @Test
     @Throws(Exception::class)
     fun applicationUserCRUDTest() {
-        val ds = ApplicationUserRoomDataSource(db)
+        val ds = ApplicationUserRoomDataSource(dataBaseManager)
 
         var user1 = ApplicationUserEntity(
             primarykey = UUID.randomUUID(),
@@ -194,5 +222,160 @@ class RoomTest {
         println(checkDeleted)
         println(checkDeleted.first()?.name)
         Assert.assertTrue(checkDeleted.first()?.name == "Cat")
+    }
+
+    /**
+     * Тест [QuerySettings].
+     */
+    @Test
+    @Throws(Exception::class)
+    fun querySettingsTest() {
+        val ds = ApplicationUserRoomDataSource(dataBaseManager)
+
+        var user1 = ApplicationUserEntity(
+            primarykey = UUID.randomUUID(),
+            name = "Rat",
+            vip = true
+        )
+
+        var user2 = ApplicationUserEntity(
+            primarykey = UUID.randomUUID(),
+            name = "Dog",
+            vip = false
+        )
+
+        var user3 = ApplicationUserEntity(
+            primarykey = UUID.randomUUID(),
+            name = "Cat",
+            vip = true
+        )
+
+        // Добавление
+        val insertCount = ds.createObjects(listOf(user1, user2, user3))
+        Assert.assertEquals(insertCount, 3)
+
+        // Проверка hasFilter (оператор Like)
+        var querySettings = QuerySettings()
+            .filter(
+                Filter.hasFilter("Name", "at")
+            )
+
+        val data = ds.readObjects(querySettings)
+        println(data)
+        if (data.any()) {
+            Assert.assertTrue(data.any { x -> x.name == "Cat" })
+            Assert.assertTrue(data.any { x -> x.name == "Rat" })
+        }
+    }
+
+    /**
+     * Тест создания и чтения записи [MasterEntity] из [MasterRoomDataSource].
+     */
+    @Test
+    @Throws(Exception::class)
+    fun masterCreateReadTest() {
+        val dsMaster = MasterRoomDataSource(dataBaseManager)
+        val master1name = "master1 dsk!!!fhsdfgh"
+
+        val master1 = MasterEntity(
+            name = master1name
+        )
+
+        val countMastersCreated = dsMaster.createObjects(master1)
+
+        Assert.assertEquals(countMastersCreated, 1)
+
+        val masters = dsMaster.readObjects(
+            QuerySettings()
+                .filter(Filter.equalFilter("name", master1name))
+                .top(10)
+        )
+
+        Assert.assertEquals(masters.size, 1)
+
+        val countMastersDeleted = dsMaster.deleteObjects(master1)
+
+        Assert.assertEquals(countMastersDeleted, 1)
+    }
+
+    /**
+     * Тест создания и чтения записей [MasterEntity] и [DetailEntity] из [RoomDataSourceCommon].
+     * Создание детейла вместе с мастером.
+     */
+    @Test
+    @Throws(Exception::class)
+    fun masterCommonWithDetailsCreateReadDeleteTest() {
+        val dsCommon = RoomDataSourceCommon(dataBaseManager)
+        val master1name = "master1 sgdfvmnsdeasdfcbfmnbsv"
+        val detail1name = "detail1 dfjshfkjsdfkdjshf"
+        val detail2name = "detail1 qewrljnqwlqlwker"
+
+        val master1 = MasterEntity(
+            name = master1name
+        )
+
+        master1.details = listOf(
+            DetailEntity(
+                name = detail1name,
+                master = master1
+            ),
+            DetailEntity(
+                name = detail2name,
+                master = master1
+            ),
+        )
+
+        val countMastersCreated = dsCommon.createObjects(master1)
+
+        Assert.assertEquals(countMastersCreated, 1)
+
+        val detailsReaded = dsCommon.readObjects<DetailEntity>(
+            QuerySettings()
+                .filter(Filter.inFilter("name", listOf(
+                    detail1name,
+                    detail2name
+                )))
+                .top(10)
+        )
+
+        Assert.assertEquals(detailsReaded.size, 2)
+
+        val countDetailsDeleted = dsCommon.deleteObjects(master1.details!!)
+
+        Assert.assertEquals(countDetailsDeleted, 2)
+
+        val countMastersDeleted = dsCommon.deleteObjects(master1)
+
+        Assert.assertEquals(countMastersDeleted, 1)
+    }
+
+    /**
+     * Тест создания и чтения записи [MasterEntity] из [RoomDataSourceCommon].
+     */
+    @Test
+    @Throws(Exception::class)
+    fun masterCommonTest() {
+        val dsCommon = RoomDataSourceCommon(dataBaseManager)
+        val masterName = "master1 dskfhsdfgh"
+
+        val master1 = MasterEntity(
+            name = masterName
+        )
+
+        val countMastersCreated = dsCommon.createObjects(master1)
+
+        Assert.assertEquals(countMastersCreated, 1)
+
+        val masters = dsCommon.readObjects<MasterEntity>(
+            QuerySettings()
+                .filter(Filter.equalFilter("name", masterName))
+                .top(10)
+        )
+
+        Assert.assertEquals(masters.size, 1)
+
+        val countMastersDeleted = dsCommon.deleteObjects(master1)
+
+        Assert.assertEquals(countMastersDeleted, 1)
     }
 }

@@ -12,20 +12,29 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampleTheme
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 @Composable
-fun MainScreen( modifier: Modifier = Modifier, viewModel: MainViewModel = viewModel() ) {
+fun MainScreen(
+    modifier: Modifier = Modifier,
+    viewModel: MainViewModel = hiltViewModel(),
+) {
+    val uiStateOnline = remember {
+        viewModel.applicationState.isOnline
+    }
+
     Column(
-        modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(
                 vertical = 40.dp,
@@ -48,7 +57,7 @@ fun MainScreen( modifier: Modifier = Modifier, viewModel: MainViewModel = viewMo
                 fontSize = 24.sp,
                 text = "ApplicationUser",
                 rounded = 10,
-                onClick = viewModel::appUserButton
+                onClick = viewModel::onApplicationUserButtonClicked
             )
         }
         Row(
@@ -61,21 +70,30 @@ fun MainScreen( modifier: Modifier = Modifier, viewModel: MainViewModel = viewMo
                 fontSize = 24.sp,
                 text = "Vote",
                 rounded = 10,
-                onClick = viewModel::voteButton
+                onClick = viewModel::onVoteButtonClicked
             )
         }
         Row(
-            Modifier.weight(1f).fillMaxSize(),
+            Modifier
+                .weight(1f)
+                .fillMaxSize(),
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.spacedBy(32.dp, alignment = Alignment.End)
         )
         {
+            var buttonText = "Offline"
+            var buttonTextColor = MaterialTheme.colorScheme.onSecondary
+            if (uiStateOnline.value) {
+                buttonText = "Online"
+                buttonTextColor = MaterialTheme.colorScheme.onPrimary
+            }
             mainButton(
                 modifier = modifier.size(100.dp),
                 fontSize = 18.sp,
-                text = "Offline",
-                onClick = viewModel::offlineButton,
-                rounded = 50
+                text = buttonText,
+                textColor = buttonTextColor,
+                rounded = 50,
+                onClick = viewModel::onOfflineButtonClicked
             )
         }
     }
@@ -86,8 +104,9 @@ fun mainButton(
     modifier: Modifier,
     fontSize: TextUnit,
     text: String,
+    textColor: Color = MaterialTheme.colorScheme.onPrimary,
+    rounded: Int = 0,
     onClick: () -> Unit,
-    rounded: Int = 0
     ) {
     Button(
         modifier = modifier,
@@ -97,7 +116,8 @@ fun mainButton(
         Text(
             text = text,
             style = MaterialTheme.typography.titleLarge,
-            fontSize = fontSize
+            fontSize = fontSize,
+            color = textColor
         )
     }
 }
