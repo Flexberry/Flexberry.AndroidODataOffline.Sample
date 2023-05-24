@@ -358,9 +358,10 @@ class RoomTest {
     @Throws(Exception::class)
     fun masterCreateReadTest() {
         val dsMaster = MasterRoomDataSource(db)
+        val master1name = "master1 dsk!!!fhsdfgh"
 
         val master1 = MasterEntity(
-            name = "master1 dskfhsdfgh"
+            name = master1name
         )
 
         val countMastersCreated = dsMaster.createObjects(master1)
@@ -369,7 +370,7 @@ class RoomTest {
 
         val masters = dsMaster.readObjects(
             QuerySettings()
-                .filter(Filter.equalFilter("name", "master1 dskfhsdfgh"))
+                .filter(Filter.equalFilter("name", master1name))
                 .top(10)
         )
 
@@ -385,9 +386,12 @@ class RoomTest {
     fun masterWithDetailsCreateReadDeleteTest() {
         val dsMaster = MasterRoomDataSource(db)
         val dsDetail = DetailRoomDataSource(db)
+        val master1name = "master1 sgdfvmnsdeasdfcbfmnbsv"
+        val detail1name = "detail1 dfjshfkjsdfkdjshf"
+        val detail2name = "detail1 qewrljnqwlqlwker"
 
         val master1 = MasterEntity(
-            name = "master1 sgdfvmncbfmnbsv"
+            name = master1name
         )
 
         val countMastersCreated = dsMaster.createObjects(master1)
@@ -396,11 +400,11 @@ class RoomTest {
 
         val details = listOf(
             DetailEntity(
-                name = "detail1 dfjshfkjsdfkdjshf",
+                name = detail1name,
                 masterId = master1.primarykey
             ),
             DetailEntity(
-                name = "detail1 qewrljnqwlqlwker",
+                name = detail2name,
                 masterId = master1.primarykey
             ),
         )
@@ -412,8 +416,8 @@ class RoomTest {
         val detailsReaded = dsDetail.readObjects(
             QuerySettings()
                 .filter(Filter.inFilter("name", listOf(
-                    "detail1 dfjshfkjsdfkdjshf",
-                    "detail1 qewrljnqwlqlwker"
+                    detail1name,
+                    detail2name
                 )))
                 .top(10)
         )
