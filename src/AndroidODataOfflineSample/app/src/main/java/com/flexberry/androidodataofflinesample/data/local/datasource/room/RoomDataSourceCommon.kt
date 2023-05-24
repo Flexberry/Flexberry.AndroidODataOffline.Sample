@@ -1,8 +1,9 @@
-package com.flexberry.androidodataofflinesample.data.local.datasource
+package com.flexberry.androidodataofflinesample.data.local.datasource.room
 
 import android.util.Log
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.flexberry.androidodataofflinesample.data.di.RoomDataSourceManager
+import com.flexberry.androidodataofflinesample.data.local.datasource.LocalDatabase
 import com.flexberry.androidodataofflinesample.data.query.Filter
 import com.flexberry.androidodataofflinesample.data.query.FilterType
 import com.flexberry.androidodataofflinesample.data.query.OrderType

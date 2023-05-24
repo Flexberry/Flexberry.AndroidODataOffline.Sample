@@ -1,4 +1,4 @@
-package com.flexberry.androidodataofflinesample.data.local.datasource
+package com.flexberry.androidodataofflinesample.data.local.datasource.room
 
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.flexberry.androidodataofflinesample.data.local.dao.BaseDao

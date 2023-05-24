@@ -5,7 +5,7 @@ import androidx.room.Room
 import com.flexberry.androidodataofflinesample.data.local.datasource.AppDataRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.ApplicationUserRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.LocalDatabase
-import com.flexberry.androidodataofflinesample.data.local.datasource.RoomDataSourceTypeManager
+import com.flexberry.androidodataofflinesample.data.local.datasource.room.RoomDataSourceTypeManager
 import com.flexberry.androidodataofflinesample.data.local.datasource.VoteRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.entities.AppDataEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.ApplicationUserEntity

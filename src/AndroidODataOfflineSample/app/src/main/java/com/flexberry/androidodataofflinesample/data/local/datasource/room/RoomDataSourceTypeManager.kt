@@ -1,5 +1,6 @@
-package com.flexberry.androidodataofflinesample.data.local.datasource
+package com.flexberry.androidodataofflinesample.data.local.datasource.room
 
+import com.flexberry.androidodataofflinesample.data.local.datasource.LocalDatabase
 import com.flexberry.androidodataofflinesample.data.local.entities.DetailEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.MasterEntity
 import javax.inject.Inject
