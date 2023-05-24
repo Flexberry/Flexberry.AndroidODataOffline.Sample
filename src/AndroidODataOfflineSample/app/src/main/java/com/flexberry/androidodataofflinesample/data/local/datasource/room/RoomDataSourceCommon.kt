@@ -10,6 +10,7 @@ import javax.inject.Inject
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.isSubclassOf
 
 /**
  * Общий источник данных Room.
@@ -223,7 +224,7 @@ open class RoomDataSourceCommon @Inject constructor(
             FilterType.GreaterOrEqual,
             FilterType.Less,
             FilterType.LessOrEqual -> {
-                result = "$paramName ${filterType.getRoomDataSourceValue()} '$paramValue'"
+                result = "$paramName ${filterType.getRoomDataSourceValue()} ${evaluateParamValueForFilter(paramValue)}"
             }
 
             FilterType.Has,
@@ -292,5 +293,23 @@ open class RoomDataSourceCommon @Inject constructor(
             FilterType.Or -> "or"
             FilterType.Not -> "not"
         }
+    }
+
+    /**
+     * Преобразовать значение параметра к строке для Room.
+     *
+     * @param paramValue Значение параметра.
+     * @return Строковое значение.
+     */
+    private fun evaluateParamValueForFilter(paramValue: Any?): String {
+        if (paramValue == null) return "null"
+
+        // String, Enum
+        if (paramValue is String || paramValue::class.isSubclassOf(Enum::class)) return "'$paramValue'"
+
+        // Boolean
+        if (paramValue is Boolean) return if (paramValue) "1" else "0"
+
+        return "$paramValue"
     }
 }
