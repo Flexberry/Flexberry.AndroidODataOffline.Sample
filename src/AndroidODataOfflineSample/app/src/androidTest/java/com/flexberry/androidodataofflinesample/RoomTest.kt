@@ -58,13 +58,21 @@ class RoomTest {
 
         // Добавление
         val insertCount = ds.createObjects(listOf(appData1, appData2))
+        println(insertCount)
         Assert.assertEquals(insertCount, 2)
 
         // Вычитка
-        val data = ds.readObjects()
-        println(data)
-        if (data.any()) {
-            Assert.assertTrue(data.any { x -> x.isOnline })
+        val allObjects = ds.readObjects()
+        println(allObjects)
+
+        val querySettings = QuerySettings()
+            .filter(
+                Filter.equalFilter("IsOnline", false)
+            )
+        val filterData = ds.readObjects(querySettings)
+        println(filterData)
+        if (filterData.any()) {
+            Assert.assertTrue(filterData.any { x -> !x.isOnline })
         }
 
         // Обновление
@@ -251,97 +259,4 @@ class RoomTest {
             Assert.assertTrue(data.any { x -> x.name == "Rat" })
         }
     }
-
-    /**
-     * Тест операции чтения мастера [ApplicationUserEntity] со всеми детейлами [VoteEntity].
-     */
-/*
-    @Test
-    @Throws(Exception::class)
-    fun applicationUserWithVotesTest() {
-        val dsUser = ApplicationUserRoomDataSource(db)
-        val dsVote = VoteRoomDataSource(db)
-
-        var user1 = ApplicationUserEntity(
-            primarykey = UUID.randomUUID(),
-            name = "Mouse",
-            vip = true
-        )
-
-        var vote1 = VoteEntity(
-            primarykey = UUID.randomUUID(),
-            voteType = VoteType.Like,
-            creator = "Creator1",
-            applicationUserId = user1.primarykey
-        )
-
-        var vote2 = VoteEntity(
-            primarykey = UUID.randomUUID(),
-            voteType = VoteType.Dislike,
-            creator = "Creator2"
-        )
-
-        var vote3 = VoteEntity(
-            primarykey = UUID.randomUUID(),
-            voteType = VoteType.Dislike,
-            creator = "Creator3",
-            applicationUserId = user1.primarykey
-        )
-
-        val insertCountUser = dsUser.createObjects(listOf(user1))
-        println(insertCountUser)
-
-        val insertCountVote = dsVote.createObjects(listOf(vote1, vote2, vote3))
-        println(insertCountVote)
-
-        val getObjectsWithDetails = dsUser.readObjectWithDetails(listOf(user1.primarykey))
-        println(getObjectsWithDetails)
-        Assert.assertTrue(getObjectsWithDetails.any { x -> x?.votes?.count() == 2})
-    }
-*/
-
-    /**
-     * Тест операции чтения [VoteEntity] с мастером [ApplicationUserEntity].
-     */
-/*    @Test
-    @Throws(Exception::class)
-    fun voteWithApplicationUserTest() {
-        val dsUser = ApplicationUserRoomDataSource(db)
-        val dsVote = VoteRoomDataSource(db)
-
-        var user1 = ApplicationUserEntity(
-            primarykey = UUID.randomUUID(),
-            name = "Mouse",
-            vip = true
-        )
-
-        var user2 = ApplicationUserEntity(
-            primarykey = UUID.randomUUID(),
-            name = "Cat",
-            vip = true
-        )
-
-        var user3 = ApplicationUserEntity(
-            primarykey = UUID.randomUUID(),
-            name = "Dog",
-            vip = true
-        )
-
-        var vote1 = VoteEntity(
-            primarykey = UUID.randomUUID(),
-            voteType = VoteType.Like,
-            creator = "Creator1",
-            applicationUserId = user1.primarykey
-        )
-
-        val insertCountUser = dsUser.createObjects(listOf(user1, user2, user3))
-        println(insertCountUser)
-
-        val insertCountVote = dsVote.createObjects(listOf(vote1))
-        println(insertCountVote)
-
-        val getObjectWithMaster = dsVote.readObjectWithMaster(listOf(vote1.primarykey))
-        println(getObjectWithMaster)
-        Assert.assertTrue(getObjectWithMaster.any { x -> x?.user?.primarykey == user1.primarykey})
-    }*/
 }
