@@ -15,10 +15,10 @@ import kotlin.reflect.full.isSubclassOf
 /**
  * Общий источник данных Room.
  *
- * @param typeManager Менеджер типов данных.
+ * @param dataBaseManager Менеджер типов данных.
  */
 open class RoomDataSourceCommon @Inject constructor(
-    val typeManager: RoomDataSourceTypeManager
+    private val dataBaseManager: RoomDataBaseManager
 ) {
     /**
      * Создать объекты.
@@ -43,7 +43,7 @@ open class RoomDataSourceCommon @Inject constructor(
             // Имя типа сущности.
             val entityObjectSimpleName = entityObject::class.simpleName
             // Информация о типе сущности.
-            val entityObjectTypeInfo = typeManager.getInfoByTypeName(entityObjectSimpleName)!!
+            val entityObjectTypeInfo = dataBaseManager.getInfoByTypeName(entityObjectSimpleName)!!
 
             countResult += entityObjectTypeInfo.insertObjects(listOf(entityObject))
 
@@ -78,7 +78,7 @@ open class RoomDataSourceCommon @Inject constructor(
         // Имя типа сущности.
         val entityObjectSimpleName = kotlinClass.simpleName
         // Информация о типе сущности.
-        val entityObjectTypeInfo = typeManager.getInfoByTypeName(entityObjectSimpleName)!!
+        val entityObjectTypeInfo = dataBaseManager.getInfoByTypeName(entityObjectSimpleName)!!
         // Имя таблицы.
         val tableName = entityObjectTypeInfo.tableName
         // Параметры запроса.
@@ -126,7 +126,7 @@ open class RoomDataSourceCommon @Inject constructor(
             // Имя типа сущности.
             val entityObjectSimpleName = entityObject::class.simpleName
             // Информация о типе сущности.
-            val entityObjectTypeInfo = typeManager.getInfoByTypeName(entityObjectSimpleName)!!
+            val entityObjectTypeInfo = dataBaseManager.getInfoByTypeName(entityObjectSimpleName)!!
 
             countResult += entityObjectTypeInfo.deleteObjects(listOf(entityObject))
         }
@@ -157,7 +157,7 @@ open class RoomDataSourceCommon @Inject constructor(
             // Имя типа сущности.
             val entityObjectSimpleName = entityObject::class.simpleName
             // Информация о типе сущности.
-            val entityObjectTypeInfo = typeManager.getInfoByTypeName(entityObjectSimpleName)!!
+            val entityObjectTypeInfo = dataBaseManager.getInfoByTypeName(entityObjectSimpleName)!!
 
             countResult += entityObjectTypeInfo.updateObjects(listOf(entityObject))
         }

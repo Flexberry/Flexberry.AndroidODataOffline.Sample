@@ -5,7 +5,7 @@ import androidx.room.Room
 import com.flexberry.androidodataofflinesample.data.local.datasource.AppDataRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.ApplicationUserRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.LocalDatabase
-import com.flexberry.androidodataofflinesample.data.local.datasource.room.RoomDataSourceTypeManager
+import com.flexberry.androidodataofflinesample.data.local.datasource.room.RoomDataBaseManager
 import com.flexberry.androidodataofflinesample.data.local.datasource.VoteRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.entities.AppDataEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.ApplicationUserEntity
@@ -85,20 +85,20 @@ object DataSourceModule {
 
     @AppDataLocalDataSource
     @Provides
-    fun provideAppDataLocalDataSource(roomDataSourceTypeManager: RoomDataSourceTypeManager): LocalDataSource<AppDataEntity> {
-        return AppDataRoomDataSource(roomDataSourceTypeManager)
+    fun provideAppDataLocalDataSource(roomDataBaseManager: RoomDataBaseManager): LocalDataSource<AppDataEntity> {
+        return AppDataRoomDataSource(roomDataBaseManager)
     }
 
     @ApplicationUserLocalDataSource
     @Provides
-    fun provideApplicationUserLocalDataSource(roomDataSourceTypeManager: RoomDataSourceTypeManager): LocalDataSource<ApplicationUserEntity> {
-        return ApplicationUserRoomDataSource(roomDataSourceTypeManager)
+    fun provideApplicationUserLocalDataSource(roomDataBaseManager: RoomDataBaseManager): LocalDataSource<ApplicationUserEntity> {
+        return ApplicationUserRoomDataSource(roomDataBaseManager)
     }
 
     @VoteLocalDatasource
     @Provides
-    fun provideVoteLocalDatasource(roomDataSourceTypeManager: RoomDataSourceTypeManager): LocalDataSource<VoteEntity> {
-        return VoteRoomDataSource(roomDataSourceTypeManager)
+    fun provideVoteLocalDatasource(roomDataBaseManager: RoomDataBaseManager): LocalDataSource<VoteEntity> {
+        return VoteRoomDataSource(roomDataBaseManager)
     }
 
     @Provides
@@ -111,7 +111,7 @@ object DataSourceModule {
 
     @Provides
     @Singleton
-    fun provideRoomDataSourceManager(localDatabase: LocalDatabase): RoomDataSourceTypeManager {
-        return RoomDataSourceTypeManager(localDatabase)
+    fun provideRoomDataSourceManager(localDatabase: LocalDatabase): RoomDataBaseManager {
+        return RoomDataBaseManager(localDatabase)
     }
 }

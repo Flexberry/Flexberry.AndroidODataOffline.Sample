@@ -5,7 +5,7 @@ import com.flexberry.androidodataofflinesample.data.local.dao.BaseDao
 import kotlin.reflect.KClass
 
 /**
- * Информация о типе сущности.
+ * Информация о базе данных сущности.
  *
  * @param T Тип сущности.
  * @param kotlinClass Класс сущности.
@@ -13,7 +13,7 @@ import kotlin.reflect.KClass
  * @param tableName Имя таблицы.
  * @param details Список детейлов.
  */
-class RoomDataSourceTypeInfo<T : Any> (
+class RoomDataBaseEntityInfo<T : Any> (
     val kotlinClass: KClass<T>,
     val dao: BaseDao<T>,
     val tableName: String,

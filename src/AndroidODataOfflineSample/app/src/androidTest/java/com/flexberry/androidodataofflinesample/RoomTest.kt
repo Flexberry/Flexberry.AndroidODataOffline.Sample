@@ -15,7 +15,7 @@ import com.flexberry.androidodataofflinesample.data.local.entities.ApplicationUs
 import com.flexberry.androidodataofflinesample.data.local.entities.VoteEntity
 import com.flexberry.androidodataofflinesample.data.local.datasource.room.RoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.room.RoomDataSourceCommon
-import com.flexberry.androidodataofflinesample.data.local.datasource.room.RoomDataSourceTypeManager
+import com.flexberry.androidodataofflinesample.data.local.datasource.room.RoomDataBaseManager
 import com.flexberry.androidodataofflinesample.data.local.entities.DetailEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.MasterEntity
 import com.flexberry.androidodataofflinesample.data.query.Filter
@@ -34,7 +34,7 @@ import java.util.UUID
 @RunWith(AndroidJUnit4::class)
 class RoomTest {
     private lateinit var db: LocalDatabase
-    private lateinit var typeManager: RoomDataSourceTypeManager
+    private lateinit var dataBaseManager: RoomDataBaseManager
 
     @Before
     fun createDb() {
@@ -44,7 +44,7 @@ class RoomTest {
             .allowMainThreadQueries()
             .build()
 
-        typeManager = RoomDataSourceTypeManager(db)
+        dataBaseManager = RoomDataBaseManager(db)
     }
 
     @After
@@ -59,7 +59,7 @@ class RoomTest {
     @Test
     @Throws(Exception::class)
     fun appDataCRUDTest() {
-        val ds = AppDataRoomDataSource(typeManager)
+        val ds = AppDataRoomDataSource(dataBaseManager)
 
         val appData1 = AppDataEntity(UUID.randomUUID(),true)
         val appData2 = AppDataEntity(UUID.randomUUID(),false)
@@ -112,7 +112,7 @@ class RoomTest {
     @Test
     @Throws(Exception::class)
     fun voteCRUDTest() {
-        val ds = VoteRoomDataSource(typeManager)
+        val ds = VoteRoomDataSource(dataBaseManager)
 
         var vote1 = VoteEntity(
             primarykey = UUID.randomUUID(),
@@ -169,7 +169,7 @@ class RoomTest {
     @Test
     @Throws(Exception::class)
     fun applicationUserCRUDTest() {
-        val ds = ApplicationUserRoomDataSource(typeManager)
+        val ds = ApplicationUserRoomDataSource(dataBaseManager)
 
         var user1 = ApplicationUserEntity(
             primarykey = UUID.randomUUID(),
@@ -230,7 +230,7 @@ class RoomTest {
     @Test
     @Throws(Exception::class)
     fun querySettingsTest() {
-        val ds = ApplicationUserRoomDataSource(typeManager)
+        val ds = ApplicationUserRoomDataSource(dataBaseManager)
 
         var user1 = ApplicationUserEntity(
             primarykey = UUID.randomUUID(),
@@ -274,7 +274,7 @@ class RoomTest {
     @Test
     @Throws(Exception::class)
     fun masterCreateReadTest() {
-        val dsMaster = MasterRoomDataSource(typeManager)
+        val dsMaster = MasterRoomDataSource(dataBaseManager)
         val master1name = "master1 dsk!!!fhsdfgh"
 
         val master1 = MasterEntity(
@@ -305,7 +305,7 @@ class RoomTest {
     @Test
     @Throws(Exception::class)
     fun masterCommonWithDetailsCreateReadDeleteTest() {
-        val dsCommon = RoomDataSourceCommon(typeManager)
+        val dsCommon = RoomDataSourceCommon(dataBaseManager)
         val master1name = "master1 sgdfvmnsdeasdfcbfmnbsv"
         val detail1name = "detail1 dfjshfkjsdfkdjshf"
         val detail2name = "detail1 qewrljnqwlqlwker"
@@ -355,7 +355,7 @@ class RoomTest {
     @Test
     @Throws(Exception::class)
     fun masterCommonTest() {
-        val dsCommon = RoomDataSourceCommon(typeManager)
+        val dsCommon = RoomDataSourceCommon(dataBaseManager)
         val masterName = "master1 dskfhsdfgh"
 
         val master1 = MasterEntity(

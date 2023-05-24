@@ -9,39 +9,39 @@ import com.flexberry.androidodataofflinesample.data.local.entities.VoteEntity
 import javax.inject.Inject
 
 /**
- * Менеджер типов для Room.
+ * Менеджер сущностей для Room.
  *
  * @param db Текущая база данных.
  */
-class RoomDataSourceTypeManager @Inject constructor(
+class RoomDataBaseManager @Inject constructor(
     db: LocalDatabase
 ) {
     /**
-     * Список [RoomDataSourceTypeInfo] типов.
+     * Список [RoomDataBaseEntityInfo] типов.
      */
     private val roomTypeMap = listOf(
-        RoomDataSourceTypeInfo(
+        RoomDataBaseEntityInfo(
             kotlinClass = AppDataEntity::class,
             dao = db.getAppDataDao(),
             tableName = AppDataEntity.tableName
         ),
-        RoomDataSourceTypeInfo(
+        RoomDataBaseEntityInfo(
             kotlinClass = MasterEntity::class,
             dao = db.getMasterDao(),
             tableName = MasterEntity.tableName,
             details = listOf("details")
         ),
-        RoomDataSourceTypeInfo(
+        RoomDataBaseEntityInfo(
             kotlinClass = DetailEntity::class,
             dao = db.getDetailDao(),
             tableName = DetailEntity.tableName
         ),
-        RoomDataSourceTypeInfo(
+        RoomDataBaseEntityInfo(
             kotlinClass = ApplicationUserEntity::class,
             dao = db.getApplicationUserDao(),
             tableName = ApplicationUserEntity.tableName
         ),
-        RoomDataSourceTypeInfo(
+        RoomDataBaseEntityInfo(
             kotlinClass = VoteEntity::class,
             dao = db.getVoteDao(),
             tableName = VoteEntity.tableName
@@ -52,9 +52,9 @@ class RoomDataSourceTypeManager @Inject constructor(
      * Получить информацию о типе по его имени.
      *
      * @param typeName Имя типа.
-     * @return [RoomDataSourceTypeInfo] указанного типа.
+     * @return [RoomDataBaseEntityInfo] указанного типа.
      */
-    fun getInfoByTypeName(typeName: String?): RoomDataSourceTypeInfo<*>? {
+    fun getInfoByTypeName(typeName: String?): RoomDataBaseEntityInfo<*>? {
         return roomTypeMap.firstOrNull { x -> x.typeName == typeName }
     }
 }

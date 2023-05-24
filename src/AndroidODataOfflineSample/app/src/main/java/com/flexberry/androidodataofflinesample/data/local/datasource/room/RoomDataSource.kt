@@ -15,9 +15,9 @@ import kotlin.reflect.KClass
  */
 open class RoomDataSource<T: Any> @Inject constructor(
     private val entityObjectClass: KClass<T>,
-    typeManager: RoomDataSourceTypeManager
+    dataBaseManager: RoomDataBaseManager
 ) : LocalDataSource<T> {
-    private val roomDataSourceCommon = RoomDataSourceCommon(typeManager)
+    private val roomDataSourceCommon = RoomDataSourceCommon(dataBaseManager)
 
     /**
      * Создать объекты.
