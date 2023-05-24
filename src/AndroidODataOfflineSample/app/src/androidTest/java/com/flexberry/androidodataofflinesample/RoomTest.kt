@@ -9,7 +9,6 @@ import com.flexberry.androidodataofflinesample.data.local.datasource.LocalDataba
 import com.flexberry.androidodataofflinesample.data.local.datasource.AppDataRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.VoteRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.ApplicationUserRoomDataSource
-import com.flexberry.androidodataofflinesample.data.local.datasource.DetailRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.MasterRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.entities.AppDataEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.ApplicationUserEntity

@@ -1,11 +1,9 @@
 package com.flexberry.androidodataofflinesample.data.local.entities
 
 import androidx.room.ColumnInfo
-import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import androidx.room.Relation
 import java.util.UUID
 
 /**
