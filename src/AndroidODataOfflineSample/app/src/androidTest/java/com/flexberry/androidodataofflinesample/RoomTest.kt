@@ -13,7 +13,7 @@ import com.flexberry.androidodataofflinesample.data.local.datasource.MasterRoomD
 import com.flexberry.androidodataofflinesample.data.local.entities.AppDataEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.ApplicationUserEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.VoteEntity
-import com.flexberry.androidodataofflinesample.data.local.datasource.RoomDataSource
+import com.flexberry.androidodataofflinesample.data.local.datasource.room.RoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.room.RoomDataSourceCommon
 import com.flexberry.androidodataofflinesample.data.local.datasource.room.RoomDataSourceTypeManager
 import com.flexberry.androidodataofflinesample.data.local.entities.DetailEntity
