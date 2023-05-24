@@ -56,10 +56,6 @@ annotation class ApplicationUserLocalDataSource
 @Retention(AnnotationRetention.BINARY)
 annotation class VoteLocalDatasource
 
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class RoomDataSourceManager
-
 @Module
 @InstallIn(SingletonComponent::class)
 object DataSourceModule {
@@ -113,8 +109,8 @@ object DataSourceModule {
             .build()
     }
 
-    @RoomDataSourceManager
     @Provides
+    @Singleton
     fun provideRoomDataSourceManager(localDatabase: LocalDatabase): RoomDataSourceTypeManager {
         return RoomDataSourceTypeManager(localDatabase)
     }

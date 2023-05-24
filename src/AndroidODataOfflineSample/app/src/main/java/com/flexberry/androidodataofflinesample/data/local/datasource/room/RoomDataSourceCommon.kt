@@ -2,7 +2,6 @@ package com.flexberry.androidodataofflinesample.data.local.datasource.room
 
 import android.util.Log
 import androidx.sqlite.db.SimpleSQLiteQuery
-import com.flexberry.androidodataofflinesample.data.di.RoomDataSourceManager
 import com.flexberry.androidodataofflinesample.data.query.Filter
 import com.flexberry.androidodataofflinesample.data.query.FilterType
 import com.flexberry.androidodataofflinesample.data.query.OrderType
@@ -18,7 +17,7 @@ import kotlin.reflect.full.declaredMemberProperties
  * @param typeManager Менеджер типов данных.
  */
 open class RoomDataSourceCommon @Inject constructor(
-    @RoomDataSourceManager val typeManager: RoomDataSourceTypeManager
+    val typeManager: RoomDataSourceTypeManager
 ) {
     /**
      * Создать объекты.
