@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.flexberry.androidodataofflinesample.data.model.Detail
 import com.flexberry.androidodataofflinesample.ui.theme.listFormBottomMenu
@@ -46,6 +47,12 @@ fun DetailListFormScreen(
         modifier = modifier.fillMaxWidth(),
     ) {
         Column() {
+            Text(
+                modifier = modifier.padding(start = 16.dp),
+                text = "Detail List",
+                style = MaterialTheme.typography.titleLarge,
+                fontSize = 48.sp
+            )
             LazyColumn(
                 modifier = modifier
                     .padding(start = 32.dp, top = 16.dp, end = 32.dp, bottom = 16.dp)
