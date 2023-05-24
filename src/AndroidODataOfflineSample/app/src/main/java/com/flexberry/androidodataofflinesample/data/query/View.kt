@@ -6,7 +6,7 @@ class View(
     val detailViews: MutableMap<String, View> = mutableMapOf()
     ) {
 
-    class PropertyTreeNode(val Name: String, val children: PropertyTree? = null)
+    class PropertyTreeNode(val name: String, val children: PropertyTree? = null)
     class PropertyTree(val listProperties: List<PropertyTreeNode>)
 
     val properties = stringedView

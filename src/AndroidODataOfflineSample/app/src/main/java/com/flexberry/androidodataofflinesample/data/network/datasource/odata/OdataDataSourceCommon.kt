@@ -448,7 +448,7 @@ open class OdataDataSourceCommon {
                 val detailProperties = detailView.propertiesTree.listProperties
                 var detailExpand = getViewExtension(detailProperties)
 
-                if (!detailProperties.any { it.Name == primaryKeyPropertyName }) {
+                if (!detailProperties.any { it.name == primaryKeyPropertyName }) {
                     detailExpand = "$primaryKeyPropertyName,$detailExpand"
                 }
 
@@ -488,11 +488,11 @@ open class OdataDataSourceCommon {
 
         tree.forEach { node ->
             if (node.children == null) {
-                resultList.add(node.Name)
+                resultList.add(node.name)
             } else {
                 val childExtension = getViewExtension(node.children.listProperties)
 
-                resultList.add("${node.Name}(${UrlParamNames.select}=$childExtension)")
+                resultList.add("${node.name}(${UrlParamNames.select}=$childExtension)")
             }
         }
 
@@ -550,7 +550,7 @@ open class OdataDataSourceCommon {
         else if (view != null) {
             val selectPropertiesList = view.propertiesTree.listProperties
                 .filter { it.children == null }
-                .map { it.Name }
+                .map { it.name }
             var selectValue = selectPropertiesList.joinToString(",")
 
             if (!selectPropertiesList.contains(primaryKeyPropertyName)) {
