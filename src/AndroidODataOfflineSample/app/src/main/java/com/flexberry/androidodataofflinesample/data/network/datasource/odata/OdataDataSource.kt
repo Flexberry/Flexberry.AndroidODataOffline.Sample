@@ -2,6 +2,7 @@ package com.flexberry.androidodataofflinesample.data.network.datasource.odata
 
 import com.flexberry.androidodataofflinesample.data.network.interfaces.NetworkDataSource
 import com.flexberry.androidodataofflinesample.data.query.QuerySettings
+import com.flexberry.androidodataofflinesample.data.query.View
 import kotlin.reflect.KClass
 
 /**
@@ -44,8 +45,8 @@ open class OdataDataSource<T : Any> (private val odataObjectClass: KClass<T>) : 
      * @param querySettings Параметры ограничения.
      * @return Список объектов.
      */
-    override fun readObjects(querySettings: QuerySettings?): List<T> {
-        return odataDataSourceCommon.readObjects(odataObjectClass, querySettings) as List<T>
+    override fun readObjects(querySettings: QuerySettings?, view: View?): List<T> {
+        return odataDataSourceCommon.readObjects(odataObjectClass, querySettings, view) as List<T>
     }
 
     /**

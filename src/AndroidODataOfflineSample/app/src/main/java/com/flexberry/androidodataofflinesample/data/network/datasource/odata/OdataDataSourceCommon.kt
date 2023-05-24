@@ -191,7 +191,7 @@ open class OdataDataSourceCommon {
      * @param kotlinClass Класс объекта.
      * @return Список объектов.
      */
-    fun readObjects(kotlinClass: KClass<*>, view: View? = null, querySettings: QuerySettings? = null): List<Any> {
+    fun readObjects(kotlinClass: KClass<*>, querySettings: QuerySettings? = null, view: View? = null): List<Any> {
         // Имя типа объекта.
         val odataObjectSimpleName = kotlinClass.simpleName
         // Информация о типе объекта.
@@ -265,10 +265,6 @@ open class OdataDataSourceCommon {
         return resultList
     }
 
-    fun readObjects(kotlinClass: KClass<*>, querySettings: QuerySettings? = null): List<Any> {
-        return readObjects(kotlinClass, null, querySettings)
-    }
-
     /**
      * Вычитать объекты.
      *
@@ -276,12 +272,8 @@ open class OdataDataSourceCommon {
      * @param querySettings Параметры ограничения.
      * @return Список объектов.
      */
-    inline fun <reified T: Any> readObjects(view: View? = null, querySettings: QuerySettings? = null) : List<T> {
-        return readObjects(T::class, view, querySettings) as List<T>
-    }
-
-    inline fun <reified T: Any> readObjects(querySettings: QuerySettings? = null) : List<T> {
-        return readObjects<T>(null, querySettings)
+    inline fun <reified T: Any> readObjects(querySettings: QuerySettings? = null, view: View? = null) : List<T> {
+        return readObjects(T::class, querySettings, view) as List<T>
     }
 
     /**
@@ -444,7 +436,6 @@ open class OdataDataSourceCommon {
      *
      * @param odataObjectClass Класс объекта.
      */
-    /// TODO: тут в будущем появится параметр в виде представления объекта.
     private fun getRequestExtension(odataObjectClass: KClass<*>, view: View? = null): String? {
         val resultList = mutableListOf<String>()
 
@@ -454,7 +445,12 @@ open class OdataDataSourceCommon {
                     .filter { it.children != null }))
 
             view.detailViews.forEach { (detailName, detailView) ->
-                val detailExpand = getViewExtension(detailView.propertiesTree.listProperties)
+                val detailProperties = detailView.propertiesTree.listProperties
+                var detailExpand = getViewExtension(detailProperties)
+
+                if (!detailProperties.any { it.Name == primaryKeyPropertyName }) {
+                    detailExpand = "$primaryKeyPropertyName,$detailExpand"
+                }
 
                 resultList.add("$detailName(${UrlParamNames.select}=$detailExpand)")
             }
@@ -481,6 +477,12 @@ open class OdataDataSourceCommon {
         }
     }
 
+    /**
+     * Получить расширание согласно [View].
+     *
+     * @param tree Дерево свойств представления.
+     * @return Extend для дерева свойств.
+     */
     private fun getViewExtension(tree: List<View.PropertyTreeNode>): String {
         val resultList = mutableListOf<String>()
 
@@ -489,12 +491,9 @@ open class OdataDataSourceCommon {
                 resultList.add(node.Name)
             } else {
                 val childExtension = getViewExtension(node.children.listProperties)
+
                 resultList.add("${node.Name}(${UrlParamNames.select}=$childExtension)")
             }
-        }
-
-        if (!resultList.contains(primaryKeyPropertyName)) {
-            resultList.add(primaryKeyPropertyName)
         }
 
         return resultList.filter { it.isNotEmpty() }.joinToString(",")
@@ -540,12 +539,24 @@ open class OdataDataSourceCommon {
         val elements: MutableList<String> = mutableListOf()
 
         if (this.selectList != null) {
-            val selectValue = this.selectList!!.joinToString(",")
+            var selectValue = this.selectList!!.joinToString(",")
+
+            if (!selectList!!.contains(primaryKeyPropertyName)) {
+                selectValue = "$primaryKeyPropertyName,$selectValue"
+            }
+
             elements.add("${UrlParamNames.select}=$selectValue")
-        } else if (view != null) {
-            val selectValue = view.propertiesTree.listProperties
+        }
+        else if (view != null) {
+            val selectPropertiesList = view.propertiesTree.listProperties
                 .filter { it.children == null }
-                .joinToString(",") { it.Name }
+                .map { it.Name }
+            var selectValue = selectPropertiesList.joinToString(",")
+
+            if (!selectPropertiesList.contains(primaryKeyPropertyName)) {
+                selectValue = "$primaryKeyPropertyName,$selectValue"
+            }
+
             elements.add("${UrlParamNames.select}=$selectValue")
         }
 
