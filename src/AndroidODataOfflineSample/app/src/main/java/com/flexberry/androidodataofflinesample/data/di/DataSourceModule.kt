@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.flexberry.androidodataofflinesample.data.local.datasource.AppDataRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.ApplicationUserRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.LocalDatabase
+import com.flexberry.androidodataofflinesample.data.local.datasource.room.RoomDataBaseManager
 import com.flexberry.androidodataofflinesample.data.local.datasource.VoteRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.entities.AppDataEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.ApplicationUserEntity
@@ -84,20 +85,20 @@ object DataSourceModule {
 
     @AppDataLocalDataSource
     @Provides
-    fun provideAppDataLocalDataSource(localDatabase: LocalDatabase): LocalDataSource<AppDataEntity> {
-        return AppDataRoomDataSource(localDatabase)
+    fun provideAppDataLocalDataSource(roomDataBaseManager: RoomDataBaseManager): LocalDataSource<AppDataEntity> {
+        return AppDataRoomDataSource(roomDataBaseManager)
     }
 
     @ApplicationUserLocalDataSource
     @Provides
-    fun provideApplicationUserLocalDataSource(localDatabase: LocalDatabase): LocalDataSource<ApplicationUserEntity> {
-        return ApplicationUserRoomDataSource(localDatabase)
+    fun provideApplicationUserLocalDataSource(roomDataBaseManager: RoomDataBaseManager): LocalDataSource<ApplicationUserEntity> {
+        return ApplicationUserRoomDataSource(roomDataBaseManager)
     }
 
     @VoteLocalDatasource
     @Provides
-    fun provideVoteLocalDatasource(localDatabase: LocalDatabase): LocalDataSource<VoteEntity> {
-        return VoteRoomDataSource(localDatabase)
+    fun provideVoteLocalDatasource(roomDataBaseManager: RoomDataBaseManager): LocalDataSource<VoteEntity> {
+        return VoteRoomDataSource(roomDataBaseManager)
     }
 
     @Provides
@@ -106,5 +107,11 @@ object DataSourceModule {
         return Room.inMemoryDatabaseBuilder(appContext, LocalDatabase::class.java)
             .allowMainThreadQueries()
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRoomDataBaseManager(localDatabase: LocalDatabase): RoomDataBaseManager {
+        return RoomDataBaseManager(localDatabase)
     }
 }

@@ -7,14 +7,23 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.flexberry.androidodataofflinesample.data.local.dao.AppDataDao
 import com.flexberry.androidodataofflinesample.data.local.dao.ApplicationUserDao
+import com.flexberry.androidodataofflinesample.data.local.dao.DetailDao
+import com.flexberry.androidodataofflinesample.data.local.dao.MasterDao
 import com.flexberry.androidodataofflinesample.data.local.dao.VoteDao
 import com.flexberry.androidodataofflinesample.data.local.entities.AppDataEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.ApplicationUserEntity
+import com.flexberry.androidodataofflinesample.data.local.entities.DetailEntity
+import com.flexberry.androidodataofflinesample.data.local.entities.MasterEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.VoteEntity
 import com.flexberry.androidodataofflinesample.data.local.utils.Converters
 
 @Database(
-    entities = [AppDataEntity::class, ApplicationUserEntity::class, VoteEntity::class],
+    entities = [
+        AppDataEntity::class,
+        ApplicationUserEntity::class,
+        VoteEntity::class,
+        MasterEntity::class,
+        DetailEntity::class],
     version = 1
 )
 @TypeConverters(Converters::class)
@@ -22,6 +31,8 @@ abstract class LocalDatabase : RoomDatabase() {
     abstract fun getAppDataDao(): AppDataDao;
     abstract fun getApplicationUserDao(): ApplicationUserDao;
     abstract fun getVoteDao(): VoteDao;
+    abstract fun getMasterDao(): MasterDao
+    abstract fun getDetailDao(): DetailDao
 
     companion object {
         private var INSTANCE: LocalDatabase? = null
