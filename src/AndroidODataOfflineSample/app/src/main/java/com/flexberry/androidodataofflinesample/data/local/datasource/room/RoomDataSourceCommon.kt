@@ -1,33 +1,33 @@
-package com.flexberry.androidodataofflinesample.data.local.datasource
+package com.flexberry.androidodataofflinesample.data.local.datasource.room
 
 import android.util.Log
 import androidx.sqlite.db.SimpleSQLiteQuery
-import com.flexberry.androidodataofflinesample.data.local.dao.BaseDao
-import com.flexberry.androidodataofflinesample.data.local.interfaces.LocalDataSource
 import com.flexberry.androidodataofflinesample.data.query.Filter
 import com.flexberry.androidodataofflinesample.data.query.FilterType
 import com.flexberry.androidodataofflinesample.data.query.OrderType
 import com.flexberry.androidodataofflinesample.data.query.QuerySettings
+import javax.inject.Inject
+import kotlin.reflect.KClass
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.isSubclassOf
 
 /**
- * Источник данных Room.
+ * Общий источник данных Room.
  *
- * @param T Тип объекта.
- * @param dao Соответствующий DAO-класс.
- * @param tableName Соответствующая таблица в БД.
- * @see [LocalDataSource].
+ * @param dataBaseManager Менеджер типов данных.
  */
-open class RoomDataSource<T: Any>(val dao: BaseDao<T>,
-                                  private val tableName: String) : LocalDataSource<T> {
+open class RoomDataSourceCommon @Inject constructor(
+    private val dataBaseManager: RoomDataBaseManager
+) {
     /**
      * Создать объекты.
      *
      * @param dataObjects Объекты данных.
      * @return Количество созданных объектов.
      */
-    override fun createObjects(vararg dataObjects: T): Int {
-        return this.createObjects(dataObjects.asList())
+    fun createObjects(vararg dataObjects: Any): Int {
+        return createObjects(dataObjects.asList())
     }
 
     /**
@@ -36,25 +36,61 @@ open class RoomDataSource<T: Any>(val dao: BaseDao<T>,
      * @param listObjects Список объектов данных.
      * @return Количество созданных объектов.
      */
-    override fun createObjects(listObjects: List<T>): Int {
-        return dao.insertObjects(listObjects).size
+    fun createObjects(listObjects: List<Any>): Int {
+        var countResult = 0
+
+        listObjects.forEach { entityObject ->
+            // Имя типа сущности.
+            val entityObjectSimpleName = entityObject::class.simpleName
+            // Информация о типе сущности.
+            val entityObjectDataBaseInfo = dataBaseManager.getDataBaseInfoForTypeName(entityObjectSimpleName)!!
+
+            countResult += entityObjectDataBaseInfo.insertObjectsToDataBase(listOf(entityObject))
+
+            // Еще надо найти детейлы (атрибуты типа List<OdataType>).
+            // И сохранить детейлы отдельно. Т.к. из json основного объекта они исключены.
+            entityObject::class.declaredMemberProperties
+                .filter { x -> entityObjectDataBaseInfo.hasDetail(x.name) }
+                .forEach { detailProperty ->
+                    // Детейловое свойство.
+                    val detailPropertyValue = (detailProperty as KProperty1<Any, List<*>?>).get(entityObject)
+                    // Список детейловых объектов.
+                    val detailList = detailPropertyValue?.filterNotNull()
+
+                    if (detailList?.any() == true) {
+                        // Создание детейлов.
+                        createObjects(detailList)
+                    }
+                }
+        }
+
+        return countResult
     }
 
     /**
      * Вычитать объекты.
      *
+     * @param kotlinClass Класс объекта.
      * @param querySettings Параметры ограничения.
      * @return Список объектов.
      */
-    override fun readObjects(querySettings: QuerySettings?): List<T> {
-        var queryParamsValue = querySettings?.getRoomDataSourceValue()
+    fun readObjects(kotlinClass: KClass<*>, querySettings: QuerySettings?): List<Any> {
+        // Имя типа сущности.
+        val entityObjectSimpleName = kotlinClass.simpleName
+        // Информация о типе сущности.
+        val entityObjectDataBaseInfo = dataBaseManager.getDataBaseInfoForTypeName(entityObjectSimpleName)!!
+        // Имя таблицы.
+        val tableName = entityObjectDataBaseInfo.tableName
+        // Параметры запроса.
+        val queryParamsValue = querySettings?.getRoomDataSourceValue()
+
         Log.v("queryParamsValue", queryParamsValue.toString())
 
-        var finalQuery = StringBuilder()
+        val finalQuery = StringBuilder()
         finalQuery.append("SELECT * FROM $tableName")
 
         queryParamsValue?.forEach{
-            if (!it.isNullOrEmpty()) {
+            if (it.isNotEmpty()) {
                 finalQuery.append(it)
             }
         }
@@ -63,37 +99,18 @@ open class RoomDataSource<T: Any>(val dao: BaseDao<T>,
 
         val simpleSQLiteQuery = SimpleSQLiteQuery(finalQuery.toString());
 
-        return dao.getObjects(simpleSQLiteQuery)
+        return entityObjectDataBaseInfo.getObjectsFromDataBase(simpleSQLiteQuery)
     }
 
     /**
-     * Обновить объекты.
+     * Вычитать объекты.
      *
-     * @param dataObjects Объекты данных.
-     * @return Количество обновленных объектов.
+     * @param T Тип объекта.
+     * @param querySettings Параметры ограничения.
+     * @return Список объектов.
      */
-    override fun updateObjects(vararg dataObjects: T): Int {
-        return this.updateObjects(dataObjects.asList())
-    }
-
-    /**
-     * Обновить объекты.
-     *
-     * @param listObjects Список объектов данных.
-     * @return Количество обновленных объектов.
-     */
-    override fun updateObjects(listObjects: List<T>): Int {
-        return dao.updateObjects(listObjects)
-    }
-
-    /**
-     * Удалить объекты.
-     *
-     * @param dataObjects Объекты данных.
-     * @return Количество удаленных объектов.
-     */
-    override fun deleteObjects(vararg dataObjects: T): Int {
-        return this.deleteObjects(dataObjects.asList())
+    inline fun <reified T: Any> readObjects(querySettings: QuerySettings? = null) : List<T> {
+        return readObjects(T::class, querySettings) as List<T>
     }
 
     /**
@@ -102,8 +119,60 @@ open class RoomDataSource<T: Any>(val dao: BaseDao<T>,
      * @param listObjects Список объектов данных.
      * @return Количество удаленных объектов.
      */
-    override fun deleteObjects(listObjects: List<T>): Int {
-        return dao.deleteObjects(listObjects)
+    fun deleteObjects(listObjects: List<Any>): Int {
+        var countResult = 0
+
+        listObjects.forEach { entityObject ->
+            // Имя типа сущности.
+            val entityObjectSimpleName = entityObject::class.simpleName
+            // Информация о типе сущности.
+            val entityObjectDataBaseInfo = dataBaseManager.getDataBaseInfoForTypeName(entityObjectSimpleName)!!
+
+            countResult += entityObjectDataBaseInfo.deleteObjectsFromDataBase(listOf(entityObject))
+        }
+
+        return countResult
+    }
+
+    /**
+     * Удалить объекты.
+     *
+     * @param dataObjects Объекты данных.
+     * @return Количество удаленных объектов.
+     */
+    fun deleteObjects(vararg dataObjects: Any): Int {
+        return deleteObjects(dataObjects.asList())
+    }
+
+    /**
+     * Обновить объекты.
+     *
+     * @param listObjects Список объектов данных.
+     * @return Количество обновленных объектов.
+     */
+    fun updateObjects(listObjects: List<Any>): Int {
+        var countResult = 0
+
+        listObjects.forEach { entityObject ->
+            // Имя типа сущности.
+            val entityObjectSimpleName = entityObject::class.simpleName
+            // Информация о типе сущности.
+            val entityObjectDataBaseInfo = dataBaseManager.getDataBaseInfoForTypeName(entityObjectSimpleName)!!
+
+            countResult += entityObjectDataBaseInfo.updateObjectsInDataBase(listOf(entityObject))
+        }
+
+        return countResult
+    }
+
+    /**
+     * Обновить объекты.
+     *
+     * @param dataObjects Объекты данных.
+     * @return Количество обновленных объектов.
+     */
+    fun updateObjects(vararg dataObjects: Any): Int {
+        return updateObjects(dataObjects.asList())
     }
 
     /**
@@ -111,25 +180,25 @@ open class RoomDataSource<T: Any>(val dao: BaseDao<T>,
      *
      * @return Список строковых значений.
      */
-    protected fun QuerySettings.getRoomDataSourceValue(): MutableList<String> {
+    private fun QuerySettings.getRoomDataSourceValue(): MutableList<String> {
         val elements: MutableList<String> = mutableListOf()
 
         if (this.selectList != null) {
             val selectValue = this.selectList!!.joinToString(",")
-            val selectValueFull = if (selectValue.isNullOrEmpty()) "*" else selectValue
+            val selectValueFull = selectValue.ifEmpty { "*" }
             elements.add(selectValueFull)
         }
 
         if (this.filterValue != null) {
-            val filterVal = "${this.filterValue!!.getRoomDataSourceValue()}"
-            val filterValFull = if (filterVal.isNullOrEmpty()) "" else " WHERE $filterVal"
+            val filterVal = this.filterValue!!.getRoomDataSourceValue()
+            val filterValFull = if (filterVal.isEmpty()) "" else " WHERE $filterVal"
             elements.add(filterValFull)
         }
 
         if (this.orderList != null) {
             val orderValue = this.orderList!!
                 .joinToString(",") { x -> "${x.first} ${x.second.getRoomDataSourceValue()}"}
-            val orderValueFull = if (orderValue.isNullOrEmpty()) "" else " ORDER BY $orderValue"
+            val orderValueFull = if (orderValue.isEmpty()) "" else " ORDER BY $orderValue"
             elements.add(orderValueFull)
         }
 

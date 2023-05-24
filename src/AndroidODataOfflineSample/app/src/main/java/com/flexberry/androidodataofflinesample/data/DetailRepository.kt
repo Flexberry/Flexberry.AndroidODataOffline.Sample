@@ -1,6 +1,9 @@
 package com.flexberry.androidodataofflinesample.data
 
+import com.flexberry.androidodataofflinesample.data.di.DetailLocalDatasource
 import com.flexberry.androidodataofflinesample.data.di.DetailNetworkDatasource
+import com.flexberry.androidodataofflinesample.data.local.entities.DetailEntity
+import com.flexberry.androidodataofflinesample.data.local.interfaces.LocalDataSource
 import com.flexberry.androidodataofflinesample.data.model.Detail
 import com.flexberry.androidodataofflinesample.data.model.asDataModel
 import com.flexberry.androidodataofflinesample.data.network.interfaces.NetworkDataSource
@@ -12,6 +15,7 @@ import javax.inject.Inject
  */
 class DetailRepository @Inject constructor(
     @DetailNetworkDatasource private val networkDataSource: NetworkDataSource<NetworkDetail>,
+    @DetailLocalDatasource private val localDataSource: LocalDataSource<DetailEntity>,
 ) {
     /**
      * Получение списка детейлов в режиме онлайн.
@@ -46,6 +50,6 @@ class DetailRepository @Inject constructor(
      * @param dataObjects Список объектов.
      */
     fun updateDetailsOffline(dataObjects: List<Detail>) {
-        //localDataSource.updateObjects(dataObjects.map { it.asLocalModel() })
+        localDataSource.updateObjects(dataObjects.map { it.asLocalModel() })
     }
 }
