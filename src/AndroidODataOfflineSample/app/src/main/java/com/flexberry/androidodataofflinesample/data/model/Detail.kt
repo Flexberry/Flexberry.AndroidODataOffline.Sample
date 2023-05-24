@@ -1,7 +1,6 @@
 package com.flexberry.androidodataofflinesample.data.model
 
 import com.flexberry.androidodataofflinesample.data.local.entities.DetailEntity
-import com.flexberry.androidodataofflinesample.data.local.entities.MasterEntity
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkDetail
 import java.util.UUID
 
