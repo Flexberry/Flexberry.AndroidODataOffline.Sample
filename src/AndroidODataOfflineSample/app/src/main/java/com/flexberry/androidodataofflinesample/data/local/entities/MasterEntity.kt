@@ -18,6 +18,17 @@ data class MasterEntity(
     @ColumnInfo(name = "name")
     val name: String? = null,
 ) {
+    constructor(
+        primarykey: UUID = UUID.randomUUID(),
+        name: String? = null,
+        details: List<DetailEntity>? = null
+    ) : this(
+        primarykey = primarykey,
+        name = name
+    ) {
+        this.details = details
+    }
+
     @Ignore
     var details: List<DetailEntity>? = null
 

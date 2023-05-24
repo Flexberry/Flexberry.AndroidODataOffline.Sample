@@ -1,5 +1,7 @@
 package com.flexberry.androidodataofflinesample.data.model
 
+import com.flexberry.androidodataofflinesample.data.local.entities.DetailEntity
+import com.flexberry.androidodataofflinesample.data.local.entities.MasterEntity
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkDetail
 import java.util.UUID
 
@@ -21,12 +23,28 @@ data class Detail(
             Master = master.asNetworkModel()
         )
     }
+
+    /**
+     * Преобразование [Detail] в [DetailEntity].
+     */
+    fun asLocalModel(): DetailEntity {
+        return DetailEntity(
+            primarykey = primarykey,
+            name = name,
+            master = master.asLocalModel()
+        )
+    }
 }
 
 /**
  * Преобразование [NetworkDetail] в [Detail].
  */
 fun NetworkDetail.asDataModel() = networkDetailAsDataModel(this)
+
+/**
+ * Преобразование [DetailEntity] в [Detail].
+ */
+fun DetailEntity.asDataModel() = detailEntityAsDataModel(this)
 
 /**
  * Преобразование [NetworkDetail] в [Detail].
@@ -36,5 +54,16 @@ private fun networkDetailAsDataModel(dataObject: NetworkDetail): Detail {
         primarykey = dataObject.__PrimaryKey,
         name = dataObject.Name,
         master = dataObject.Master.asDataModel()
+    )
+}
+
+/**
+ * Преобразование [DetailEntity] в [Detail].
+ */
+private fun detailEntityAsDataModel(entityObject: DetailEntity): Detail {
+    return Detail(
+        primarykey = entityObject.primarykey,
+        name = entityObject.name,
+        master = entityObject.master?.asDataModel() ?: Master(entityObject.masterId)
     )
 }
