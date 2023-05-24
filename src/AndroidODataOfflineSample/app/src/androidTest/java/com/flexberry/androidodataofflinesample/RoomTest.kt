@@ -436,7 +436,7 @@ class RoomTest {
     @Test
     @Throws(Exception::class)
     fun masterCommonTest() {
-        val dsCommon = RoomDataSourceCommon(db, typeManager)
+        val dsCommon = RoomDataSourceCommon(typeManager)
         val masterName = "master1 dskfhsdfgh"
 
         val master1 = MasterEntity(

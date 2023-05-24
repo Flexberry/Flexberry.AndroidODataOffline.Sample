@@ -12,7 +12,6 @@ import javax.inject.Inject
 import kotlin.reflect.KClass
 
 open class RoomDataSourceCommon @Inject constructor(
-    db: LocalDatabase,
     @RoomDataSourceManager val typeManager: RoomDataSourceTypeManager
 ) {
     fun createObjects(vararg dataObjects: Any): Int {
