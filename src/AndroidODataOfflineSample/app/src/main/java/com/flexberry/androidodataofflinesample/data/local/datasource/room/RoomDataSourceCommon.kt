@@ -12,18 +12,37 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 
+/**
+ * Общий источник данных Room.
+ *
+ * @param typeManager Менеджер типов данных.
+ */
 open class RoomDataSourceCommon @Inject constructor(
     @RoomDataSourceManager val typeManager: RoomDataSourceTypeManager
 ) {
+    /**
+     * Создать объекты.
+     *
+     * @param dataObjects Объекты данных.
+     * @return Количество созданных объектов.
+     */
     fun createObjects(vararg dataObjects: Any): Int {
         return createObjects(dataObjects.asList())
     }
 
+    /**
+     * Создать объекты.
+     *
+     * @param listObjects Список объектов данных.
+     * @return Количество созданных объектов.
+     */
     fun createObjects(listObjects: List<Any>): Int {
         var countResult = 0
 
         listObjects.forEach { entityObject ->
+            // Имя типа сущности.
             val entityObjectSimpleName = entityObject::class.simpleName
+            // Информация о типе сущности.
             val entityObjectTypeInfo = typeManager.getInfoByTypeName(entityObjectSimpleName)!!
 
             countResult += entityObjectTypeInfo.insertObjects(listOf(entityObject))
@@ -48,11 +67,23 @@ open class RoomDataSourceCommon @Inject constructor(
         return countResult
     }
 
+    /**
+     * Вычитать объекты.
+     *
+     * @param kotlinClass Класс объекта.
+     * @param querySettings Параметры ограничения.
+     * @return Список объектов.
+     */
     fun readObjects(kotlinClass: KClass<*>, querySettings: QuerySettings?): List<Any> {
+        // Имя типа сущности.
         val entityObjectSimpleName = kotlinClass.simpleName
+        // Информация о типе сущности.
         val entityObjectTypeInfo = typeManager.getInfoByTypeName(entityObjectSimpleName)!!
+        // Имя таблицы.
         val tableName = entityObjectTypeInfo.tableName
+        // Параметры запроса.
         val queryParamsValue = querySettings?.getRoomDataSourceValue()
+
         Log.v("queryParamsValue", queryParamsValue.toString())
 
         val finalQuery = StringBuilder()
@@ -71,15 +102,30 @@ open class RoomDataSourceCommon @Inject constructor(
         return entityObjectTypeInfo.getObjects(simpleSQLiteQuery)
     }
 
+    /**
+     * Вычитать объекты.
+     *
+     * @param T Тип объекта.
+     * @param querySettings Параметры ограничения.
+     * @return Список объектов.
+     */
     inline fun <reified T: Any> readObjects(querySettings: QuerySettings? = null) : List<T> {
         return readObjects(T::class, querySettings) as List<T>
     }
 
+    /**
+     * Удалить объекты.
+     *
+     * @param listObjects Список объектов данных.
+     * @return Количество удаленных объектов.
+     */
     fun deleteObjects(listObjects: List<Any>): Int {
         var countResult = 0
 
         listObjects.forEach { entityObject ->
+            // Имя типа сущности.
             val entityObjectSimpleName = entityObject::class.simpleName
+            // Информация о типе сущности.
             val entityObjectTypeInfo = typeManager.getInfoByTypeName(entityObjectSimpleName)!!
 
             countResult += entityObjectTypeInfo.deleteObjects(listOf(entityObject))
@@ -88,15 +134,29 @@ open class RoomDataSourceCommon @Inject constructor(
         return countResult
     }
 
+    /**
+     * Удалить объекты.
+     *
+     * @param dataObjects Объекты данных.
+     * @return Количество удаленных объектов.
+     */
     fun deleteObjects(vararg dataObjects: Any): Int {
         return deleteObjects(dataObjects.asList())
     }
 
+    /**
+     * Обновить объекты.
+     *
+     * @param listObjects Список объектов данных.
+     * @return Количество обновленных объектов.
+     */
     fun updateObjects(listObjects: List<Any>): Int {
         var countResult = 0
 
         listObjects.forEach { entityObject ->
+            // Имя типа сущности.
             val entityObjectSimpleName = entityObject::class.simpleName
+            // Информация о типе сущности.
             val entityObjectTypeInfo = typeManager.getInfoByTypeName(entityObjectSimpleName)!!
 
             countResult += entityObjectTypeInfo.updateObjects(listOf(entityObject))
@@ -105,6 +165,12 @@ open class RoomDataSourceCommon @Inject constructor(
         return countResult
     }
 
+    /**
+     * Обновить объекты.
+     *
+     * @param dataObjects Объекты данных.
+     * @return Количество обновленных объектов.
+     */
     fun updateObjects(vararg dataObjects: Any): Int {
         return updateObjects(dataObjects.asList())
     }

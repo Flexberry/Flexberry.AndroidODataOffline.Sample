@@ -353,6 +353,9 @@ class RoomTest {
         Assert.assertTrue(getObjectWithMaster.any { x -> x?.user?.primarykey == user1.primarykey})
     }*/
 
+    /**
+     * Тест создания и чтения записи [MasterEntity] из [MasterRoomDataSource].
+     */
     @Test
     @Throws(Exception::class)
     fun masterCreateReadTest() {
@@ -380,6 +383,10 @@ class RoomTest {
         Assert.assertEquals(countMastersDeleted, 1)
     }
 
+    /**
+     * Тест создания и чтения записей [MasterEntity] и [DetailEntity] из [RoomDataSourceCommon].
+     * Создание детейла вместе с мастером.
+     */
     @Test
     @Throws(Exception::class)
     fun masterCommonWithDetailsCreateReadDeleteTest() {
@@ -427,6 +434,9 @@ class RoomTest {
         Assert.assertEquals(countMastersDeleted, 1)
     }
 
+    /**
+     * Тест создания и чтения записи [MasterEntity] из [RoomDataSourceCommon].
+     */
     @Test
     @Throws(Exception::class)
     fun masterCommonTest() {
