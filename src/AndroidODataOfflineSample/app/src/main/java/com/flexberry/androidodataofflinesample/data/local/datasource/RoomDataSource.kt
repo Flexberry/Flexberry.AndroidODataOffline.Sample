@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.flexberry.androidodataofflinesample.data.local.dao.BaseDao
 import com.flexberry.androidodataofflinesample.data.local.interfaces.LocalDataSource
-import com.flexberry.androidodataofflinesample.data.network.datasource.odata.OdataDataSourceTypeManager
 import com.flexberry.androidodataofflinesample.data.query.Filter
 import com.flexberry.androidodataofflinesample.data.query.FilterType
 import com.flexberry.androidodataofflinesample.data.query.OrderType

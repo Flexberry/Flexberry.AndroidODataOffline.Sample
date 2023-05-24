@@ -53,7 +53,7 @@ class RoomTest {
     fun appDataCRUDTest() {
         val ds = AppDataRoomDataSource(db)
 
-        val appData1 = AppDataEntity(UUID.fromString("53b5db63-b5e1-4387-8611-748b61f5949b"),true)
+        val appData1 = AppDataEntity(UUID.randomUUID(),true)
         val appData2 = AppDataEntity(UUID.randomUUID(),false)
 
         // Добавление
@@ -68,7 +68,6 @@ class RoomTest {
         val querySettings = QuerySettings()
             .filter(
                 Filter.equalFilter("IsOnline", false)
-                //Filter.equalFilter("__primaryKey", UUID.fromString("53b5db63-b5e1-4387-8611-748b61f5949b"))
             )
         val filterData = ds.readObjects(querySettings)
         println(filterData)
