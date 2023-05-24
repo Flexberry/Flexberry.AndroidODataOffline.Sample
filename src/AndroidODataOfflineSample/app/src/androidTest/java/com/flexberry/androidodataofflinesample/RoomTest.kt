@@ -383,9 +383,8 @@ class RoomTest {
 
     @Test
     @Throws(Exception::class)
-    fun masterWithDetailsCreateReadDeleteTest() {
-        val dsMaster = MasterRoomDataSource(db)
-        val dsDetail = DetailRoomDataSource(db)
+    fun masterCommonWithDetailsCreateReadDeleteTest() {
+        val dsCommon = RoomDataSourceCommon(typeManager)
         val master1name = "master1 sgdfvmnsdeasdfcbfmnbsv"
         val detail1name = "detail1 dfjshfkjsdfkdjshf"
         val detail2name = "detail1 qewrljnqwlqlwker"
@@ -394,26 +393,22 @@ class RoomTest {
             name = master1name
         )
 
-        val countMastersCreated = dsMaster.createObjects(master1)
-
-        Assert.assertEquals(countMastersCreated, 1)
-
-        val details = listOf(
+        master1.details = listOf(
             DetailEntity(
                 name = detail1name,
-                masterId = master1.primarykey
+                master = master1
             ),
             DetailEntity(
                 name = detail2name,
-                masterId = master1.primarykey
+                master = master1
             ),
         )
 
-        val countDetailsCreated = dsDetail.createObjects(details)
+        val countMastersCreated = dsCommon.createObjects(master1)
 
-        Assert.assertEquals(countDetailsCreated, 2)
+        Assert.assertEquals(countMastersCreated, 1)
 
-        val detailsReaded = dsDetail.readObjects(
+        val detailsReaded = dsCommon.readObjects<DetailEntity>(
             QuerySettings()
                 .filter(Filter.inFilter("name", listOf(
                     detail1name,
@@ -424,11 +419,11 @@ class RoomTest {
 
         Assert.assertEquals(detailsReaded.size, 2)
 
-        val countDetailsDeleted = dsDetail.deleteObjects(details)
+        val countDetailsDeleted = dsCommon.deleteObjects(master1.details!!)
 
         Assert.assertEquals(countDetailsDeleted, 2)
 
-        val countMastersDeleted = dsMaster.deleteObjects(master1)
+        val countMastersDeleted = dsCommon.deleteObjects(master1)
 
         Assert.assertEquals(countMastersDeleted, 1)
     }

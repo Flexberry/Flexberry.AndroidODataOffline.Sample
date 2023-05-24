@@ -3,6 +3,7 @@ package com.flexberry.androidodataofflinesample.data.local.entities
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 import java.util.UUID
@@ -14,26 +15,29 @@ import java.util.UUID
 data class DetailEntity(
     @PrimaryKey
     @ColumnInfo(name = "primaryKey")
-    val primarykey : UUID = UUID.randomUUID(),
+    val primarykey: UUID = UUID.randomUUID(),
 
     @ColumnInfo(name = "name")
     val name: String? = null,
 
     @ColumnInfo(name = "master")
-    val masterId: UUID,
+    var masterId: UUID,
 ) {
+    constructor(
+        primarykey: UUID = UUID.randomUUID(),
+        name: String? = null,
+        master: MasterEntity
+    ) : this(
+        primarykey = primarykey,
+        name = name,
+        masterId = master.primarykey) {
+        this.master = master
+    }
+
+    @Ignore
+    var master: MasterEntity? = null
+
     companion object {
         const val tableName = "Detail"
     }
 }
-
-data class DetailRelations(
-    @Embedded
-    val detail: DetailEntity,
-
-    @Relation(
-        parentColumn = "master",
-        entityColumn = "primaryKey"
-    )
-    val master: MasterEntity
-)

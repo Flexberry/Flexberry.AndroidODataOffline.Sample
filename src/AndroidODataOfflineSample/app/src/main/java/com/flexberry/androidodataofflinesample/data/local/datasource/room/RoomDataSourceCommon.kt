@@ -3,13 +3,14 @@ package com.flexberry.androidodataofflinesample.data.local.datasource.room
 import android.util.Log
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.flexberry.androidodataofflinesample.data.di.RoomDataSourceManager
-import com.flexberry.androidodataofflinesample.data.local.datasource.LocalDatabase
 import com.flexberry.androidodataofflinesample.data.query.Filter
 import com.flexberry.androidodataofflinesample.data.query.FilterType
 import com.flexberry.androidodataofflinesample.data.query.OrderType
 import com.flexberry.androidodataofflinesample.data.query.QuerySettings
 import javax.inject.Inject
 import kotlin.reflect.KClass
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.declaredMemberProperties
 
 open class RoomDataSourceCommon @Inject constructor(
     @RoomDataSourceManager val typeManager: RoomDataSourceTypeManager
@@ -26,6 +27,22 @@ open class RoomDataSourceCommon @Inject constructor(
             val entityObjectTypeInfo = typeManager.getInfoByTypeName(entityObjectSimpleName)!!
 
             countResult += entityObjectTypeInfo.insertObjects(listOf(entityObject))
+
+            // Еще надо найти детейлы (атрибуты типа List<OdataType>).
+            // И сохранить детейлы отдельно. Т.к. из json основного объекта они исключены.
+            entityObject::class.declaredMemberProperties
+                .filter { x -> entityObjectTypeInfo.hasDetail(x.name) }
+                .forEach { detailProperty ->
+                    // Детейловое свойство.
+                    val detailPropertyValue = (detailProperty as KProperty1<Any, List<*>?>).get(entityObject)
+                    // Список детейловых объектов.
+                    val detailList = detailPropertyValue?.filterNotNull()
+
+                    if (detailList?.any() == true) {
+                        // Создание детейлов.
+                        createObjects(detailList)
+                    }
+                }
         }
 
         return countResult

@@ -12,7 +12,8 @@ class RoomDataSourceTypeManager @Inject constructor(
         RoomDataSourceTypeInfo(
             kotlinClass = MasterEntity::class,
             dao = db.getMasterDao(),
-            tableName = MasterEntity.tableName
+            tableName = MasterEntity.tableName,
+            details = listOf("details")
         ),
         RoomDataSourceTypeInfo(
             kotlinClass = DetailEntity::class,
