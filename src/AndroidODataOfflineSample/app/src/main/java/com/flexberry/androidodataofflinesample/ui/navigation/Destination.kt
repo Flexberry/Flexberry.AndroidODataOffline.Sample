@@ -12,10 +12,10 @@ sealed class Destination(protected val route: String, vararg params: String) {
     }
 
     object MainScreen : NoArgumentsDestination("main")
-
     object ApplicationUserListFormModelScreen : NoArgumentsDestination("users")
-
     object VoteListFormModelScreen : NoArgumentsDestination("votes")
+    object MasterListForm : NoArgumentsDestination("masters")
+    object DetailListForm : NoArgumentsDestination("details")
 }
 
 internal fun String.appendParams(vararg params: Pair<String, Any?>): String {
