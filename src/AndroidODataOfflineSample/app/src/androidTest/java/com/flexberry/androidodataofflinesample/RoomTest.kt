@@ -15,6 +15,8 @@ import com.flexberry.androidodataofflinesample.data.local.entities.AppDataEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.ApplicationUserEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.VoteEntity
 import com.flexberry.androidodataofflinesample.data.local.datasource.RoomDataSource
+import com.flexberry.androidodataofflinesample.data.local.datasource.RoomDataSourceCommon
+import com.flexberry.androidodataofflinesample.data.local.datasource.RoomDataSourceTypeManager
 import com.flexberry.androidodataofflinesample.data.local.entities.DetailEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.MasterEntity
 import com.flexberry.androidodataofflinesample.data.query.Filter
@@ -33,6 +35,7 @@ import java.util.UUID
 @RunWith(AndroidJUnit4::class)
 class RoomTest {
     private lateinit var db: LocalDatabase
+    private lateinit var typeManager: RoomDataSourceTypeManager
 
     @Before
     fun createDb() {
@@ -41,6 +44,8 @@ class RoomTest {
             // Позволяет выполнять запросы в основном потоке - только для теста
             .allowMainThreadQueries()
             .build()
+
+        typeManager = RoomDataSourceTypeManager(db)
     }
 
     @After
@@ -420,6 +425,33 @@ class RoomTest {
         Assert.assertEquals(countDetailsDeleted, 2)
 
         val countMastersDeleted = dsMaster.deleteObjects(master1)
+
+        Assert.assertEquals(countMastersDeleted, 1)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun masterCommonTest() {
+        val dsCommon = RoomDataSourceCommon(db, typeManager)
+        val masterName = "master1 dskfhsdfgh"
+
+        val master1 = MasterEntity(
+            name = masterName
+        )
+
+        val countMastersCreated = dsCommon.createObjects(master1)
+
+        Assert.assertEquals(countMastersCreated, 1)
+
+        val masters = dsCommon.readObjects<MasterEntity>(
+            QuerySettings()
+                .filter(Filter.equalFilter("name", masterName))
+                .top(10)
+        )
+
+        Assert.assertEquals(masters.size, 1)
+
+        val countMastersDeleted = dsCommon.deleteObjects(master1)
 
         Assert.assertEquals(countMastersDeleted, 1)
     }

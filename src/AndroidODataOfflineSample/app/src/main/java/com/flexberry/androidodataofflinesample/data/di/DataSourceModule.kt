@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.flexberry.androidodataofflinesample.data.local.datasource.AppDataRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.ApplicationUserRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.LocalDatabase
+import com.flexberry.androidodataofflinesample.data.local.datasource.RoomDataSourceTypeManager
 import com.flexberry.androidodataofflinesample.data.local.datasource.VoteRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.entities.AppDataEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.ApplicationUserEntity
@@ -54,6 +55,10 @@ annotation class ApplicationUserLocalDataSource
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class VoteLocalDatasource
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class RoomDataSourceManager
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -106,5 +111,11 @@ object DataSourceModule {
         return Room.inMemoryDatabaseBuilder(appContext, LocalDatabase::class.java)
             .allowMainThreadQueries()
             .build()
+    }
+
+    @RoomDataSourceManager
+    @Provides
+    fun provideRoomDataSourceManager(localDatabase: LocalDatabase): RoomDataSourceTypeManager {
+        return RoomDataSourceTypeManager(localDatabase)
     }
 }
