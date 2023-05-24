@@ -1,7 +1,7 @@
-package com.flexberry.androidodataofflinesample.navigation.di
+package com.flexberry.androidodataofflinesample.ui.navigation.di
 
-import com.flexberry.androidodataofflinesample.navigation.AppNavigator
-import com.flexberry.androidodataofflinesample.navigation.AppNavigatorImplement
+import com.flexberry.androidodataofflinesample.ui.navigation.AppNavigator
+import com.flexberry.androidodataofflinesample.ui.navigation.AppNavigatorImplement
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

@@ -1,4 +1,4 @@
-package com.flexberry.androidodataofflinesample.navigation
+package com.flexberry.androidodataofflinesample.ui.navigation
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

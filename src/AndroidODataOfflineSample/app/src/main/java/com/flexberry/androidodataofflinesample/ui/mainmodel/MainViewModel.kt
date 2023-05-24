@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.flexberry.androidodataofflinesample.ApplicationState
 import com.flexberry.androidodataofflinesample.data.AppDataRepository
 import com.flexberry.androidodataofflinesample.data.di.AppState
-import com.flexberry.androidodataofflinesample.navigation.AppNavigator
-import com.flexberry.androidodataofflinesample.navigation.Destination
+import com.flexberry.androidodataofflinesample.ui.navigation.AppNavigator
+import com.flexberry.androidodataofflinesample.ui.navigation.Destination
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

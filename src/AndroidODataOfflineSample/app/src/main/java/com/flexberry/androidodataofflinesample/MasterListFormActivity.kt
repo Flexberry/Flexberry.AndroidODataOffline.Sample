@@ -8,16 +8,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.flexberry.androidodataofflinesample.ui.navigation.BaseNavigation
-import com.flexberry.androidodataofflinesample.ui.mainmodel.MainViewModel
+import com.flexberry.androidodataofflinesample.ui.masterlistformmodel.MasterListFormScreen
+import com.flexberry.androidodataofflinesample.ui.masterlistformmodel.MasterListFormViewModel
 import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampleTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+
 @AndroidEntryPoint
-class MainActivity: ComponentActivity() {
+class MasterListFormActivity : ComponentActivity() {
 
     // Внедрение viewModel через hilt.
-    private val mainViewModel: MainViewModel by viewModels()
+    private val masterListFormViewModel: MasterListFormViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +29,7 @@ class MainActivity: ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    BaseNavigation()
+                    MasterListFormScreen(masters = emptyList())
                 }
             }
         }
