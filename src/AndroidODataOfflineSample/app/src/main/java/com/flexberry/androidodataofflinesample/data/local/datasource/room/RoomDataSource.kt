@@ -1,16 +1,9 @@
 package com.flexberry.androidodataofflinesample.data.local.datasource.room
 
-import android.util.Log
-import androidx.sqlite.db.SimpleSQLiteQuery
-import com.flexberry.androidodataofflinesample.data.local.dao.BaseDao
 import com.flexberry.androidodataofflinesample.data.local.interfaces.LocalDataSource
-import com.flexberry.androidodataofflinesample.data.query.Filter
-import com.flexberry.androidodataofflinesample.data.query.FilterType
-import com.flexberry.androidodataofflinesample.data.query.OrderType
 import com.flexberry.androidodataofflinesample.data.query.QuerySettings
 import javax.inject.Inject
 import kotlin.reflect.KClass
-import kotlin.reflect.full.isSubclassOf
 
 /**
  * Источник данных Room.
