@@ -41,17 +41,17 @@ data class DetailEntity(
             val DetailEntityE = View(
                 name = "DetailEntityE",
                 stringedView = """
-                    ${DetailEntity::name.name},
-                    ${DetailEntity::masterId.name},
-                    ${DetailEntity::master.name}.${MasterEntity::name.name}
+                    name,
+                    masterId,
+                    master.name
                 """.trimIndent()
             )
 
             val DetailEntityD = View(
                 name = "DetailEntityD",
                 stringedView = """
-                    ${DetailEntity::name.name},
-                    ${DetailEntity::masterId.name}
+                    name,
+                    masterId
                 """.trimIndent()
             )
         }

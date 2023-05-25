@@ -31,9 +31,9 @@ class RoomDataBaseManager @Inject constructor(
             tableName = MasterEntity.tableName,
             details = listOf(
                 RoomDataBaseRelation(
-                    entityProperty = MasterEntity::details.name,
+                    entityProperty = "details",
                     kotlinClass =  DetailEntity::class,
-                    relationProperty =  DetailEntity::masterId.name,
+                    relationProperty =  "masterId",
                 )
             )
         ),
@@ -43,9 +43,9 @@ class RoomDataBaseManager @Inject constructor(
             tableName = DetailEntity.tableName,
             masters = listOf(
                 RoomDataBaseRelation(
-                    entityProperty = DetailEntity::master.name,
+                    entityProperty = "master",
                     kotlinClass = MasterEntity::class,
-                    relationProperty = DetailEntity::masterId.name
+                    relationProperty = "masterId"
                 )
             )
         ),

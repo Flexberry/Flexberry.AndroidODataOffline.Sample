@@ -38,14 +38,14 @@ data class MasterEntity(
             val MasterEntityE = View(
                 name = "MasterEntityE",
                 stringedView = """
-                    ${MasterEntity::name.name}
+                    name
                 """.trimIndent()
             ).addDetail(MasterEntity::details.name, DetailEntity.Views.DetailEntityD)
 
             val MasterEntityL = View(
                 name = "MasterEntityL",
                 stringedView = """
-                    ${MasterEntity::name.name}
+                    name
                 """.trimIndent()
             )
         }
