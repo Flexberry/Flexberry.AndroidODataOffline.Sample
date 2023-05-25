@@ -522,13 +522,9 @@ open class OdataDataSourceCommon {
      *
      * @param propertyName Имя текущего свойства.
      * @param viewTree Дерево свойств представления.
-     * @param detailExpand Расширение дочернего детейла.
      * @return Extend для дерева свойств.
      */
-    private fun getViewTreeExtension(
-        propertyName: String,
-        viewTree: List<View.PropertyTreeNode>,
-        detailExpand: String? = null): String {
+    private fun getViewTreeExtension(propertyName: String, viewTree: List<View.PropertyTreeNode>): String {
         val resultList = mutableListOf<String>()
         val attributes = viewTree.map { it.name } as MutableList
         val mastersExpand = viewTree
@@ -545,11 +541,8 @@ open class OdataDataSourceCommon {
             resultList.add("${UrlParamNames.select}=$attributesValue")
         }
 
-        val expands = listOf(mastersExpand, detailExpand)
-            .filter { it?.isNotEmpty() ?: false }
-
-        if (expands.any()) {
-            resultList.add("${UrlParamNames.expand}=${expands.joinToString(",")}")
+        if (mastersExpand.isNotEmpty()) {
+            resultList.add("${UrlParamNames.expand}=$mastersExpand")
         }
 
         val result = resultList.joinToString(";")
