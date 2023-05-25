@@ -30,17 +30,24 @@ class RoomDataBaseManager @Inject constructor(
             dao = db.getMasterDao(),
             tableName = MasterEntity.tableName,
             details = listOf(
-                RoomDataBaseDetailInfo(
-                    MasterEntity::details.name,
-                    DetailEntity::class,
-                    DetailEntity::masterId.name,
+                RoomDataBaseRelation(
+                    entityProperty = MasterEntity::details.name,
+                    kotlinClass =  DetailEntity::class,
+                    relationProperty =  DetailEntity::masterId.name,
                 )
             )
         ),
         RoomDataBaseEntityInfo(
             kotlinClass = DetailEntity::class,
             dao = db.getDetailDao(),
-            tableName = DetailEntity.tableName
+            tableName = DetailEntity.tableName,
+            masters = listOf(
+                RoomDataBaseRelation(
+                    entityProperty = DetailEntity::master.name,
+                    kotlinClass = MasterEntity::class,
+                    relationProperty = DetailEntity::masterId.name
+                )
+            )
         ),
         RoomDataBaseEntityInfo(
             kotlinClass = ApplicationUserEntity::class,

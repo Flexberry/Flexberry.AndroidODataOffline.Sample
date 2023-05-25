@@ -1,24 +1,30 @@
 package com.flexberry.androidodataofflinesample.data.query
 
 class View(
-    val name: String,
-    val stringedView: String,
+    val name: String = "",
+    val stringedView: String = "",
     val detailViews: MutableMap<String, View> = mutableMapOf()
     ) {
+
+    constructor(
+        listView: List<PropertyTreeNode>
+    ) : this() {
+        this.propertiesTreeValue = PropertyTree(listView)
+    }
 
     class PropertyTreeNode(val name: String, val children: PropertyTree? = null)
     class PropertyTree(val listProperties: List<PropertyTreeNode>)
 
-    val properties = stringedView
+    val propertiesTree get() = propertiesTreeValue
+
+    private var propertiesTreeValue = getTree(stringedView
         .replace("\n", "")
         .replace("\r", "")
         .replace("\t", "")
         .replace(" ", "")
         .split(",")
         .filter { it.isNotEmpty() }
-        .map { it.trim() }
-
-    val propertiesTree = getTree(properties)
+        .map { it.trim() })
 
     fun addDetail(detailName: String, view: View): View {
         detailViews[detailName] = view

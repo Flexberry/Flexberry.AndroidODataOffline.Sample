@@ -17,7 +17,8 @@ class RoomDataBaseEntityInfo<T : Any> (
     val kotlinClass: KClass<T>,
     val dao: BaseDao<T>,
     val tableName: String,
-    val details: List<RoomDataBaseDetailInfo<*>>? = null
+    val details: List<RoomDataBaseRelation<*>>? = null,
+    val masters: List<RoomDataBaseRelation<*>>? = null
 ) {
     /**
      * Имя типа сущности.
@@ -71,10 +72,14 @@ class RoomDataBaseEntityInfo<T : Any> (
      * @return True если содержит, иначе False.
      */
     fun hasDetail(detailName: String?): Boolean {
-        return details?.any { it.name == detailName } ?: false
+        return details?.any { it.entityProperty == detailName } ?: false
     }
 
-    fun getDetailInfo(detailName: String?): RoomDataBaseDetailInfo<*>? {
-        return details?.firstOrNull { it.name == detailName }
+    fun getDetailInfo(detailName: String?): RoomDataBaseRelation<*>? {
+        return details?.firstOrNull { it.entityProperty == detailName }
+    }
+
+    fun getMasterInfo(detailName: String?): RoomDataBaseRelation<*>? {
+        return masters?.firstOrNull { it.entityProperty == detailName }
     }
 }

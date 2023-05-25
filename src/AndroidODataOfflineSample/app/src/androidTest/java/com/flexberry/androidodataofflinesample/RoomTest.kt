@@ -9,6 +9,7 @@ import com.flexberry.androidodataofflinesample.data.local.datasource.LocalDataba
 import com.flexberry.androidodataofflinesample.data.local.datasource.AppDataRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.VoteRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.ApplicationUserRoomDataSource
+import com.flexberry.androidodataofflinesample.data.local.datasource.DetailRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.datasource.MasterRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.entities.AppDataEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.ApplicationUserEntity
@@ -373,5 +374,44 @@ class RoomTest {
         val countMastersDeleted = dsCommon.deleteObjects(master1)
 
         Assert.assertEquals(countMastersDeleted, 1)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun detailCreateReadTest() {
+        val dsCommon = RoomDataSourceCommon(dataBaseManager)
+        val dsDetail = DetailRoomDataSource(dataBaseManager)
+        val master1name = "master1 sgdfvmnsdeasdfcbfmnbsv"
+        val detail1name = "detail1 dfjshfkjsdfkdjshf"
+        val detail2name = "detail1 qewrljnqwlqlwker"
+
+        val master1 = MasterEntity(
+            name = master1name
+        )
+
+        master1.details = listOf(
+            DetailEntity(
+                name = detail1name,
+                master = master1
+            ),
+            DetailEntity(
+                name = detail2name,
+                master = master1
+            ),
+        )
+
+        // Создаем мастера с детейлами.
+        val countMastersCreated = dsCommon.createObjects(master1)
+
+        Assert.assertEquals(countMastersCreated, 1)
+
+        val detailsRead = dsDetail.getDetailsWithRelations(
+            QuerySettings()
+                .filter(Filter.equalFilter("${DetailEntity::master.name}.${MasterEntity::name.name}", master1name))
+                .top(5)
+        )
+
+        Assert.assertEquals(detailsRead.size, 2)
+        Assert.assertEquals(detailsRead.filter { it.master?.name == master1name }.size, 2)
     }
 }

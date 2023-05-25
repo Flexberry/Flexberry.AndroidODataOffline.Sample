@@ -118,12 +118,41 @@ open class RoomDataSourceCommon @Inject constructor(
                         // Чтение объектов детейла.
                         val detailEntities = readObjects(
                             detailInfo.kotlinClass,
-                            QuerySettings(Filter.equalFilter(detailInfo.masterProperty, currentPrimaryKey)),
+                            QuerySettings(Filter.equalFilter(detailInfo.relationProperty, currentPrimaryKey)),
                             detailView
                         )
 
                         // Устанавливанием значение детейла.
                         (detailProperty as KMutableProperty1<Any, List<*>?>).set(currentEntity, detailEntities)
+                    }
+                }
+            }
+        }
+
+        // Смотрим мастера типа.
+        entityObjectDataBaseInfo.masters?.forEach { masterInfo ->
+            val relationProperty = kotlinClass.declaredMemberProperties
+                .filter { it.name == masterInfo.relationProperty } as KProperty1<Any, *>
+            val entityProperty = kotlinClass.declaredMemberProperties
+                .filter { it.name == masterInfo.entityProperty } as KMutableProperty1<Any, Any>
+
+            resultList.forEach { currentEntity ->
+                val relationPropertyValue = relationProperty.get(currentEntity)
+                val masterView = if (view == null) {
+                    View("", primaryKeyPropertyName)
+                } else {
+                    View(view.propertiesTree.listProperties.filter { it.name == masterInfo.entityProperty })
+                }
+
+                if (relationPropertyValue != null) {
+                    val masterEntities = readObjects(
+                        masterInfo.kotlinClass,
+                        QuerySettings(Filter.equalFilter(primaryKeyPropertyName, relationPropertyValue)),
+                        masterView
+                    )
+
+                    if (masterEntities.size == 1) {
+                        entityProperty.set(currentEntity, masterEntities[0])
                     }
                 }
             }
@@ -229,10 +258,14 @@ open class RoomDataSourceCommon @Inject constructor(
         val limitValue = topValue?.toString()
         val offsetValue = skipValue?.toString()
 
+        // Присоединить таблицы
+        var joinValue = getQueryJoins(kotlinClass, tableAliases)
+
         var resultQuery =
             """
                 SELECT ${selectValue ?: "*"} 
                 FROM $tableName 
+                $joinValue
                 ${if (whereValue != null) { "WHERE $whereValue" } else { "" }}
                 ${if (orderValue != null) { "ORDER BY $orderValue" } else { "" }}
                 ${if (limitValue != null) { "LIMIT $limitValue" } else { "" }}
@@ -240,6 +273,8 @@ open class RoomDataSourceCommon @Inject constructor(
             """
 
         resultQuery = resultQuery.trimIndent()
+
+        while (resultQuery.contains("\n\n")) resultQuery = resultQuery.replace("\n\n", "\n")
 
         return resultQuery
     }
@@ -251,7 +286,7 @@ open class RoomDataSourceCommon @Inject constructor(
      */
     private fun Filter.getRoomDataSourceValue(kotlinClass: KClass<*>): String {
         var result = ""
-        val paramNameValue = evaluateParamNameAsString(kotlinClass, paramName)
+        val paramNameValue = evaluateParamNameAsString(paramName)
         val filterTypeValue = filterType.getRoomDataSourceValue()
         val paramValueTransformed = evaluateParamValueForFilter(paramValue)
 
@@ -353,7 +388,7 @@ open class RoomDataSourceCommon @Inject constructor(
      * @param paramName Имя параметра.
      * @return Строковое значение.
      */
-    private fun evaluateParamNameAsString(kotlinClass: KClass<*>, paramName: String?): String {
+    private fun evaluateParamNameAsString(paramName: String?): String {
         if (paramName == null) return "null"
         
         val prefixIndex = paramName.indexOfLast { it == '.' }
@@ -409,5 +444,55 @@ open class RoomDataSourceCommon @Inject constructor(
         if (paramValue::class.isSubclassOf(Enum::class)) return "'$paramValue'"
 
         return "$paramValue"
+    }
+
+    private fun getQueryJoins(kotlinClass: KClass<*>, queryPathsList: List<String>, parentAlias: String? = null): String {
+        val usedPrefixes = mutableListOf<String>()
+        val thisInfo = dataBaseManager.getDataBaseInfoForTypeName(kotlinClass.simpleName)!!
+        var returnValue = ""
+
+        queryPathsList.forEach { queryPath ->
+            val indexOfDot = queryPath.indexOfFirst { it == '.' }
+            var propertyName = queryPath
+
+            if (indexOfDot > 0) {
+                propertyName = queryPath.substring(0, indexOfDot)
+
+                // Нужно для добавления промежуточных значений.
+                // Если вдруг есть сразу ограничение Мастер1.Мастер2.Мастер3....
+                if (!tableAliases.contains(propertyName)) tableAliases.add(propertyName)
+
+                // Если такой мастер уже попадался, то пропускаем.
+                if (usedPrefixes.contains(propertyName)) return@forEach // continue
+
+                usedPrefixes.add(propertyName)
+            }
+
+            val masterInfo = thisInfo.getMasterInfo(propertyName)
+
+            if (masterInfo != null) {
+                val propertyInfo = dataBaseManager.getDataBaseInfoForTypeName(masterInfo.kotlinClass.simpleName)
+
+                if (propertyInfo != null) {
+                    val tableIndex = tableAliases.indexOf(propertyName)
+                    val tableAlias = "table$tableIndex"
+                    val parentAliasValue = parentAlias ?: thisInfo.tableName
+
+                    returnValue += "LEFT JOIN ${propertyInfo.tableName} AS $tableAlias " +
+                            "ON $parentAliasValue.${masterInfo.relationProperty} = $tableAlias.$primaryKeyPropertyName\n"
+
+                    val prefixToSearch = "$propertyName."
+                    val children = queryPathsList
+                        .filter { it.startsWith(prefixToSearch) }
+                        .map { it.substring(prefixToSearch.length)}
+
+                    if (children.any()) {
+                        returnValue += getQueryJoins(masterInfo.kotlinClass, children, tableAlias)
+                    }
+                }
+            }
+        }
+
+        return returnValue
     }
 }
