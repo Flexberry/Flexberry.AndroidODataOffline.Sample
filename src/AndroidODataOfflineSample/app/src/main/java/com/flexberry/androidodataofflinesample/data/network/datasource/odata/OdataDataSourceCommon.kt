@@ -441,11 +441,11 @@ open class OdataDataSourceCommon {
 
         if (view != null) {
             resultList.add(getViewExtension(
-                view.propertiesTree.listProperties
+                view.propertiesTree
                     .filter { it.children != null }))
 
             view.detailViews.forEach { (detailName, detailView) ->
-                val detailProperties = detailView.propertiesTree.listProperties
+                val detailProperties = detailView.propertiesTree
                 var detailExpand = getViewExtension(detailProperties)
 
                 if (!detailProperties.any { it.name == primaryKeyPropertyName }) {
@@ -538,22 +538,22 @@ open class OdataDataSourceCommon {
     private fun QuerySettings.getOdataDataSourceValue(view: View? = null): String {
         val elements: MutableList<String> = mutableListOf()
 
-        if (this.selectList != null) {
-            var selectValue = this.selectList!!.joinToString(",")
-
-            if (!selectList!!.contains(primaryKeyPropertyName)) {
-                selectValue = "$primaryKeyPropertyName,$selectValue"
-            }
-
-            elements.add("${UrlParamNames.select}=$selectValue")
-        }
-        else if (view != null) {
-            val selectPropertiesList = view.propertiesTree.listProperties
+        if (view != null) {
+            val selectPropertiesList = view.propertiesTree
                 .filter { it.children == null }
                 .map { it.name }
             var selectValue = selectPropertiesList.joinToString(",")
 
             if (!selectPropertiesList.contains(primaryKeyPropertyName)) {
+                selectValue = "$primaryKeyPropertyName,$selectValue"
+            }
+
+            elements.add("${UrlParamNames.select}=$selectValue")
+        }
+        else if (this.selectList != null) {
+            var selectValue = this.selectList!!.joinToString(",")
+
+            if (!selectList!!.contains(primaryKeyPropertyName)) {
                 selectValue = "$primaryKeyPropertyName,$selectValue"
             }
 

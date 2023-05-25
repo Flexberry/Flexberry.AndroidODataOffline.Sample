@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import com.flexberry.androidodataofflinesample.data.query.View
 import java.util.UUID
 
 /**
@@ -12,10 +13,10 @@ import java.util.UUID
 @Entity(tableName = MasterEntity.tableName)
 data class MasterEntity(
     @PrimaryKey
-    @ColumnInfo(name = "primaryKey")
+    @ColumnInfo
     val primarykey: UUID = UUID.randomUUID(),
 
-    @ColumnInfo(name = "name")
+    @ColumnInfo
     val name: String? = null,
 ) {
     constructor(
@@ -31,6 +32,24 @@ data class MasterEntity(
 
     @Ignore
     var details: List<DetailEntity>? = null
+
+    class Views {
+        companion object {
+            val MasterEntityE = View(
+                name = "MasterEntityE",
+                stringedView = """
+                    name
+                """.trimIndent()
+            ).addDetail(MasterEntity::details.name, DetailEntity.Views.DetailEntityD)
+
+            val MasterEntityL = View(
+                name = "MasterEntityL",
+                stringedView = """
+                    name
+                """.trimIndent()
+            )
+        }
+    }
 
     companion object {
         const val tableName = "Master"

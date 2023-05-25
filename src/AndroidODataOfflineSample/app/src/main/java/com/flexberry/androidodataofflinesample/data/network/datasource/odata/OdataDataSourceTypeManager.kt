@@ -18,8 +18,8 @@ class OdataDataSourceTypeManager {
             OdataDataSourceTypeInfo(
                 kotlinClass = NetworkApplicationUser::class,
                 namespace = "EmberFlexberryDummy",
-                odataTypeName = "ApplicationUsers",
-                details = listOf("Votes")),
+                odataTypeName = "ApplicationUsers"
+            ),
             OdataDataSourceTypeInfo(
                 kotlinClass = NetworkVote::class,
                 namespace = "EmberFlexberryDummy",
@@ -29,12 +29,14 @@ class OdataDataSourceTypeManager {
                 kotlinClass = VoteType::class,
                 namespace = "EmberFlexberryDummy",
                 odataTypeName = "VoteType",
-                isEnum = true),
+                isEnum = true
+            ),
             OdataDataSourceTypeInfo(
                 kotlinClass = NetworkMaster::class,
                 namespace = "EmberFlexberryDummy",
                 odataTypeName = "Masters",
-                details = listOf("Detail")),
+                details = listOf(NetworkMaster::Detail.name)
+            ),
             OdataDataSourceTypeInfo(
                 kotlinClass = NetworkDetail::class,
                 namespace = "EmberFlexberryDummy",

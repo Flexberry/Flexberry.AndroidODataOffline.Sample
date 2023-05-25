@@ -2,6 +2,7 @@ package com.flexberry.androidodataofflinesample.data.local.datasource.room
 
 import com.flexberry.androidodataofflinesample.data.local.interfaces.LocalDataSource
 import com.flexberry.androidodataofflinesample.data.query.QuerySettings
+import com.flexberry.androidodataofflinesample.data.query.View
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
@@ -45,8 +46,8 @@ open class RoomDataSource<T: Any> @Inject constructor(
      * @param querySettings Параметры ограничения.
      * @return Список объектов.
      */
-    override fun readObjects(querySettings: QuerySettings?): List<T> {
-        return roomDataSourceCommon.readObjects(entityObjectClass, querySettings) as List<T>
+    override fun readObjects(querySettings: QuerySettings?, view: View?): List<T> {
+        return roomDataSourceCommon.readObjects(entityObjectClass, querySettings, view) as List<T>
     }
 
     /**

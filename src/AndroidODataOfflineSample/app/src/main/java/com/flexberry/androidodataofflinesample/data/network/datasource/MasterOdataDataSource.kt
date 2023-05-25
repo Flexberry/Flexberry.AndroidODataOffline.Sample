@@ -9,9 +9,9 @@ import com.flexberry.androidodataofflinesample.data.query.QuerySettings
  */
 class MasterOdataDataSource: OdataDataSource<NetworkMaster>(NetworkMaster::class) {
     /**
-     * Получить объекты [NetworkMaster] с детейлами и мастерами (если будут).
+     * Получить объекты [NetworkMaster] со связями.
      */
-    fun getMastersWithRelations(querySettings: QuerySettings?): List<NetworkMaster> {
+    fun getMastersWithRelations(querySettings: QuerySettings? = null): List<NetworkMaster> {
         return this.readObjects(querySettings, NetworkMaster.Views.NetworkMasterE)
     }
 }
