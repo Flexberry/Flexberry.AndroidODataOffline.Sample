@@ -538,22 +538,22 @@ open class OdataDataSourceCommon {
     private fun QuerySettings.getOdataDataSourceValue(view: View? = null): String {
         val elements: MutableList<String> = mutableListOf()
 
-        if (this.selectList != null) {
-            var selectValue = this.selectList!!.joinToString(",")
-
-            if (!selectList!!.contains(primaryKeyPropertyName)) {
-                selectValue = "$primaryKeyPropertyName,$selectValue"
-            }
-
-            elements.add("${UrlParamNames.select}=$selectValue")
-        }
-        else if (view != null) {
+        if (view != null) {
             val selectPropertiesList = view.propertiesTree.listProperties
                 .filter { it.children == null }
                 .map { it.name }
             var selectValue = selectPropertiesList.joinToString(",")
 
             if (!selectPropertiesList.contains(primaryKeyPropertyName)) {
+                selectValue = "$primaryKeyPropertyName,$selectValue"
+            }
+
+            elements.add("${UrlParamNames.select}=$selectValue")
+        }
+        else if (this.selectList != null) {
+            var selectValue = this.selectList!!.joinToString(",")
+
+            if (!selectList!!.contains(primaryKeyPropertyName)) {
                 selectValue = "$primaryKeyPropertyName,$selectValue"
             }
 

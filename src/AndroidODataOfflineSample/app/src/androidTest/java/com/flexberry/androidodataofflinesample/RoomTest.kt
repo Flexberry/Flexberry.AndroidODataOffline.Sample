@@ -66,19 +66,19 @@ class RoomTest {
 
         // Добавление
         val insertCount = ds.createObjects(listOf(appData1, appData2))
-        println(insertCount)
         Assert.assertEquals(insertCount, 2)
 
         // Вычитка
-        val allObjects = ds.readObjects()
-        println(allObjects)
+        val oneObjects = ds.readObjects(
+            QuerySettings(Filter.equalFilter(AppDataEntity::primarykey.name, appData1.primarykey)))
+
+        Assert.assertEquals(oneObjects.size, 1)
 
         val querySettings = QuerySettings()
             .filter(
                 Filter.equalFilter("IsOnline", false)
             )
         val filterData = ds.readObjects(querySettings)
-        println(filterData)
         if (filterData.any()) {
             Assert.assertTrue(filterData.any { x -> !x.isOnline })
         }
@@ -87,22 +87,18 @@ class RoomTest {
         val appData3 = AppDataEntity(appData1.primarykey, false)
         val appData4 = AppDataEntity(appData2.primarykey, true)
         val updateCount = ds.updateObjects(listOf(appData3, appData4))
-        println(updateCount)
         Assert.assertEquals(updateCount, 2)
 
         // Вычитка
         val checkUpdated = ds.readObjects()
-        println(checkUpdated)
         Assert.assertTrue(!checkUpdated[0].isOnline && checkUpdated[1].isOnline)
 
         // Удаление
         val deletedCount = ds.deleteObjects(listOf(appData1))
-        println(deletedCount)
         Assert.assertEquals(deletedCount, 1)
 
         // Вычитка
         val checkDeleted = ds.readObjects()
-        println(checkDeleted)
         Assert.assertTrue(checkDeleted.count() == 1)
     }
 
@@ -137,29 +133,23 @@ class RoomTest {
             )
 
         val data = ds.readObjects(querySettings)
-        println(data)
         Assert.assertTrue(data.isNotEmpty())
 
         // Обновление
         vote1.voteType = VoteType.Dislike
         val updateCount = ds.updateObjects(listOf(vote1))
-        println(updateCount)
         Assert.assertEquals(updateCount, 1)
 
         // Вычитка
         val checkUpdated = ds.readObjects()
-        println(checkUpdated)
         Assert.assertTrue(checkUpdated.first { x -> x.primarykey == vote1.primarykey }?.voteType == VoteType.Dislike)
 
         // Удаление
         val deletedCount = ds.deleteObjects(listOf(vote1))
-        println(deletedCount)
         Assert.assertEquals(deletedCount, 1)
 
         // Вычитка
         val checkDeleted = ds.readObjects()
-        println(checkDeleted)
-        println(checkDeleted.first()?.editor)
         Assert.assertTrue(checkDeleted.first()?.editor == "Caseberry")
     }
 
@@ -198,29 +188,23 @@ class RoomTest {
             .orderBy("Name")
 
         val data = ds.readObjects(querySettings)
-        println(data)
         Assert.assertTrue(data.isNotEmpty())
 
         // Обновление
         user1.email = "mouse@mail.ru"
         val updateCount = ds.updateObjects(listOf(user1))
-        println(updateCount)
         Assert.assertEquals(updateCount, 1)
 
         // Вычитка
         val checkUpdated = ds.readObjects()
-        println(checkUpdated)
         Assert.assertTrue(checkUpdated.first { x -> x.primarykey == user1.primarykey }?.email == "mouse@mail.ru")
 
         // Удаление
         val deletedCount = ds.deleteObjects(listOf(user1, user2))
-        println(deletedCount)
         Assert.assertEquals(deletedCount, 2)
 
         // Вычитка
         val checkDeleted = ds.readObjects()
-        println(checkDeleted)
-        println(checkDeleted.first()?.name)
         Assert.assertTrue(checkDeleted.first()?.name == "Cat")
     }
 
@@ -261,7 +245,6 @@ class RoomTest {
             )
 
         val data = ds.readObjects(querySettings)
-        println(data)
         if (data.any()) {
             Assert.assertTrue(data.any { x -> x.name == "Cat" })
             Assert.assertTrue(data.any { x -> x.name == "Rat" })
@@ -306,6 +289,7 @@ class RoomTest {
     @Throws(Exception::class)
     fun masterCommonWithDetailsCreateReadDeleteTest() {
         val dsCommon = RoomDataSourceCommon(dataBaseManager)
+        val dsMaster = MasterRoomDataSource(dataBaseManager)
         val master1name = "master1 sgdfvmnsdeasdfcbfmnbsv"
         val detail1name = "detail1 dfjshfkjsdfkdjshf"
         val detail2name = "detail1 qewrljnqwlqlwker"
@@ -325,10 +309,12 @@ class RoomTest {
             ),
         )
 
+        // Создаем мастера с детейлами.
         val countMastersCreated = dsCommon.createObjects(master1)
 
         Assert.assertEquals(countMastersCreated, 1)
 
+        // Вычитаем отдельно детейлы и проверим что все сохранилось.
         val detailsReaded = dsCommon.readObjects<DetailEntity>(
             QuerySettings()
                 .filter(Filter.inFilter("name", listOf(
@@ -340,6 +326,16 @@ class RoomTest {
 
         Assert.assertEquals(detailsReaded.size, 2)
 
+        // Вычитаем мастера полностью и проверим что он есть вместе с детейлами.
+        val mastersReaded = dsMaster.getMastersWithRelations(
+            QuerySettings(Filter.equalFilter(MasterEntity::name.name, master1name))
+                .top(10)
+        )
+
+        Assert.assertEquals(mastersReaded.size, 1)
+        Assert.assertEquals(mastersReaded[0].details?.size ?: 0, 2)
+
+        // Удаляем наши объекты.
         val countDetailsDeleted = dsCommon.deleteObjects(master1.details!!)
 
         Assert.assertEquals(countDetailsDeleted, 2)

@@ -1,13 +1,18 @@
 package com.flexberry.androidodataofflinesample.data.local.datasource.room
 
-import android.util.Log
 import androidx.sqlite.db.SimpleSQLiteQuery
+import com.flexberry.androidodataofflinesample.data.local.utils.Converters
 import com.flexberry.androidodataofflinesample.data.query.Filter
 import com.flexberry.androidodataofflinesample.data.query.FilterType
 import com.flexberry.androidodataofflinesample.data.query.OrderType
 import com.flexberry.androidodataofflinesample.data.query.QuerySettings
+import com.flexberry.androidodataofflinesample.data.query.View
+import java.sql.Date
+import java.sql.Timestamp
+import java.util.UUID
 import javax.inject.Inject
 import kotlin.reflect.KClass
+import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.isSubclassOf
@@ -20,6 +25,10 @@ import kotlin.reflect.full.isSubclassOf
 open class RoomDataSourceCommon @Inject constructor(
     private val dataBaseManager: RoomDataBaseManager
 ) {
+    private val primaryKeyPropertyName = "primarykey"
+    private val converters = Converters()
+    private val tableAliases = mutableListOf<String>()
+
     /**
      * Создать объекты.
      *
@@ -74,7 +83,7 @@ open class RoomDataSourceCommon @Inject constructor(
      * @param querySettings Параметры ограничения.
      * @return Список объектов.
      */
-    fun readObjects(kotlinClass: KClass<*>, querySettings: QuerySettings?): List<Any> {
+    fun readObjects(kotlinClass: KClass<*>, querySettings: QuerySettings?, view: View? = null): List<Any> {
         // Имя типа сущности.
         val entityObjectSimpleName = kotlinClass.simpleName
         // Информация о типе сущности.
@@ -82,24 +91,45 @@ open class RoomDataSourceCommon @Inject constructor(
         // Имя таблицы.
         val tableName = entityObjectDataBaseInfo.tableName
         // Параметры запроса.
-        val queryParamsValue = querySettings?.getRoomDataSourceValue()
+        val finalQuery = querySettings?.getRoomDataSourceValue(kotlinClass, entityObjectDataBaseInfo.tableName, view)
+            ?: "SELECT * FROM $tableName"
 
-        Log.v("queryParamsValue", queryParamsValue.toString())
+        val simpleSQLiteQuery = SimpleSQLiteQuery(finalQuery)
 
-        val finalQuery = StringBuilder()
-        finalQuery.append("SELECT * FROM $tableName")
+        val resultList = entityObjectDataBaseInfo.getObjectsFromDataBase(simpleSQLiteQuery)
 
-        queryParamsValue?.forEach{
-            if (it.isNotEmpty()) {
-                finalQuery.append(it)
+        // Смотрим детейлы представления.
+        view?.detailViews?.forEach { (detailName, detailView) ->
+            // Детейловое свойство.
+            val detailProperty = kotlinClass.declaredMemberProperties
+                .firstOrNull { it.name == detailName }
+            // Информация про детейл.
+            val detailInfo = entityObjectDataBaseInfo.getDetailInfo(detailName)
+
+            // Если такое свойство вообще есть и оно известно...
+            if (detailProperty != null && detailInfo != null) {
+
+                // ... то для каждого объекта подгрузим данные детейла.
+                resultList.forEach { currentEntity ->
+                    // Ключ текущего объекта.
+                    val currentPrimaryKey = getPrimaryKeyValue(currentEntity)
+
+                    if (currentPrimaryKey != null) {
+                        // Чтение объектов детейла.
+                        val detailEntities = readObjects(
+                            detailInfo.kotlinClass,
+                            QuerySettings(Filter.equalFilter(detailInfo.masterProperty, currentPrimaryKey)),
+                            detailView
+                        )
+
+                        // Устанавливанием значение детейла.
+                        (detailProperty as KMutableProperty1<Any, List<*>?>).set(currentEntity, detailEntities)
+                    }
+                }
             }
         }
 
-        Log.v("finalQuery", finalQuery.toString())
-
-        val simpleSQLiteQuery = SimpleSQLiteQuery(finalQuery.toString());
-
-        return entityObjectDataBaseInfo.getObjectsFromDataBase(simpleSQLiteQuery)
+        return resultList
     }
 
     /**
@@ -109,8 +139,8 @@ open class RoomDataSourceCommon @Inject constructor(
      * @param querySettings Параметры ограничения.
      * @return Список объектов.
      */
-    inline fun <reified T: Any> readObjects(querySettings: QuerySettings? = null) : List<T> {
-        return readObjects(T::class, querySettings) as List<T>
+    inline fun <reified T: Any> readObjects(querySettings: QuerySettings? = null, view: View? = null) : List<T> {
+        return readObjects(T::class, querySettings, view) as List<T>
     }
 
     /**
@@ -180,33 +210,38 @@ open class RoomDataSourceCommon @Inject constructor(
      *
      * @return Список строковых значений.
      */
-    private fun QuerySettings.getRoomDataSourceValue(): MutableList<String> {
-        val elements: MutableList<String> = mutableListOf()
+    private fun QuerySettings.getRoomDataSourceValue(kotlinClass: KClass<*>, tableName: String, view: View? = null): String {
+        // Берем список свойств из представления, иначе из настроек.
+        val selectPropertiesList = (view
+            ?.propertiesTree?.listProperties
+            ?.filter { it.children == null }
+            ?.map { it.name } ?: selectList) as MutableList<String>?
 
-        if (this.selectList != null) {
-            val selectValue = this.selectList!!.joinToString(",")
-            val selectValueFull = selectValue.ifEmpty { "*" }
-            elements.add(selectValueFull)
+        if (selectPropertiesList != null && !selectPropertiesList.contains(primaryKeyPropertyName)) {
+            selectPropertiesList.add(primaryKeyPropertyName)
         }
 
-        if (this.filterValue != null) {
-            val filterVal = this.filterValue!!.getRoomDataSourceValue()
-            val filterValFull = if (filterVal.isEmpty()) "" else " WHERE $filterVal"
-            elements.add(filterValFull)
-        }
+        val selectValue = selectPropertiesList?.joinToString(",")?.ifEmpty { null }
+        val whereValue = filterValue?.getRoomDataSourceValue(kotlinClass)?.ifEmpty { null }
+        val orderValue = this.orderList?.joinToString(",")
+            { x -> "${x.first} ${x.second.getRoomDataSourceValue()}"}
+            ?.ifEmpty { null }
+        val limitValue = topValue?.toString()
+        val offsetValue = skipValue?.toString()
 
-        if (this.orderList != null) {
-            val orderValue = this.orderList!!
-                .joinToString(",") { x -> "${x.first} ${x.second.getRoomDataSourceValue()}"}
-            val orderValueFull = if (orderValue.isEmpty()) "" else " ORDER BY $orderValue"
-            elements.add(orderValueFull)
-        }
+        var resultQuery =
+            """
+                SELECT ${selectValue ?: "*"} 
+                FROM $tableName 
+                ${if (whereValue != null) { "WHERE $whereValue" } else { "" }}
+                ${if (orderValue != null) { "ORDER BY $orderValue" } else { "" }}
+                ${if (limitValue != null) { "LIMIT $limitValue" } else { "" }}
+                ${if (offsetValue != null) { "OFFSET $offsetValue" } else { "" }}
+            """
 
-        elements.add(if (this.topValue != null) " LIMIT ${this.topValue}" else "")
+        resultQuery = resultQuery.trimIndent()
 
-        elements.add(if (this.skipValue != null) " OFFSET ${this.skipValue}" else "")
-
-        return elements
+        return resultQuery
     }
 
     /**
@@ -214,8 +249,11 @@ open class RoomDataSourceCommon @Inject constructor(
      *
      * @return Строковое значение.
      */
-    private fun Filter.getRoomDataSourceValue(): String {
+    private fun Filter.getRoomDataSourceValue(kotlinClass: KClass<*>): String {
         var result = ""
+        val paramNameValue = evaluateParamNameAsString(kotlinClass, paramName)
+        val filterTypeValue = filterType.getRoomDataSourceValue()
+        val paramValueTransformed = evaluateParamValueForFilter(paramValue)
 
         when (this.filterType) {
             FilterType.Equal,
@@ -224,36 +262,36 @@ open class RoomDataSourceCommon @Inject constructor(
             FilterType.GreaterOrEqual,
             FilterType.Less,
             FilterType.LessOrEqual -> {
-                result = "$paramName ${filterType.getRoomDataSourceValue()} ${evaluateParamValueForFilter(paramValue)}"
+                result = "$paramNameValue $filterTypeValue $paramValueTransformed"
             }
 
             FilterType.Has,
             FilterType.Contains -> {
-                result = "$paramName ${filterType.getRoomDataSourceValue()} '%$paramValue%'"
+                result = "$paramNameValue $filterTypeValue '%$paramValue%'"
             }
 
             FilterType.StartsWith -> {
-                result = "$paramName ${filterType.getRoomDataSourceValue()} '$paramValue%')"
+                result = "$paramNameValue $filterTypeValue '$paramValue%'"
             }
             FilterType.EndsWith -> {
-                result = "$paramName ${filterType.getRoomDataSourceValue()} '%$paramValue')"
+                result = "$paramNameValue $filterTypeValue '%$paramValue'"
             }
 
             FilterType.And -> {
                 result = filterParams
-                    ?.joinToString(" ${filterType.getRoomDataSourceValue()} ")
-                    { x -> x.getRoomDataSourceValue() }.toString()
+                    ?.joinToString(" $filterTypeValue ")
+                    { x -> x.getRoomDataSourceValue(kotlinClass) }.toString()
             }
 
             FilterType.Or -> {
                 result = filterParams
-                    ?.joinToString(" ${filterType.getRoomDataSourceValue()} ")
-                    { x -> "(${x.getRoomDataSourceValue()})" }.toString()
+                    ?.joinToString(" $filterTypeValue ")
+                    { x -> "(${x.getRoomDataSourceValue(kotlinClass)})" }.toString()
             }
 
             FilterType.Not -> {
-                result = "${filterType.getRoomDataSourceValue()} ${filterParams?.get(0)
-                    ?.getRoomDataSourceValue()}"
+                result = "$filterTypeValue ${filterParams?.get(0)
+                    ?.getRoomDataSourceValue(kotlinClass)}"
             }
         }
 
@@ -296,6 +334,65 @@ open class RoomDataSourceCommon @Inject constructor(
     }
 
     /**
+     * Получить значение первичного ключа в объекте.
+     *
+     * @param entityObject Объект данных.
+     * @return primaryKey: [UUID]
+     */
+    private fun getPrimaryKeyValue(entityObject: Any): UUID? {
+        // Да, но лучше вытянуть первое поле с аннотацией @PrimaryKey
+        val primaryKeyProperty =
+            entityObject::class.members.firstOrNull { it.name == primaryKeyPropertyName } as KProperty1<Any, UUID>?
+
+        return primaryKeyProperty?.get(entityObject)
+    }
+
+    /**
+     * Преобразовать имя параметра к строке для Room.
+     *
+     * @param paramName Имя параметра.
+     * @return Строковое значение.
+     */
+    private fun evaluateParamNameAsString(kotlinClass: KClass<*>, paramName: String?): String {
+        if (paramName == null) return "null"
+        
+        val prefixIndex = paramName.indexOfLast { it == '.' }
+        var returnValue = ""
+        var fieldName = paramName
+
+        if (prefixIndex > 0) {
+            val prefix = paramName.substring(0, prefixIndex)
+            
+            fieldName = paramName.substring(prefixIndex + 1)
+
+            if (!tableAliases.contains(prefix)) tableAliases.add(prefix)
+
+            val aliasIndex = tableAliases.indexOf(prefix)
+
+            returnValue = "table$aliasIndex."
+        }
+
+        // Получить имя из аннотации почему-то не предоставляется возможными.
+        // Вот почему из аннтоации ColumnInfo удалено значение name.
+        // Хочу чтобы в будущем это стало возможным...
+        /** @sample
+            val kProperty = kotlinClass.declaredMemberProperties.firstOrNull { it.name == fieldName }
+
+            returnValue += if (kProperty != null) {
+                val annotation =
+                    kProperty.findAnnotation<ColumnInfo>() ?: kProperty.getter.findAnnotation()
+
+                annotation?.name ?: fieldName
+            } else {
+                fieldName
+            }
+         */
+        returnValue += fieldName
+
+        return returnValue
+    }
+
+    /**
      * Преобразовать значение параметра к строке для Room.
      *
      * @param paramValue Значение параметра.
@@ -304,11 +401,12 @@ open class RoomDataSourceCommon @Inject constructor(
     private fun evaluateParamValueForFilter(paramValue: Any?): String {
         if (paramValue == null) return "null"
 
-        // String, Enum
-        if (paramValue is String || paramValue::class.isSubclassOf(Enum::class)) return "'$paramValue'"
-
-        // Boolean
+        if (paramValue is String) return "'$paramValue'"
         if (paramValue is Boolean) return if (paramValue) "1" else "0"
+        if (paramValue is UUID) return "'${converters.fromUUIDtoString(paramValue)}'"
+        if (paramValue is Timestamp) return converters.fromTimestampToLong(paramValue).toString()
+        if (paramValue is Date) return converters.fromDateToLong(paramValue).toString()
+        if (paramValue::class.isSubclassOf(Enum::class)) return "'$paramValue'"
 
         return "$paramValue"
     }

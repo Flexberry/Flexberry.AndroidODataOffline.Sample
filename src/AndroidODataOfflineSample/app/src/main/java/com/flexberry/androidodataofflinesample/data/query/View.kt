@@ -15,6 +15,7 @@ class View(
         .replace("\t", "")
         .replace(" ", "")
         .split(",")
+        .filter { it.isNotEmpty() }
         .map { it.trim() }
 
     val propertiesTree = getTree(properties)

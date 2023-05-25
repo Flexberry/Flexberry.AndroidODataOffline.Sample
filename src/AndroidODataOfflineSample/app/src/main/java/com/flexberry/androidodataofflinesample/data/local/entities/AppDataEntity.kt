@@ -9,10 +9,10 @@ private const val TABLE_NAME = "AppData"
 @Entity(tableName = TABLE_NAME)
 data class AppDataEntity(
     @PrimaryKey
-    @ColumnInfo(name = "__primaryKey")
+    @ColumnInfo
     val primarykey : UUID,
 
-    @ColumnInfo(name = "IsOnline")
+    @ColumnInfo
     val isOnline: Boolean
 ) {
     companion object {

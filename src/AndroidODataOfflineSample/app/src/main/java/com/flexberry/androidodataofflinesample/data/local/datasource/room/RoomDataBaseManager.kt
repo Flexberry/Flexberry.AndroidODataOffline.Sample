@@ -29,7 +29,13 @@ class RoomDataBaseManager @Inject constructor(
             kotlinClass = MasterEntity::class,
             dao = db.getMasterDao(),
             tableName = MasterEntity.tableName,
-            details = listOf("details")
+            details = listOf(
+                RoomDataBaseDetailInfo(
+                    MasterEntity::details.name,
+                    DetailEntity::class,
+                    DetailEntity::masterId.name,
+                )
+            )
         ),
         RoomDataBaseEntityInfo(
             kotlinClass = DetailEntity::class,
