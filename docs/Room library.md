@@ -47,9 +47,8 @@ data class MasterEntity(
 ## 3. Объекты доступа к данным
 *@Dao* - аннотация для объявления интерфейса (или абстрактного класса), который будет производить манипуляции с данными.
 
-В данном приложении используется интерфейс, содержащий описание четырех основных CRUD-операций:
-
 ```kotlin
+@Dao
 interface BaseDao<T> {
     @Insert
     open fun insertObjects(appData: List<T>): List<Long>
@@ -66,17 +65,23 @@ interface BaseDao<T> {
 ```
 
 - *@Insert* - аннотация, которая позволяет выполнить вставку в таблицу базы данных.
-- *@RawQuery* - аннотация, которая позволяет выполнить чтение из таблицы базы данных в случае, если строка запроса генерируется во время выполнения (как в данном приложении). *Если запрос известен заренее, то лучше отдавать предпочтение использованию аннотации **@Query***
+- *@RawQuery* - аннотация, которая позволяет выполнить чтение из таблицы базы данных в случае, если строка запроса генерируется во время выполнения (как в данном приложении):
+```kotlin
+val finalQuery = StringBuilder()
+finalQuery.append("SELECT * FROM $tableName WHERE name LIKE '%name_%'")
+val simpleSQLiteQuery = SimpleSQLiteQuery(finalQuery.toString());
+return dao.getObjects(simpleSQLiteQuery)
+```
 - *@Update* - аннотация, которая позволяет выполнить обновление некоторых строк в таблице базы данных.
 - *@Delete* - аннотация, которая позволяет выполнить удаление некоторых строк в таблице базы данных.
-
-От этого интерфейса наследуются абстрактные классы для конкретных сущностей:
+- *@Query* - аннотация, которая позволяет выполнить чтение из таблицы базы данных. Если запрос известен заренее, то лучше отдавать предпочтение использованию данной аннотации (а не **@RawQuery**). Здесь же можно использовать переданные параметры, подставив их после двоеточия в запросе:
 ```kotlin
-@Dao
-abstract class MasterDao: BaseDao<MasterEntity> {
-
-}
+@Query("SELECT * FROM BaseTable WHERE primarykey = :pk")
+open fun getObject(pk: UUID): List<T>
 ```
+
+В данном проекте от базового интерфейса наследуются абстрактные классы для конкретных сущностей. Аннотация **@Dao** в этом случае используется для наследников, и отсутствует у базового интерфейса.
+
 
 ## 4. База данных
 *@Database* - аннотация, которой помечается основной класс по работе с базой данных. Этот класс должен быть абстрактным и наследовать **RoomDatabase**:
@@ -96,6 +101,7 @@ abstract class LocalDatabase : RoomDatabase() {
 ```
 - *entities* - используемые Entity. Для каждого Entity класса из указанного списка будет создана таблица.
 - *version* - версия базы данных (нужна, например, при миграции между разными версиями БД)
+-  В данном проекте через класс базы данных получаем DAO-объекты. При этом в приложении должен быть единственный экземпляр данного класса.
 
 ## 5. Конвертация типов
 Иногда Entity-объекты могут содержать поля, которые не являются примитивами, и не могут быть сохранены в БД.
@@ -139,9 +145,67 @@ abstract class LocalDatabase : RoomDatabase() {
 
 ## 6. Внедрение базы данных Room через Hilt
 
-В данном случае класс базы данных назван *LocalDatabase*, а следующая цепочка классов в совокупности отвечает за взаимодействие с БД:
+1) В данном приложении БД существует в единственном экземпляре. Именованная регистрация происходит в специальном классе **DataSourceModule.kt**:
+```kotlin
+@Provides
+@Singleton
+fun provideLocalDatabase(@ApplicationContext appContext: Context): LocalDatabase {
+    return Room.inMemoryDatabaseBuilder(appContext, LocalDatabase::class.java)
+        .allowMainThreadQueries()
+        .build()
+}
+```
 
-1) Интерфейс с описанием общих методов CRUD-операций
+2) Здесь же регистрируем вспомогательный класс RoomDataBaseManager, параметром которого является экземпляр класса базы данных:
+```kotlin
+@Provides
+@Singleton
+fun provideRoomDataBaseManager(localDatabase: LocalDatabase): RoomDataBaseManager {
+    return RoomDataBaseManager(localDatabase)
+}
+```
+- Конструкторы сразу нескольких классов получают его в качестве параметра, поэтому он упоминается здесь. Однако для простоты примеров экземпляр данного класса не будет использоваться.
+
+3) В этом же классе определяем аннотацию для конкретного DataSource-а, и регистрируем его. В качестве параметра передается упомянутый выше RoomDataBaseManager:
+```kotlin
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class MasterLocalDataSource
+
+@MasterLocalDataSource
+@Provides
+fun provideMasterLocalDataSource(roomDataBaseManager: RoomDataBaseManager): LocalDataSource<MasterEntity> {
+    return MasterRoomDataSource(roomDataBaseManager)
+}
+```
+
+4) Затем по созданной аннотации для конкретного DataSource-а, мы подтягиваем его в репозиторий через @Inject-конструктор:
+```kotlin
+class MasterRepository @Inject constructor(
+    @MasterLocalDataSource private val localDataSource: LocalDataSource<MasterEntity>
+) {
+    // Используя экземпляр локального DataSource-а, можно вызывать метды CRUD-операций
+    fun readMastersOffline(dataObjects: List<Master>) {
+        localDataSource.readObjects().map { it.asLocalModel() }
+    }
+}
+```
+
+## 7. Пример CRUD-операций
+Рассмотрим получение объектов *MasterEntity*
+1) В репозиторий из предыдущего пункта добавим вызов метода readObjects
+```kotlin
+class MasterRepository @Inject constructor(
+    @MasterLocalDataSource private val localDataSource: LocalDataSource<MasterEntity>
+) {
+    // Используя экземпляр локального DataSource-а, можно вызывать метды CRUD-операций
+    fun readMastersOffline(dataObjects: List<Master>) {
+        localDataSource.readObjects().map { it.asLocalModel() }
+    }
+}
+```
+
+2) Описание методов CRUD-операций реализовано в интерфейсе, от которого наследуется класс репозитория:
 ```kotlin
 interface LocalDataSource<T> {
     fun createObjects(vararg dataObjects: T): Int
@@ -154,79 +218,26 @@ interface LocalDataSource<T> {
 }
 ```
 
-2) Менеджер сущностей для Room. В конструктор передается LocalDatabase, с помощью которого будет получен конкретный dao для каждой сущности (в данный класс каждая новая сущность добавляется вручную в текущем проекте)
-```kotlin
-class RoomDataBaseManager @Inject constructor(
-    db: LocalDatabase
-) {
-    // ...
-    // dao = db.getMasterDao()
-    // ...
-}
-```
-
-3) Общий источник данных Room. В конструктор передается RoomDataBaseManager из п.2.
-```kotlin
-open class RoomDataSourceCommon @Inject constructor(
-    private val dataBaseManager: RoomDataBaseManager
-) {
-    // Реализованы метод createObjects, readObjects, updateObjects, deleteObjects
-}
-```
-
-4) Источник данных Room. Наследуется от интерфейса из п.1; Создается экземпляр класса RoomDataSourceCommon из п.3; Здесь T - конкретнный Entity-класс.
-```kotlin
-open class RoomDataSource<T: Any> @Inject constructor(
-    private val entityObjectClass: KClass<T>,
-    dataBaseManager: RoomDataBaseManager
-) : LocalDataSource<T> {
-    // Экземпляр RoomDataSourceCommon, в котором находится конечная реализация базовых методов
-    private val roomDataSourceCommon = RoomDataSourceCommon(dataBaseManager)
-    
-    // Override для методов из интерфейса из п.1. Вызов конечной реализации из roomDataSourceCommon
-    override fun createObjects(vararg dataObjects: T): Int {
-        return this.createObjects(dataObjects.asList())
-    }
-
-    // ...
-    // Аналогично для readObjects, updateObjects, deleteObjects
-}
-```
-5) DataSource класс для конкретной сущности. Наследуется от RoomDataSource из п.4
+3) Конкретный DataSource (MasterRoomDataSource) в нашем случае не содержит собственных методов, т.к. они определены в базовом классе RoomDataSource:
 ```kotlin
 class MasterRoomDataSource @Inject constructor(
     dataBaseManager: RoomDataBaseManager
 ) : RoomDataSource<MasterEntity>(MasterEntity::class, dataBaseManager) {
 
 }
-```
 
-## 7. Пример CRUD-операций
-Рассмотрим создание, вычитку, обновление и удаление для *MasterEntity*
-1) Пусть у нас есть локальный DataSource из предыдущего пункта:
-```kotlin
-val ds = RoomDataSourceCommon(dataBaseManager)
+open class RoomDataSource<T: Any> @Inject constructor(
+    dataBaseManager: RoomDataBaseManager
+) : LocalDataSource<T> {
+    override fun readObjects(): List<T> {
+        // Для построения строки запроса можно передавать вспомогательный объект. Убран для простоты примера
+        val finalQuery = StringBuilder()
+        finalQuery.append("SELECT * FROM $tableName")
+
+        val simpleSQLiteQuery = SimpleSQLiteQuery(finalQuery.toString());
+
+        return MasterDao.getObjects(simpleSQLiteQuery) 
+    }
+}
 ```
-2) Прежде всего необходимо создать объект:
-```kotlin
-val master = MasterEntity(
-    name = "MasterName"
-)
-```
-3) При создании записи в БД, метод возвращает количество созданных строк:
-```kotlin
-val countMastersCreated = ds.createObjects(master)
-```
-4) Изменим имя у данного объекта и обновим. При обновлении также возвращается целое число обновленных строк:
-```kotlin
-master.name = "Mister X"
-val countMastersUpdated = ds.updateObjects(master)
-```
-5) При вычитке объектов возвращается список нужного нам типа (в данном случае *MasterEntity*). Данный пример вернет все объекты из таблицы *Master*:
-```kotlin
-val masterEntityList = ds.readObjects()
-```
-6) При удалении записей также возвращается число удаленных строк:
-```kotlin
-val countMastersDeleted = ds.deleteObjects(master)
-```
+- В данном проекте для собственного удобства были созданы классы *RoomDataSourceCommon*, *RoomDataBaseManager*, *RoomDataBaseEntityInfo*, в которые из основного класса *RoomDataSource* вынесена логика получения информации об используемом конкретном типе Entity-объектов, получение соответствующих DAO-объектов и т.д. Для простоты, данные примеры приведены без использования этих классов.
