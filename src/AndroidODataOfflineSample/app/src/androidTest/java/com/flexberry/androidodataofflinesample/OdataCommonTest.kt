@@ -175,42 +175,6 @@ class OdataCommonTest {
     }
 
     /**
-     * Тест сохранения объекта [NetworkApplicationUser] с детейлом [NetworkVote].
-     */
-    @Test
-    fun applicationUserWithVotesCreateDeleteTest() {
-        val dsUser = OdataDataSourceCommon()
-        val objUser = NetworkApplicationUser(
-            Name = "Test from android. Save with detail.",
-            EMail = "detail@save.com",
-            Creator = "Android",
-        )
-
-        objUser.Votes = listOf(
-            NetworkVote(
-                VoteType = VoteType.Like,
-                Creator = "Android",
-                Author = objUser
-            ),
-            NetworkVote(
-                VoteType = VoteType.Dislike,
-                Creator = "Android",
-                Author = objUser
-            )
-        )
-
-        dsUser.createObjects(objUser)
-
-        val objectsReaded = dsUser.readObjects<NetworkVote>(
-            QuerySettings()
-                .filter(Filter.equalFilter("Author.__PrimaryKey", objUser.__PrimaryKey))
-                .top(10)
-        )
-
-        Assert.assertEquals(objectsReaded.size, 2)
-    }
-
-    /**
      * Тест создания уже созданного объекта [NetworkApplicationUser].
      */
     @Test

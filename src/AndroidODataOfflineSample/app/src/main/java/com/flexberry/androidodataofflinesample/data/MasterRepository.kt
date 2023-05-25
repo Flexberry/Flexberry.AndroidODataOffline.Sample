@@ -2,10 +2,12 @@ package com.flexberry.androidodataofflinesample.data
 
 import com.flexberry.androidodataofflinesample.data.di.MasterLocalDataSource
 import com.flexberry.androidodataofflinesample.data.di.MasterNetworkDataSource
+import com.flexberry.androidodataofflinesample.data.local.datasource.MasterRoomDataSource
 import com.flexberry.androidodataofflinesample.data.local.entities.MasterEntity
 import com.flexberry.androidodataofflinesample.data.local.interfaces.LocalDataSource
 import com.flexberry.androidodataofflinesample.data.model.Master
 import com.flexberry.androidodataofflinesample.data.model.asDataModel
+import com.flexberry.androidodataofflinesample.data.network.datasource.MasterOdataDataSource
 import com.flexberry.androidodataofflinesample.data.network.interfaces.NetworkDataSource
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkMaster
 import javax.inject.Inject
@@ -23,7 +25,11 @@ class MasterRepository @Inject constructor(
      * @return [List] of [Master].
      */
     fun getMastersOnline(): List<Master> {
-        return networkDataSource.readObjects().map { it.asDataModel() }
+        return if (networkDataSource is MasterOdataDataSource) {
+            networkDataSource.getMastersWithRelations()
+        } else {
+            networkDataSource.readObjects()
+        }.map { it.asDataModel() }
     }
 
     /**
@@ -41,7 +47,11 @@ class MasterRepository @Inject constructor(
      * @return [List] of [Master].
      */
     fun getMastersOffline(): List<Master> {
-        return emptyList()
+        return if (localDataSource is MasterRoomDataSource) {
+            localDataSource.getMastersWithRelations()
+        } else {
+            localDataSource.readObjects()
+        }.map { it.asDataModel() }
     }
 
     /**
@@ -51,5 +61,13 @@ class MasterRepository @Inject constructor(
      */
     fun updateMastersOffline(dataObjects: List<Master>) {
         localDataSource.updateObjects(dataObjects.map { it.asLocalModel() })
+    }
+
+    fun initTestOfflineData() {
+        localDataSource.createObjects(
+            MasterEntity(name = "master1"),
+            MasterEntity(name = "master2"),
+            MasterEntity(name = "master3"),
+        )
     }
 }

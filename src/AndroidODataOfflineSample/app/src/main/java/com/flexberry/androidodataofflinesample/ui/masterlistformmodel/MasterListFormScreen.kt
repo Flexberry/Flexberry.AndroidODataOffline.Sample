@@ -42,8 +42,11 @@ import com.flexberry.androidodataofflinesample.ui.theme.listFormBottomMenu
 fun MasterListFormScreen(
     modifier: Modifier = Modifier,
     viewModel: MasterListFormViewModel = hiltViewModel(),
-    masters: List<Master> = emptyList()
 ) {
+    val mastersList = remember {
+        viewModel.masters
+    }
+
     Box(
         modifier = modifier.fillMaxWidth(),
     ) {
@@ -58,7 +61,7 @@ fun MasterListFormScreen(
                 modifier = modifier
                     .padding(start = 32.dp, top = 16.dp, end = 32.dp, bottom = 16.dp)
             ) {
-                items(masters) { master ->
+                items(mastersList.value) { master ->
                     ListItem(master, viewModel)
                 }
             }

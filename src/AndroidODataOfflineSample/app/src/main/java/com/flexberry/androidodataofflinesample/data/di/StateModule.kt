@@ -6,6 +6,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Qualifier
+import javax.inject.Singleton
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
@@ -16,6 +17,7 @@ annotation class AppState
 class StateModule {
     @AppState
     @Provides
+    @Singleton
     fun provideApplicationState(): ApplicationState {
         return ApplicationState()
     }
