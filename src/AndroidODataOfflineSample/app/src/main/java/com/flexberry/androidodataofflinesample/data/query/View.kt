@@ -15,7 +15,7 @@ class View(
     class PropertyTreeNode(val name: String, val children: PropertyTree? = null)
     class PropertyTree(val listProperties: List<PropertyTreeNode>)
 
-    val propertiesTree get() = propertiesTreeValue
+    val propertiesTree get() = propertiesTreeValue.listProperties
 
     private var propertiesTreeValue = getTree(stringedView
         .replace("\n", "")

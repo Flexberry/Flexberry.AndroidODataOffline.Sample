@@ -441,11 +441,11 @@ open class OdataDataSourceCommon {
 
         if (view != null) {
             resultList.add(getViewExtension(
-                view.propertiesTree.listProperties
+                view.propertiesTree
                     .filter { it.children != null }))
 
             view.detailViews.forEach { (detailName, detailView) ->
-                val detailProperties = detailView.propertiesTree.listProperties
+                val detailProperties = detailView.propertiesTree
                 var detailExpand = getViewExtension(detailProperties)
 
                 if (!detailProperties.any { it.name == primaryKeyPropertyName }) {
@@ -539,7 +539,7 @@ open class OdataDataSourceCommon {
         val elements: MutableList<String> = mutableListOf()
 
         if (view != null) {
-            val selectPropertiesList = view.propertiesTree.listProperties
+            val selectPropertiesList = view.propertiesTree
                 .filter { it.children == null }
                 .map { it.name }
             var selectValue = selectPropertiesList.joinToString(",")

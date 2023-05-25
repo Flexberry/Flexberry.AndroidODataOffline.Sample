@@ -132,16 +132,25 @@ open class RoomDataSourceCommon @Inject constructor(
         // Смотрим мастера типа.
         entityObjectDataBaseInfo.masters?.forEach { masterInfo ->
             val relationProperty = kotlinClass.declaredMemberProperties
-                .filter { it.name == masterInfo.relationProperty } as KProperty1<Any, *>
+                .firstOrNull { it.name == masterInfo.relationProperty } as KProperty1<Any, *>
             val entityProperty = kotlinClass.declaredMemberProperties
-                .filter { it.name == masterInfo.entityProperty } as KMutableProperty1<Any, Any>
+                .firstOrNull { it.name == masterInfo.entityProperty } as KMutableProperty1<Any, Any>
 
             resultList.forEach { currentEntity ->
                 val relationPropertyValue = relationProperty.get(currentEntity)
+
                 val masterView = if (view == null) {
                     View("", primaryKeyPropertyName)
                 } else {
-                    View(view.propertiesTree.listProperties.filter { it.name == masterInfo.entityProperty })
+                    val listProperties = view.propertiesTree
+                        .firstOrNull { it.name == masterInfo.entityProperty }
+                        ?.children?.listProperties
+
+                    if (listProperties != null) {
+                        View(listProperties)
+                    } else {
+                        View("", primaryKeyPropertyName)
+                    }
                 }
 
                 if (relationPropertyValue != null) {
@@ -242,7 +251,7 @@ open class RoomDataSourceCommon @Inject constructor(
     private fun QuerySettings.getRoomDataSourceValue(kotlinClass: KClass<*>, tableName: String, view: View? = null): String {
         // Берем список свойств из представления, иначе из настроек.
         val selectPropertiesList = (view
-            ?.propertiesTree?.listProperties
+            ?.propertiesTree
             ?.filter { it.children == null }
             ?.map { it.name } ?: selectList) as MutableList<String>?
 
@@ -250,7 +259,9 @@ open class RoomDataSourceCommon @Inject constructor(
             selectPropertiesList.add(primaryKeyPropertyName)
         }
 
-        val selectValue = selectPropertiesList?.joinToString(",")?.ifEmpty { null }
+        val selectValue = selectPropertiesList
+            ?.joinToString(",") { "$tableName.$it" }
+            ?.ifEmpty { null }
         val whereValue = filterValue?.getRoomDataSourceValue(kotlinClass)?.ifEmpty { null }
         val orderValue = this.orderList?.joinToString(",")
             { x -> "${x.first} ${x.second.getRoomDataSourceValue()}"}
