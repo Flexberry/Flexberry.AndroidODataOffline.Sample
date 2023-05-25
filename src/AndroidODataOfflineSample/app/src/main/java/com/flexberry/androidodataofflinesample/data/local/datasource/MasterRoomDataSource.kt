@@ -9,6 +9,9 @@ import javax.inject.Inject
 class MasterRoomDataSource @Inject constructor(
     dataBaseManager: RoomDataBaseManager
 ) : RoomDataSource<MasterEntity>(MasterEntity::class, dataBaseManager) {
+    /**
+     * Получить объекты [MasterEntity] со связями.
+     */
     fun getMastersWithRelations(querySettings: QuerySettings? = null): List<MasterEntity> {
         return this.readObjects(querySettings, MasterEntity.Views.MasterEntityE)
     }

@@ -25,8 +25,11 @@ import kotlin.reflect.full.isSubclassOf
 open class RoomDataSourceCommon @Inject constructor(
     private val dataBaseManager: RoomDataBaseManager
 ) {
+    // Имя свойства первичного ключа.
     private val primaryKeyPropertyName = "primarykey"
+    // Конвертация данных.
     private val converters = Converters()
+    // Список синонимов для имен таблиц (мастеров).
     private val tableAliases = mutableListOf<String>()
 
     /**
@@ -131,36 +134,49 @@ open class RoomDataSourceCommon @Inject constructor(
 
         // Смотрим мастера типа.
         entityObjectDataBaseInfo.masters?.forEach { masterInfo ->
+            // Свойство связи из которого возьмем значение первичного ключа для мастера.
             val relationProperty = kotlinClass.declaredMemberProperties
                 .firstOrNull { it.name == masterInfo.relationProperty } as KProperty1<Any, *>
+            // Свойство в которое запишем мастеровую сущность.
             val entityProperty = kotlinClass.declaredMemberProperties
                 .firstOrNull { it.name == masterInfo.entityProperty } as KMutableProperty1<Any, Any>
 
+            // Для каждой сущности.
             resultList.forEach { currentEntity ->
+                // Значение мастерового ключа.
                 val relationPropertyValue = relationProperty.get(currentEntity)
 
+                // Формируем представление мастера.
                 val masterView = if (view == null) {
+                    // Только первичный ключ.
                     View("", primaryKeyPropertyName)
                 } else {
+                    //Списку мастеровых свойств в текущем представлении.
                     val listProperties = view.propertiesTree
                         .firstOrNull { it.name == masterInfo.entityProperty }
                         ?.children?.listProperties
 
                     if (listProperties != null) {
+                        // Формируем представление по списку мастеровых свойств в текущем представлении.
                         View(listProperties)
                     } else {
+                        // Только первичный ключ.
                         View("", primaryKeyPropertyName)
                     }
                 }
 
+                // Если значение ключа мастера не пусто.
                 if (relationPropertyValue != null) {
+                    // Вычитываем мастера.
                     val masterEntities = readObjects(
                         masterInfo.kotlinClass,
                         QuerySettings(Filter.equalFilter(primaryKeyPropertyName, relationPropertyValue)),
                         masterView
                     )
 
+                    // Если мастер вычитался.
                     if (masterEntities.size == 1) {
+                        // Записываем значение мастера.
                         entityProperty.set(currentEntity, masterEntities[0])
                     }
                 }
@@ -255,23 +271,30 @@ open class RoomDataSourceCommon @Inject constructor(
             ?.filter { it.children == null }
             ?.map { it.name } ?: selectList) as MutableList<String>?
 
+        // Добавим первичный ключ, если его нет.
         if (selectPropertiesList != null && !selectPropertiesList.contains(primaryKeyPropertyName)) {
             selectPropertiesList.add(primaryKeyPropertyName)
         }
 
+        // Список возвращаемых полей.
         val selectValue = selectPropertiesList
             ?.joinToString(",") { "$tableName.$it" }
             ?.ifEmpty { null }
+        // Ограничение на вычитку.
         val whereValue = filterValue?.getRoomDataSourceValue(kotlinClass)?.ifEmpty { null }
+        // Сортировка.
         val orderValue = this.orderList?.joinToString(",")
             { x -> "${x.first} ${x.second.getRoomDataSourceValue()}"}
             ?.ifEmpty { null }
+        // Количество возвращаемых строк результата.
         val limitValue = topValue?.toString()
+        // Сколько пропустить записей в итоговом результате.
         val offsetValue = skipValue?.toString()
 
         // Присоединить таблицы
         var joinValue = getQueryJoins(kotlinClass, tableAliases)
 
+        // Итоговый запрос.
         var resultQuery =
             """
                 SELECT ${selectValue ?: "*"} 
@@ -283,6 +306,7 @@ open class RoomDataSourceCommon @Inject constructor(
                 ${if (offsetValue != null) { "OFFSET $offsetValue" } else { "" }}
             """
 
+        // Делаем его красивым.
         resultQuery = resultQuery.trimIndent()
 
         while (resultQuery.contains("\n\n")) resultQuery = resultQuery.replace("\n\n", "\n")
@@ -296,9 +320,13 @@ open class RoomDataSourceCommon @Inject constructor(
      * @return Строковое значение.
      */
     private fun Filter.getRoomDataSourceValue(kotlinClass: KClass<*>): String {
+        // Итоговый результат.
         var result = ""
+        // Приведенное имя параметра.
         val paramNameValue = evaluateParamNameAsString(paramName)
+        // Строковое значение ограничения.
         val filterTypeValue = filterType.getRoomDataSourceValue()
+        // Приведенное значение параметра.
         val paramValueTransformed = evaluateParamValueForFilter(paramValue)
 
         when (this.filterType) {
@@ -406,33 +434,24 @@ open class RoomDataSourceCommon @Inject constructor(
         var returnValue = ""
         var fieldName = paramName
 
+        // Если в имени параметра встречается точка, ограничение по мастеру.
         if (prefixIndex > 0) {
+            // Префикс свойства, имя мастра или путь до него.
             val prefix = paramName.substring(0, prefixIndex)
-            
+
+            // Имя самого свойства.
             fieldName = paramName.substring(prefixIndex + 1)
 
+            // Добавляем в синонимы.
             if (!tableAliases.contains(prefix)) tableAliases.add(prefix)
 
+            // Индекс синонима.
             val aliasIndex = tableAliases.indexOf(prefix)
 
+            // Все таблицы мстеров имеют синоним "table0","table1","table2" и т.д.
             returnValue = "table$aliasIndex."
         }
 
-        // Получить имя из аннотации почему-то не предоставляется возможными.
-        // Вот почему из аннтоации ColumnInfo удалено значение name.
-        // Хочу чтобы в будущем это стало возможным...
-        /** @sample
-            val kProperty = kotlinClass.declaredMemberProperties.firstOrNull { it.name == fieldName }
-
-            returnValue += if (kProperty != null) {
-                val annotation =
-                    kProperty.findAnnotation<ColumnInfo>() ?: kProperty.getter.findAnnotation()
-
-                annotation?.name ?: fieldName
-            } else {
-                fieldName
-            }
-         */
         returnValue += fieldName
 
         return returnValue
@@ -457,16 +476,35 @@ open class RoomDataSourceCommon @Inject constructor(
         return "$paramValue"
     }
 
-    private fun getQueryJoins(kotlinClass: KClass<*>, queryPathsList: List<String>, parentAlias: String? = null): String {
+    /**
+     * Сформировать JOIN для мастеров запроса.
+     *
+     * @param kotlinClass Тип сущности.
+     * @param queryPathsList Используемые мастера или пути до мастера.
+     * @param parentAlias Р
+     * @return JOIN чать запроса к данным.
+     */
+    private fun getQueryJoins(
+        kotlinClass: KClass<*>,
+        queryPathsList: List<String>,
+        parentAlias: String? = null,
+        parentPrefix: String? = null): String {
+        // Использованные префиксы имен мастеров.
         val usedPrefixes = mutableListOf<String>()
+        // Текущая информация базы данных сущности.
         val thisInfo = dataBaseManager.getDataBaseInfoForTypeName(kotlinClass.simpleName)!!
+        // Возвращаемое значение.
         var returnValue = ""
 
         queryPathsList.forEach { queryPath ->
+            // Индекс точки в имени мастера, вложенный мастер.
             val indexOfDot = queryPath.indexOfFirst { it == '.' }
+            // Имя мастера.
             var propertyName = queryPath
 
+            // Если есть точка в имени, значит мастер вложен.
             if (indexOfDot > 0) {
+                // Имя свойства мастера.
                 propertyName = queryPath.substring(0, indexOfDot)
 
                 // Нужно для добавления промежуточных значений.
@@ -476,29 +514,45 @@ open class RoomDataSourceCommon @Inject constructor(
                 // Если такой мастер уже попадался, то пропускаем.
                 if (usedPrefixes.contains(propertyName)) return@forEach // continue
 
+                // Добавляем в список использованных мастеров.
                 usedPrefixes.add(propertyName)
             }
 
+            // Информация о мастере сущности.
             val masterInfo = thisInfo.getMasterInfo(propertyName)
 
             if (masterInfo != null) {
+                // Информация о базе данных мастера.
                 val propertyInfo = dataBaseManager.getDataBaseInfoForTypeName(masterInfo.kotlinClass.simpleName)
 
                 if (propertyInfo != null) {
-                    val tableIndex = tableAliases.indexOf(propertyName)
+                    // Текущий полный префикс/путь мастера.
+                    val fullPrefix = if (parentPrefix != null) {
+                        "$parentPrefix."
+                    } else {
+                        ""
+                    } + propertyName
+                    // Индекс синонима мастера.
+                    val tableIndex = tableAliases.indexOf(fullPrefix)
+                    // Синоним мастера.
                     val tableAlias = "table$tableIndex"
+                    // Синоним родителя.
                     val parentAliasValue = parentAlias ?: thisInfo.tableName
 
+                    // Соедиение таблиц.
                     returnValue += "LEFT JOIN ${propertyInfo.tableName} AS $tableAlias " +
                             "ON $parentAliasValue.${masterInfo.relationProperty} = $tableAlias.$primaryKeyPropertyName\n"
 
+                    // Префикс текущего мастера с точкой.
                     val prefixToSearch = "$propertyName."
+                    // Сформируем дочерние пути до мастеров.
                     val children = queryPathsList
                         .filter { it.startsWith(prefixToSearch) }
                         .map { it.substring(prefixToSearch.length)}
 
+                    // Соединяем дочерние мастера.
                     if (children.any()) {
-                        returnValue += getQueryJoins(masterInfo.kotlinClass, children, tableAlias)
+                        returnValue += getQueryJoins(masterInfo.kotlinClass, children, tableAlias, fullPrefix)
                     }
                 }
             }

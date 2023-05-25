@@ -9,6 +9,9 @@ import javax.inject.Inject
 class DetailRoomDataSource @Inject constructor(
     dataBaseManager: RoomDataBaseManager
 ) : RoomDataSource<DetailEntity>(DetailEntity::class, dataBaseManager) {
+    /**
+     * Получить объекты [DetailEntity] со связями.
+     */
     fun getDetailsWithRelations(querySettings: QuerySettings? = null): List<DetailEntity> {
         return this.readObjects(querySettings, DetailEntity.Views.DetailEntityE)
     }

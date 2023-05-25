@@ -376,6 +376,9 @@ class RoomTest {
         Assert.assertEquals(countMastersDeleted, 1)
     }
 
+    /**
+     * Тест сохранения [DetailEntity] и вычитки его с полными связями.
+     */
     @Test
     @Throws(Exception::class)
     fun detailCreateReadTest() {
@@ -385,6 +388,7 @@ class RoomTest {
         val detail1name = "detail1 dfjshfkjsdfkdjshf"
         val detail2name = "detail1 qewrljnqwlqlwker"
 
+        // Готовим данные.
         val master1 = MasterEntity(
             name = master1name
         )
@@ -405,13 +409,16 @@ class RoomTest {
 
         Assert.assertEquals(countMastersCreated, 1)
 
+        // Вычитываем детейлы со связями, ограничивая по имени мастера.
         val detailsRead = dsDetail.getDetailsWithRelations(
             QuerySettings()
                 .filter(Filter.equalFilter("${DetailEntity::master.name}.${MasterEntity::name.name}", master1name))
                 .top(5)
         )
 
+        // Проверяем что все объекты на месте.
         Assert.assertEquals(detailsRead.size, 2)
+        // И что имя мастера прогрузилось.
         Assert.assertEquals(detailsRead.filter { it.master?.name == master1name }.size, 2)
     }
 }

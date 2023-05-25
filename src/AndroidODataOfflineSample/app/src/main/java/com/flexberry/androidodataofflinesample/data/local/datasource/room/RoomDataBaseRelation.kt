@@ -3,7 +3,7 @@ package com.flexberry.androidodataofflinesample.data.local.datasource.room
 import kotlin.reflect.KClass
 
 /**
- * Описание отношений дла детейлов и мастеров.
+ * Описание связей дла детейлов и мастеров.
  */
 class RoomDataBaseRelation<T : Any>(
     /**

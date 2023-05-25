@@ -9,7 +9,7 @@ import com.flexberry.androidodataofflinesample.data.query.QuerySettings
  */
 class DetailOdataDataSource: OdataDataSource<NetworkDetail>(NetworkDetail::class) {
     /**
-     * Получить объекты [NetworkDetail] с детейлами (если будут) и мастерами.
+     * Получить объекты [NetworkDetail] со связями.
      */
     fun getDetailsWithRelations(querySettings: QuerySettings? = null): List<NetworkDetail> {
         return this.readObjects(querySettings, NetworkDetail.Views.NetworkDetailE)

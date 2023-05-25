@@ -75,10 +75,22 @@ class RoomDataBaseEntityInfo<T : Any> (
         return details?.any { it.entityProperty == detailName } ?: false
     }
 
+    /**
+     * Получить информацию о детейле по его имени.
+     *
+     * @param detailName Имя детейла.
+     * @return Описание связи [RoomDataBaseRelation].
+     */
     fun getDetailInfo(detailName: String?): RoomDataBaseRelation<*>? {
         return details?.firstOrNull { it.entityProperty == detailName }
     }
 
+    /**
+     * Получить информацию о мастере по его имени.
+     *
+     * @param detailName Имя мастера.
+     * @return Описание связи [RoomDataBaseRelation].
+     */
     fun getMasterInfo(detailName: String?): RoomDataBaseRelation<*>? {
         return masters?.firstOrNull { it.entityProperty == detailName }
     }
