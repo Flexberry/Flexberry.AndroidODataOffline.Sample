@@ -7,7 +7,7 @@ import kotlin.reflect.KClass
  */
 class RoomDataBaseRelation<T : Any>(
     /**
-     * Свойство сущности, связанное отношением. Имя детейла или ключа мастера.
+     * Свойство сущности, связанное отношением. Имя детейла или мастера.
      */
     val entityProperty: String,
 
