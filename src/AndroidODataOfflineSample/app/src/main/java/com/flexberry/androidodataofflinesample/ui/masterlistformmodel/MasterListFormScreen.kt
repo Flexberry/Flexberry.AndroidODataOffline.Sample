@@ -43,9 +43,7 @@ fun MasterListFormScreen(
     modifier: Modifier = Modifier,
     viewModel: MasterListFormViewModel = hiltViewModel(),
 ) {
-    val mastersList = remember {
-        viewModel.masters
-    }
+    val mastersList = remember { viewModel.masters }
 
     Box(
         modifier = modifier.fillMaxWidth(),

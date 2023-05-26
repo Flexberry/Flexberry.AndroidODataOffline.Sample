@@ -28,11 +28,10 @@ class MasterListFormViewModel@Inject constructor(
         repository.initTestOfflineData()
 
         // Пример слежки за изменением онлайна.
-        snapshotFlow { applicationState.isOnline.value }
-            .onEach { isOnline ->
-                masters.value = getMasters(isOnline)
-            }
-            .launchIn(viewModelScope)
+        snapshotFlow { applicationState.isOnline.value }.onEach { isOnline ->
+            masters.value = getMasters(isOnline)
+        }
+        .launchIn(viewModelScope)
     }
 
     fun onAddMasterButtonClicked():Unit {
