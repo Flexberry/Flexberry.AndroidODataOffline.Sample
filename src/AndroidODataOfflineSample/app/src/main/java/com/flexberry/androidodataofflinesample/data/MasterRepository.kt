@@ -2,6 +2,7 @@ package com.flexberry.androidodataofflinesample.data
 
 import com.flexberry.androidodataofflinesample.data.di.MasterLocalDataSource
 import com.flexberry.androidodataofflinesample.data.di.MasterNetworkDataSource
+import com.flexberry.androidodataofflinesample.data.local.entities.DetailEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.MasterEntity
 import com.flexberry.androidodataofflinesample.data.local.interfaces.LocalDataSource
 import com.flexberry.androidodataofflinesample.data.model.Master
@@ -54,7 +55,15 @@ class MasterRepository @Inject constructor(
     }
 
     fun initTestOfflineData() {
+        val commonMaster = MasterEntity(name = "commonMaster")
+        val d1 = DetailEntity(name = "Detail One", master = commonMaster)
+        val d2 = DetailEntity(name = "Detail Two", master = commonMaster)
+        val d3 = DetailEntity(name = "Detail Three", master = commonMaster)
+
+        commonMaster.details = listOf(d1, d2, d3)
+
         localDataSource.createObjects(
+            commonMaster,
             MasterEntity(name = "master1"),
             MasterEntity(name = "master2"),
             MasterEntity(name = "master3"),
