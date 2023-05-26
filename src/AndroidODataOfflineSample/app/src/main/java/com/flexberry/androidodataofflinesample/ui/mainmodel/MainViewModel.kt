@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.flexberry.androidodataofflinesample.ApplicationState
 import com.flexberry.androidodataofflinesample.data.AppDataRepository
 import com.flexberry.androidodataofflinesample.data.MasterRepository
+import com.flexberry.androidodataofflinesample.data.TestDataRoomRepository
 import com.flexberry.androidodataofflinesample.data.di.AppState
 import com.flexberry.androidodataofflinesample.ui.navigation.AppNavigator
 import com.flexberry.androidodataofflinesample.ui.navigation.Destination
@@ -18,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val repository: AppDataRepository,
-    private val masterRepository: MasterRepository,
+    private val testDataRoomRepository: TestDataRoomRepository,
     @AppState val applicationState: ApplicationState,
     private val appNavigator: AppNavigator,
 ) : ViewModel() {
@@ -51,6 +52,6 @@ class MainViewModel @Inject constructor(
     }
 
     fun onInitTestData() {
-        masterRepository.initTestOfflineData()
+        testDataRoomRepository.initTestOfflineData()
     }
 }
