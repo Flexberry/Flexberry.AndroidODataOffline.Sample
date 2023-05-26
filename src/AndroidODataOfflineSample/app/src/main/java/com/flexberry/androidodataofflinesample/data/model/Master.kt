@@ -9,7 +9,7 @@ import java.util.UUID
  */
 data class Master(
     val primarykey: UUID,
-    val name: String? = null,
+    var name: String? = null,
     val details: List<Detail>? = null
 ) {
     /**
