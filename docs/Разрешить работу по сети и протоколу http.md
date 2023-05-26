@@ -22,3 +22,23 @@
     ...
 </application>
 ```
+
+## ThreadPolicy
+
+В стартовой активити добавить установку ThreadPolicy. Это самый простой вариант, есть более правильные решения
+
+
+```kotlin
+import android.os.StrictMode
+
+class MainActivity: ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
+
+		...
+    }
+}
+```
