@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flexberry.androidodataofflinesample.ApplicationState
 import com.flexberry.androidodataofflinesample.data.AppDataRepository
+import com.flexberry.androidodataofflinesample.data.MasterRepository
 import com.flexberry.androidodataofflinesample.data.di.AppState
 import com.flexberry.androidodataofflinesample.ui.navigation.AppNavigator
 import com.flexberry.androidodataofflinesample.ui.navigation.Destination
@@ -17,8 +18,9 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val repository: AppDataRepository,
+    private val masterRepository: MasterRepository,
     @AppState val applicationState: ApplicationState,
-    private val appNavigator: AppNavigator
+    private val appNavigator: AppNavigator,
 ) : ViewModel() {
     init {
         repository.initSettings()
@@ -46,5 +48,9 @@ class MainViewModel @Inject constructor(
         if (repository.setOnlineFlag(newValue)) {
             applicationState.setOnline(newValue)
         }
+    }
+
+    fun onInitTestData() {
+        masterRepository.initTestOfflineData()
     }
 }
