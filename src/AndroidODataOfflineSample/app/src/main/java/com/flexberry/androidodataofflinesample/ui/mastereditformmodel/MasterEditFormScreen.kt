@@ -14,12 +14,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -140,8 +137,6 @@ fun EditItem(
     fieldName: String,
     viewModel: MasterEditFormViewModel
 ) {
-    var masterName by remember { viewModel.masterName }
-
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -150,10 +145,10 @@ fun EditItem(
             modifier = modifier.weight(1f),
             text = fieldName
         )
-        TextField(
+        OutlinedTextField(
             modifier = modifier.weight(2f),
-            value = masterName,
-            onValueChange = { masterName = it },
+            value = viewModel.masterName,
+            onValueChange = { viewModel.masterName = it },
             maxLines = 1
         )
     }

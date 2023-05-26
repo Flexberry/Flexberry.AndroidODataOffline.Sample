@@ -1,6 +1,8 @@
 package com.flexberry.androidodataofflinesample.ui.mastereditformmodel
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.flexberry.androidodataofflinesample.ApplicationState
@@ -14,27 +16,29 @@ import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
-class MasterEditFormViewModel@Inject constructor(
+class MasterEditFormViewModel @Inject constructor(
     private val repository: MasterRepository,
     @AppState private val applicationState: ApplicationState,
     private val appNavigator: AppNavigator,
     savedStateHandle: SavedStateHandle
 ):ViewModel() {
-
-    var masterName = mutableStateOf("")
-    var master: Master = Master(UUID.randomUUID(),"")
+    var masterName by mutableStateOf("")
+    var master: Master = Master(UUID.randomUUID())
 
     init {
         val primaryKey =
             savedStateHandle.get<String>(Destination.MasterEditScreen.MASTER_PRIMARY_KEY) ?: ""
 
-        master = getMasterByPrimaryKey(primaryKey)
-        masterName.value = master.name ?: ""
+        master = getMasterByPrimaryKey(UUID.fromString(primaryKey)) ?: master
+        masterName = master.name ?: ""
     }
 
-    fun getMasterByPrimaryKey(primaryKey: String): Master {
-        // Изменить возвращаемое значение return на получение данных мастера по primaryKey
-        return master
+    fun getMasterByPrimaryKey(primaryKey: UUID): Master? {
+        return if (applicationState.isOnline.value) {
+            repository.getMasterByPrimaryKeyOnline(primaryKey)
+        } else {
+            repository.getMasterByPrimaryKeyOffline(primaryKey)
+        }
     }
 
     fun onCloseButtonClicked() {
@@ -43,6 +47,12 @@ class MasterEditFormViewModel@Inject constructor(
 
     fun onSaveButtonClicked() {
         // сохранение изменного Мастера
-        master.name = masterName.value
+        master.name = masterName
+
+        if (applicationState.isOnline.value) {
+            repository.updateMastersOnline(listOf(master))
+        } else {
+            repository.updateMastersOffline(listOf(master))
+        }
     }
 }

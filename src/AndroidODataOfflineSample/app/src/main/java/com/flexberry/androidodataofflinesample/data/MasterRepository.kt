@@ -8,7 +8,9 @@ import com.flexberry.androidodataofflinesample.data.model.Master
 import com.flexberry.androidodataofflinesample.data.model.asDataModel
 import com.flexberry.androidodataofflinesample.data.network.interfaces.NetworkDataSource
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkMaster
+import com.flexberry.androidodataofflinesample.data.query.Filter
 import com.flexberry.androidodataofflinesample.data.query.QuerySettings
+import java.util.UUID
 import javax.inject.Inject
 
 /**
@@ -32,6 +34,12 @@ class MasterRepository @Inject constructor(
         return networkDataSource.readObjects(querySettings, NetworkMaster.Views.NetworkMasterE).map { it.asDataModel() }
     }
 
+    fun getMasterByPrimaryKeyOnline(primaryKey: UUID): Master? {
+        return networkDataSource.readObjects(
+            QuerySettings(Filter.equalFilter("__PrimaryKey", primaryKey))
+        ).firstOrNull()?.asDataModel()
+    }
+
     /**
      * Сохранение мастеров в режиме онлайн.
      *
@@ -39,6 +47,10 @@ class MasterRepository @Inject constructor(
      */
     fun updateMastersOnline(dataObjects: List<Master>) {
         networkDataSource.updateObjects(dataObjects.map { it.asNetworkModel() })
+    }
+
+    fun deleteMastersOnline(dataObjects: List<Master>) {
+        networkDataSource.deleteObjects(dataObjects.map { it.asNetworkModel() })
     }
 
     /**
@@ -55,6 +67,12 @@ class MasterRepository @Inject constructor(
         return localDataSource.readObjects(querySettings, MasterEntity.Views.MasterEntityE).map { it.asDataModel() }
     }
 
+    fun getMasterByPrimaryKeyOffline(primaryKey: UUID): Master? {
+        return localDataSource.readObjects(
+            QuerySettings(Filter.equalFilter("primarykey", primaryKey))
+        ).firstOrNull()?.asDataModel()
+    }
+
     /**
      * Сохранение мастеров в режиме оффлайн.
      *
@@ -62,5 +80,9 @@ class MasterRepository @Inject constructor(
      */
     fun updateMastersOffline(dataObjects: List<Master>) {
         localDataSource.updateObjects(dataObjects.map { it.asLocalModel() })
+    }
+
+    fun deleteMastersOffline(dataObjects: List<Master>) {
+        localDataSource.deleteObjects(dataObjects.map { it.asLocalModel() })
     }
 }

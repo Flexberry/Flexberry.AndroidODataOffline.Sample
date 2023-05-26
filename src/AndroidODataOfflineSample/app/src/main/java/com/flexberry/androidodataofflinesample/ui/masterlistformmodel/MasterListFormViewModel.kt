@@ -16,18 +16,17 @@ import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
-class MasterListFormViewModel@Inject constructor(
+class MasterListFormViewModel @Inject constructor(
     private val repository: MasterRepository,
     @AppState private val applicationState: ApplicationState,
     private val appNavigator: AppNavigator
 ) : ViewModel() {
-
     val masters = mutableStateOf(getMasters(applicationState.isOnline.value))
 
     init {
         // Пример слежки за изменением онлайна.
-        snapshotFlow { applicationState.isOnline.value }.onEach { isOnline ->
-            masters.value = getMasters(isOnline)
+        snapshotFlow { applicationState.isOnline.value }.onEach {
+            refreshData()
         }
         .launchIn(viewModelScope)
     }
@@ -44,12 +43,22 @@ class MasterListFormViewModel@Inject constructor(
         )
     }
 
-    fun onDeleteMasterClicked():Unit {
-        // удаление пользователя
+    fun onDeleteMasterClicked(master: Master):Unit {
+        if (applicationState.isOnline.value) {
+            repository.deleteMastersOnline(listOf(master))
+        } else {
+            repository.deleteMastersOffline(listOf(master))
+        }
+
+        refreshData()
     }
 
     fun onBackButtonClicked() {
         appNavigator.tryNavigateBack(Destination.MainScreen())
+    }
+
+    override fun onCleared() {
+        super.onCleared()
     }
 
     private fun getMasters(isOnline: Boolean): List<Master> {
@@ -58,5 +67,9 @@ class MasterListFormViewModel@Inject constructor(
         } else {
             repository.getMastersOffline(10)
         }
+    }
+
+    fun refreshData() {
+        masters.value = getMasters(applicationState.isOnline.value)
     }
 }
