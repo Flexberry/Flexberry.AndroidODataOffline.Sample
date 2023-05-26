@@ -8,6 +8,7 @@ import com.flexberry.androidodataofflinesample.data.model.Master
 import com.flexberry.androidodataofflinesample.data.model.asDataModel
 import com.flexberry.androidodataofflinesample.data.network.interfaces.NetworkDataSource
 import com.flexberry.androidodataofflinesample.data.network.models.NetworkMaster
+import com.flexberry.androidodataofflinesample.data.query.QuerySettings
 import javax.inject.Inject
 
 /**
@@ -20,10 +21,15 @@ class MasterRepository @Inject constructor(
     /**
      * Получение списка мастеров в режиме онлайн.
      *
+     * @param count Количество записей.
      * @return [List] of [Master].
      */
-    fun getMastersOnline(): List<Master> {
-        return networkDataSource.readObjects(view = NetworkMaster.Views.NetworkMasterE).map { it.asDataModel() }
+    fun getMastersOnline(count: Int? = null): List<Master> {
+        var querySettings = QuerySettings()
+
+        if (count != null && count > 0) querySettings = querySettings.top(count)
+
+        return networkDataSource.readObjects(querySettings, NetworkMaster.Views.NetworkMasterE).map { it.asDataModel() }
     }
 
     /**
@@ -38,10 +44,15 @@ class MasterRepository @Inject constructor(
     /**
      * Получение списка мастеров в режиме оффлайн.
      *
+     * @param count Количество записей.
      * @return [List] of [Master].
      */
-    fun getMastersOffline(): List<Master> {
-        return localDataSource.readObjects(view = MasterEntity.Views.MasterEntityE).map { it.asDataModel() }
+    fun getMastersOffline(count: Int? = null): List<Master> {
+        var querySettings = QuerySettings()
+
+        if (count != null && count > 0) querySettings = querySettings.top(count)
+
+        return localDataSource.readObjects(querySettings, MasterEntity.Views.MasterEntityE).map { it.asDataModel() }
     }
 
     /**

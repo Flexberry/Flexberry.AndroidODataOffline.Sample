@@ -421,4 +421,56 @@ class RoomTest {
         // И что имя мастера прогрузилось.
         Assert.assertEquals(detailsRead.filter { it.master?.name == master1name }.size, 2)
     }
+
+    /**
+     * Обновление уже сохраненного объекта.
+     */
+    @Test
+    @Throws(Exception::class)
+    fun createExistedTest() {
+        val masterRoomDataSource = MasterRoomDataSource(dataBaseManager)
+        val master1 = MasterEntity(name = "tricky master")
+
+        var countMasterCreated = masterRoomDataSource.createObjects(master1)
+
+        Assert.assertEquals(countMasterCreated, 1)
+
+        countMasterCreated = masterRoomDataSource.createObjects(master1)
+
+        Assert.assertEquals(countMasterCreated, 1)
+    }
+
+    /**
+     * Обновление несохраненного объекта.
+     */
+    @Test
+    @Throws(Exception::class)
+    fun updateNewTest() {
+        val masterRoomDataSource = MasterRoomDataSource(dataBaseManager)
+        val master1 = MasterEntity(name = "tricky master")
+
+        val countMasterUpdated = masterRoomDataSource.updateObjects(master1)
+
+        Assert.assertEquals(countMasterUpdated, 1)
+
+        val mastersLoaded = masterRoomDataSource.readObjects(
+            QuerySettings(Filter.equalFilter("primarykey", master1.primarykey))
+        )
+
+        Assert.assertEquals(mastersLoaded.size, 1)
+    }
+
+    /**
+     * Удаление несуществующего объекта.
+     */
+    @Test
+    @Throws(Exception::class)
+    fun deleteNotExistedTest() {
+        val masterRoomDataSource = MasterRoomDataSource(dataBaseManager)
+        val master1 = MasterEntity(name = "tricky master")
+
+        val countMasterDeleted = masterRoomDataSource.deleteObjects(master1)
+
+        Assert.assertEquals(countMasterDeleted, 1)
+    }
 }

@@ -57,23 +57,28 @@ open class RoomDataSourceCommon @Inject constructor(
             // Информация о типе сущности.
             val entityObjectDataBaseInfo = dataBaseManager.getDataBaseInfoForTypeName(entityObjectSimpleName)!!
 
-            countResult += entityObjectDataBaseInfo.insertObjectsToDataBase(listOf(entityObject))
+            if (isEntityExists(entityObject)) {
+                countResult += updateObjects(entityObject)
+            } else {
+                countResult += entityObjectDataBaseInfo.insertObjectsToDataBase(listOf(entityObject))
 
-            // Еще надо найти детейлы (атрибуты типа List<OdataType>).
-            // И сохранить детейлы отдельно. Т.к. из json основного объекта они исключены.
-            entityObject::class.declaredMemberProperties
-                .filter { x -> entityObjectDataBaseInfo.hasDetail(x.name) }
-                .forEach { detailProperty ->
-                    // Детейловое свойство.
-                    val detailPropertyValue = (detailProperty as KProperty1<Any, List<*>?>).get(entityObject)
-                    // Список детейловых объектов.
-                    val detailList = detailPropertyValue?.filterNotNull()
+                // Еще надо найти детейлы (атрибуты типа List<OdataType>).
+                // И сохранить детейлы отдельно. Т.к. из json основного объекта они исключены.
+                entityObject::class.declaredMemberProperties
+                    .filter { x -> entityObjectDataBaseInfo.hasDetail(x.name) }
+                    .forEach { detailProperty ->
+                        // Детейловое свойство.
+                        val detailPropertyValue =
+                            (detailProperty as KProperty1<Any, List<*>?>).get(entityObject)
+                        // Список детейловых объектов.
+                        val detailList = detailPropertyValue?.filterNotNull()
 
-                    if (detailList?.any() == true) {
-                        // Создание детейлов.
-                        createObjects(detailList)
+                        if (detailList?.any() == true) {
+                            // Создание детейлов.
+                            createObjects(detailList)
+                        }
                     }
-                }
+            }
         }
 
         return countResult
@@ -212,7 +217,11 @@ open class RoomDataSourceCommon @Inject constructor(
             // Информация о типе сущности.
             val entityObjectDataBaseInfo = dataBaseManager.getDataBaseInfoForTypeName(entityObjectSimpleName)!!
 
-            countResult += entityObjectDataBaseInfo.deleteObjectsFromDataBase(listOf(entityObject))
+            countResult += if (!isEntityExists(entityObject)) {
+                1
+            } else {
+                entityObjectDataBaseInfo.deleteObjectsFromDataBase(listOf(entityObject))
+            }
         }
 
         return countResult
@@ -243,7 +252,28 @@ open class RoomDataSourceCommon @Inject constructor(
             // Информация о типе сущности.
             val entityObjectDataBaseInfo = dataBaseManager.getDataBaseInfoForTypeName(entityObjectSimpleName)!!
 
-            countResult += entityObjectDataBaseInfo.updateObjectsInDataBase(listOf(entityObject))
+            if (!isEntityExists(entityObject)) {
+                countResult += createObjects(entityObject)
+            } else {
+                countResult += entityObjectDataBaseInfo.updateObjectsInDataBase(listOf(entityObject))
+
+                // Еще надо найти детейлы (атрибуты типа List<OdataType>).
+                // И сохранить детейлы отдельно. Т.к. из json основного объекта они исключены.
+                entityObject::class.declaredMemberProperties
+                    .filter { x -> entityObjectDataBaseInfo.hasDetail(x.name) }
+                    .forEach { detailProperty ->
+                        // Детейловое свойство.
+                        val detailPropertyValue =
+                            (detailProperty as KProperty1<Any, List<*>?>).get(entityObject)
+                        // Список детейловых объектов.
+                        val detailList = detailPropertyValue?.filterNotNull()
+
+                        if (detailList?.any() == true) {
+                            // Создание детейлов.
+                            updateObjects(detailList)
+                        }
+                    }
+            }
         }
 
         return countResult
@@ -559,5 +589,14 @@ open class RoomDataSourceCommon @Inject constructor(
         }
 
         return returnValue
+    }
+
+    fun isEntityExists(entityObject: Any): Boolean {
+        val primaryKeyValue = getPrimaryKeyValue(entityObject)!!
+        val existedObject = readObjects(entityObject::class,
+            QuerySettings(Filter.equalFilter(primaryKeyPropertyName, primaryKeyValue))
+        )
+
+        return existedObject.isNotEmpty()
     }
 }

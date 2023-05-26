@@ -8,6 +8,7 @@ import com.flexberry.androidodataofflinesample.ApplicationState
 import com.flexberry.androidodataofflinesample.data.AppDataRepository
 import com.flexberry.androidodataofflinesample.data.MasterRepository
 import com.flexberry.androidodataofflinesample.data.di.AppState
+import com.flexberry.androidodataofflinesample.data.synchonization.SynchronizationService
 import com.flexberry.androidodataofflinesample.ui.navigation.AppNavigator
 import com.flexberry.androidodataofflinesample.ui.navigation.Destination
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +22,7 @@ class MainViewModel @Inject constructor(
     private val masterRepository: MasterRepository,
     @AppState val applicationState: ApplicationState,
     private val appNavigator: AppNavigator,
+    private val synchronizationService: SynchronizationService
 ) : ViewModel() {
     init {
         repository.initSettings()
@@ -43,10 +45,14 @@ class MainViewModel @Inject constructor(
     }
 
     fun onOfflineButtonClicked():Unit {
-        val newValue = !applicationState.isOnline.value;
+        val isOnlineNewValue = !applicationState.isOnline.value;
 
-        if (repository.setOnlineFlag(newValue)) {
-            applicationState.setOnline(newValue)
+        if (repository.setOnlineFlag(isOnlineNewValue)) {
+            if (!isOnlineNewValue) {
+                synchronizationService.sendRemoteDataToLocal()
+            }
+
+            applicationState.setOnline(isOnlineNewValue)
         }
     }
 
