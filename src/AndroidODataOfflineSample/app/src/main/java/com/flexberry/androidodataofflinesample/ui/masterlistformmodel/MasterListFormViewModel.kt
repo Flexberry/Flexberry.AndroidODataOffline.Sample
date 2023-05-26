@@ -31,10 +31,20 @@ class MasterListFormViewModel @Inject constructor(
         .launchIn(viewModelScope)
     }
 
+    /**
+     * Событие добавления мастера.
+     */
     fun onAddMasterButtonClicked():Unit {
-        // добавление нового пользователя
+        appNavigator.tryNavigateTo(
+            Destination.MasterEditScreen(
+                primaryKey = ""
+            )
+        )
     }
 
+    /**
+     * Редактирование мастера.
+     */
     fun onEditMasterClicked(master: Master):Unit {
         appNavigator.tryNavigateTo(
             Destination.MasterEditScreen(
@@ -43,6 +53,9 @@ class MasterListFormViewModel @Inject constructor(
         )
     }
 
+    /**
+     * Удаление мастера.
+     */
     fun onDeleteMasterClicked(master: Master):Unit {
         if (applicationState.isOnline.value) {
             repository.deleteMastersOnline(listOf(master))
@@ -53,10 +66,16 @@ class MasterListFormViewModel @Inject constructor(
         refreshData()
     }
 
+    /**
+     * Событие возврата.
+     */
     fun onBackButtonClicked() {
         appNavigator.tryNavigateBack(Destination.MainScreen())
     }
 
+    /**
+     * Получить мастеров из хранилища.
+     */
     private fun getMasters(isOnline: Boolean): List<Master> {
         return if (isOnline) {
             repository.getMastersOnline(10)

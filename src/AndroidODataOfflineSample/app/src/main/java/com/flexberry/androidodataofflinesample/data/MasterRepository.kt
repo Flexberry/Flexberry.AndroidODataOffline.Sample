@@ -34,6 +34,11 @@ class MasterRepository @Inject constructor(
         return networkDataSource.readObjects(querySettings, NetworkMaster.Views.NetworkMasterE).map { it.asDataModel() }
     }
 
+    /**
+     * Получить мастера по ключу в режиме онлайн.
+     *
+     * @param primaryKey Ключ мастера.
+     */
     fun getMasterByPrimaryKeyOnline(primaryKey: UUID): Master? {
         return networkDataSource.readObjects(
             QuerySettings(Filter.equalFilter("__PrimaryKey", primaryKey))
@@ -49,6 +54,11 @@ class MasterRepository @Inject constructor(
         networkDataSource.updateObjects(dataObjects.map { it.asNetworkModel() })
     }
 
+    /**
+     * Удалить мастеров в режиме онлайн.
+     *
+     * @param dataObjects Список мастеров.
+     */
     fun deleteMastersOnline(dataObjects: List<Master>) {
         networkDataSource.deleteObjects(dataObjects.map { it.asNetworkModel() })
     }
@@ -67,6 +77,11 @@ class MasterRepository @Inject constructor(
         return localDataSource.readObjects(querySettings, MasterEntity.Views.MasterEntityE).map { it.asDataModel() }
     }
 
+    /**
+     * Получить мастера в режиме оффлайн.
+     *
+     * @param primaryKey ключ мастера.
+     */
     fun getMasterByPrimaryKeyOffline(primaryKey: UUID): Master? {
         return localDataSource.readObjects(
             QuerySettings(Filter.equalFilter("primarykey", primaryKey))
@@ -82,6 +97,11 @@ class MasterRepository @Inject constructor(
         localDataSource.updateObjects(dataObjects.map { it.asLocalModel() })
     }
 
+    /**
+     * Удалить мастеров в режиме оффлайн.
+     *
+     * @param dataObjects Список мастеров.
+     */
     fun deleteMastersOffline(dataObjects: List<Master>) {
         localDataSource.deleteObjects(dataObjects.map { it.asLocalModel() })
     }

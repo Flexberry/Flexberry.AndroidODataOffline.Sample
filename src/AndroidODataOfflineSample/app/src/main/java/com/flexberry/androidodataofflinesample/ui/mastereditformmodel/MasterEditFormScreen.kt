@@ -57,7 +57,7 @@ fun MasterEditFormScreen(
                     )
                     Text(
                         modifier = modifier,
-                        text = viewModel.master.primarykey.toString(),
+                        text = viewModel.dataObject.primarykey.toString(),
                         style = MaterialTheme.typography.titleLarge,
                         fontSize = 12.sp
                     )
@@ -70,7 +70,7 @@ fun MasterEditFormScreen(
                 Text(modifier = modifier, text = "Details")
 
                 Spacer(modifier = modifier.size(8.dp))
-                val details = viewModel.master.details?.toList()
+                val details = viewModel.dataObject.details?.toList()
                 if (details != null) {
                     LazyColumn(modifier = modifier) {
                         items(details) { detail ->
@@ -147,8 +147,8 @@ fun EditItem(
         )
         OutlinedTextField(
             modifier = modifier.weight(2f),
-            value = viewModel.masterName,
-            onValueChange = { viewModel.masterName = it },
+            value = viewModel.mutableName,
+            onValueChange = { viewModel.mutableName = it },
             maxLines = 1
         )
     }

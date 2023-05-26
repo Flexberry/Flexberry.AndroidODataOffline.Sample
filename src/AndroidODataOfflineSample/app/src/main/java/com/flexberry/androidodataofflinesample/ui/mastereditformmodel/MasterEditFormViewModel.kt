@@ -22,17 +22,30 @@ class MasterEditFormViewModel @Inject constructor(
     private val appNavigator: AppNavigator,
     savedStateHandle: SavedStateHandle
 ):ViewModel() {
-    var masterName by mutableStateOf("")
-    var master: Master = Master(UUID.randomUUID())
+    /**
+     * Изменяемое имя мастера.
+     */
+    var mutableName by mutableStateOf("")
+
+    /**
+     * Мастер.
+     */
+    var dataObject: Master = Master(UUID.randomUUID())
 
     init {
         val primaryKey =
             savedStateHandle.get<String>(Destination.MasterEditScreen.MASTER_PRIMARY_KEY) ?: ""
 
-        master = getMasterByPrimaryKey(UUID.fromString(primaryKey)) ?: master
-        masterName = master.name ?: ""
+        if (primaryKey.isNotEmpty()) {
+            dataObject = getMasterByPrimaryKey(UUID.fromString(primaryKey)) ?: dataObject
+        }
+        
+        mutableName = dataObject.name ?: ""
     }
 
+    /**
+     * Получить мастера по ключу их хранилища.
+     */
     fun getMasterByPrimaryKey(primaryKey: UUID): Master? {
         return if (applicationState.isOnline.value) {
             repository.getMasterByPrimaryKeyOnline(primaryKey)
@@ -41,18 +54,24 @@ class MasterEditFormViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Событие закрытия формы.
+     */
     fun onCloseButtonClicked() {
         appNavigator.tryNavigateBack(Destination.MasterListForm())
     }
 
+    /**
+     * Событие кнопки сохранения.
+     */
     fun onSaveButtonClicked() {
         // сохранение изменного Мастера
-        master.name = masterName
+        dataObject.name = mutableName
 
         if (applicationState.isOnline.value) {
-            repository.updateMastersOnline(listOf(master))
+            repository.updateMastersOnline(listOf(dataObject))
         } else {
-            repository.updateMastersOffline(listOf(master))
+            repository.updateMastersOffline(listOf(dataObject))
         }
     }
 }
