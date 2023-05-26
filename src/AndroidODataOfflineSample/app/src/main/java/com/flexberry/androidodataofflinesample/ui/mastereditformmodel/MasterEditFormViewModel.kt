@@ -44,20 +44,8 @@ class MasterEditFormViewModel@Inject constructor(
     }
 
     fun getMasterByPrimaryKey(primaryKey: String): Master {
-        var master = Master(UUID.fromString("4e0793de-fb8e-11ed-be56-0242ac120002"), "Alex", details = emptyList())
-        val detailsSample = listOf(
-            Detail(
-                primarykey = UUID.randomUUID(),
-                name = "Alex",
-                master = master
-            ),
-            Detail(
-                primarykey = UUID.randomUUID(),
-                name = "Peter",
-                master = master
-            )
-        )
-        return Master(master.primarykey, master.name, details = detailsSample)
+        // Изменить возвращаемое значение return на получение данных мастера по primaryKey
+        return master
     }
 
     fun onCloseButtonClicked() {
