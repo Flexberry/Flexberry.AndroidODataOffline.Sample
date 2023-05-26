@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flexberry.androidodataofflinesample.ApplicationState
 import com.flexberry.androidodataofflinesample.data.AppDataRepository
-import com.flexberry.androidodataofflinesample.data.MasterRepository
 import com.flexberry.androidodataofflinesample.data.TestDataRoomRepository
 import com.flexberry.androidodataofflinesample.data.di.AppState
 import com.flexberry.androidodataofflinesample.ui.navigation.AppNavigator
