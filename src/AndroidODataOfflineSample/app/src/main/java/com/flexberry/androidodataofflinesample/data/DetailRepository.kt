@@ -23,7 +23,7 @@ class DetailRepository @Inject constructor(
      * @return [List] of [Detail].
      */
     fun getDetailsOnline(): List<Detail> {
-        return networkDataSource.readObjects().map { it.asDataModel() }
+        return networkDataSource.readObjects(view = NetworkDetail.Views.NetworkDetailE).map { it.asDataModel() }
     }
 
     /**
@@ -41,7 +41,7 @@ class DetailRepository @Inject constructor(
      * @return [List] of [Detail].
      */
     fun getDetailsOffline(): List<Detail> {
-        return emptyList()
+        return localDataSource.readObjects(view = DetailEntity.Views.DetailEntityE).map { it.asDataModel() }
     }
 
     /**

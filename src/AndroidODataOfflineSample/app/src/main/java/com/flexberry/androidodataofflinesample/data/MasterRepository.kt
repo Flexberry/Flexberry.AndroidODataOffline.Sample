@@ -63,12 +63,4 @@ class MasterRepository @Inject constructor(
     fun updateMastersOffline(dataObjects: List<Master>) {
         localDataSource.updateObjects(dataObjects.map { it.asLocalModel() })
     }
-
-    fun initTestOfflineData() {
-        localDataSource.createObjects(
-            MasterEntity(name = "master1"),
-            MasterEntity(name = "master2"),
-            MasterEntity(name = "master3"),
-        )
-    }
 }

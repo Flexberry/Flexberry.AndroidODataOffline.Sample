@@ -40,9 +40,9 @@ import com.flexberry.androidodataofflinesample.ui.theme.listFormBottomMenu
 @Composable
 fun DetailListFormScreen(
     modifier: Modifier = Modifier,
-    viewModel: DetailListFormViewModel = hiltViewModel(),
-    details: List<Detail> = emptyList()
+    viewModel: DetailListFormViewModel = hiltViewModel()
 ) {
+    val detailsList = remember { viewModel.details }
     Box(
         modifier = modifier.fillMaxWidth(),
     ) {
@@ -57,7 +57,7 @@ fun DetailListFormScreen(
                 modifier = modifier
                     .padding(start = 32.dp, top = 16.dp, end = 32.dp, bottom = 16.dp)
             ) {
-                items(details) { detail ->
+                items(detailsList.value) { detail ->
                     ListItem(detail, viewModel)
                 }
             }

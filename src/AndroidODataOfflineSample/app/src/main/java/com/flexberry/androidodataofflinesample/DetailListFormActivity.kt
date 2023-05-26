@@ -28,7 +28,7 @@ class DetailListFormActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    DetailListFormScreen(details = emptyList())
+                    DetailListFormScreen()
                 }
             }
         }
