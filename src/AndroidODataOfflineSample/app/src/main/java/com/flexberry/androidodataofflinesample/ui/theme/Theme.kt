@@ -5,7 +5,10 @@ import android.content.res.Configuration
 import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,10 +35,13 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.flexberry.androidodataofflinesample.ui.mastereditformmodel.MasterEditFormViewModel
 
 private val DarkColorScheme = darkColorScheme(
         primary = LightGrey,
@@ -166,6 +172,56 @@ fun listFormBottomMenu(
         }
     }
 }
+
+@Composable
+fun editFormTopMenu(
+    modifier: Modifier = Modifier,
+    onCloseButtonClicked: (() -> Unit)? = null,
+    onSaveCloseButtonClicked: (() -> Unit)? = null,
+    onSaveButtonClicked: (() -> Unit)? = null
+) {
+    Row(modifier = modifier) {
+        Row(modifier = modifier.weight(1f)) {
+            editFormTopMenuButton(text = "Close", onButtonClicked = onCloseButtonClicked)
+        }
+
+        Spacer(modifier = modifier.size(16.dp))
+
+        Row(
+            modifier = modifier.weight(2f),
+            horizontalArrangement = Arrangement.End
+        ) {
+            editFormTopMenuButton(text = "Save & Close", onButtonClicked = onSaveCloseButtonClicked)
+
+            Spacer(modifier = modifier.size(8.dp))
+
+            editFormTopMenuButton(text = "Save", onButtonClicked = onSaveButtonClicked)
+        }
+    }
+}
+
+@Composable
+fun editFormTopMenuButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    onButtonClicked: (() -> Unit)? = null
+) {
+    val buttonSize = 90.dp
+    if (onButtonClicked != null) {
+        Button(
+            modifier = modifier
+                .size(buttonSize),
+            onClick = onButtonClicked
+        ) {
+            Text(
+                text = text,
+                fontSize = MaterialTheme.typography.titleSmall.fontSize,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
 
 // Для предпросмотра в Android Studio
 @Preview(

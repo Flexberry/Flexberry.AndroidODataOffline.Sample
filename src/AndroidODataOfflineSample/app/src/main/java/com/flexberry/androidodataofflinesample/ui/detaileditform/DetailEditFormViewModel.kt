@@ -1,11 +1,12 @@
-package com.flexberry.androidodataofflinesample.ui.mastereditformmodel
+package com.flexberry.androidodataofflinesample.ui.detaileditform
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.flexberry.androidodataofflinesample.ApplicationState
-import com.flexberry.androidodataofflinesample.data.MasterRepository
+import com.flexberry.androidodataofflinesample.data.DetailRepository
 import com.flexberry.androidodataofflinesample.data.di.AppState
+import com.flexberry.androidodataofflinesample.data.model.Detail
 import com.flexberry.androidodataofflinesample.data.model.Master
 import com.flexberry.androidodataofflinesample.ui.navigation.AppNavigator
 import com.flexberry.androidodataofflinesample.ui.navigation.Destination
@@ -14,36 +15,38 @@ import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
-class MasterEditFormViewModel@Inject constructor(
-    private val repository: MasterRepository,
+class DetailEditFormViewModel@Inject constructor(
+    private val repository: DetailRepository,
     @AppState private val applicationState: ApplicationState,
     private val appNavigator: AppNavigator,
     savedStateHandle: SavedStateHandle
-):ViewModel() {
+) : ViewModel() {
 
+    var detailName = mutableStateOf("")
     var masterName = mutableStateOf("")
-    var master: Master = Master(UUID.randomUUID(),"")
+    var detail: Detail = Detail(UUID.randomUUID(), "", Master(UUID.randomUUID(),""))
 
     init {
         val primaryKey =
-            savedStateHandle.get<String>(Destination.MasterEditScreen.MASTER_PRIMARY_KEY) ?: ""
+            savedStateHandle.get<String>(Destination.DetailEditScreen.DETAIL_PRIMARY_KEY) ?: ""
 
-        master = getMasterByPrimaryKey(primaryKey)
-        masterName.value = master.name ?: ""
+        detail = getDetailByPrimaryKey(primaryKey)
+        detailName.value = detail.name ?: ""
+        masterName.value = detail.master.name ?: ""
     }
 
-    fun getMasterByPrimaryKey(primaryKey: String): Master {
-        // Изменить возвращаемое значение return на получение данных мастера по primaryKey
-        return master
+    fun getDetailByPrimaryKey(primaryKey: String): Detail {
+        // Изменить возвращаемое значение return на получение данных detail по primaryKey
+        return detail
     }
 
     fun onCloseButtonClicked() {
-        appNavigator.tryNavigateBack(Destination.MasterListForm())
+        appNavigator.tryNavigateBack(Destination.DetailListForm())
     }
 
     fun onSaveButtonClicked() {
         // сохранение изменного Мастера
-        master.name = masterName.value
+        detail.name = detailName.value
     }
 
     fun onSaveCloseButtonClicked() {
