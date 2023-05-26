@@ -429,7 +429,7 @@ class RoomTest {
     @Throws(Exception::class)
     fun createExistedTest() {
         val masterRoomDataSource = MasterRoomDataSource(dataBaseManager)
-        val master1 = MasterEntity(name = "tricky master")
+        val master1 = MasterEntity(name = "tricky master createExisted")
 
         var countMasterCreated = masterRoomDataSource.createObjects(master1)
 
@@ -447,7 +447,7 @@ class RoomTest {
     @Throws(Exception::class)
     fun updateNewTest() {
         val masterRoomDataSource = MasterRoomDataSource(dataBaseManager)
-        val master1 = MasterEntity(name = "tricky master")
+        val master1 = MasterEntity(name = "tricky master updateNew")
 
         val countMasterUpdated = masterRoomDataSource.updateObjects(master1)
 
@@ -467,7 +467,7 @@ class RoomTest {
     @Throws(Exception::class)
     fun deleteNotExistedTest() {
         val masterRoomDataSource = MasterRoomDataSource(dataBaseManager)
-        val master1 = MasterEntity(name = "tricky master")
+        val master1 = MasterEntity(name = "tricky master deleteNotExisted")
 
         val countMasterDeleted = masterRoomDataSource.deleteObjects(master1)
 

@@ -27,11 +27,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            buildConfigField("String", "ODATA_BACKEND_URL", "\"http://134.209.30.115/odata\"")
+            buildConfigField("String", "ODATA_BACKEND_URL", "\"http://stands-backend.flexberry.net/odata\"")
         }
 
         debug {
-            buildConfigField("String", "ODATA_BACKEND_URL", "\"http://134.209.30.115/odata\"")
+            buildConfigField("String", "ODATA_BACKEND_URL", "\"http://stands-backend.flexberry.net/odata\"")
         }
     }
     compileOptions {
