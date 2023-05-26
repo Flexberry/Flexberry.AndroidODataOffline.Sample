@@ -10,8 +10,6 @@ import javax.inject.Inject
  * Сервис синхронизации между локальным и удаленным источниками данных.
  */
 class SynchronizationService @Inject constructor(
-    private val applicationUserRepository: ApplicationUserRepository,
-    private val voteRepository: VoteRepository,
     private val masterRepository: MasterRepository,
     private val detailRepository: DetailRepository,
 ) {
@@ -19,12 +17,6 @@ class SynchronizationService @Inject constructor(
      * Взять данные из внешнего репозитория и положить их в локальный репозиторий.
      */
     fun sendRemoteDataToLocal() {
-        val applicationUsersData = applicationUserRepository.getApplicationUsersOnline()
-        applicationUserRepository.updateApplicationUsersOffline(applicationUsersData)
-
-        val votesData = voteRepository.getVotesOnline()
-        voteRepository.updateVotesOffline(votesData)
-
         val mastersData = masterRepository.getMastersOnline()
         masterRepository.updateMastersOffline(mastersData)
 

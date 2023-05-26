@@ -50,9 +50,9 @@ class MasterListFormViewModel@Inject constructor(
 
     private fun getMasters(isOnline: Boolean): List<Master> {
         return if (isOnline) {
-            repository.getMastersOnline().take(10)
+            repository.getMastersOnline(10)
         } else {
-            repository.getMastersOffline().take(10)
+            repository.getMastersOffline(10)
         }
     }
 }
