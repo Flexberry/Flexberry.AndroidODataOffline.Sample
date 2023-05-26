@@ -81,6 +81,15 @@ fun MainScreen(
             horizontalArrangement = Arrangement.spacedBy(32.dp, alignment = Alignment.End)
         )
         {
+            mainButton(
+                modifier = modifier.size(100.dp),
+                fontSize = 18.sp,
+                text = "Test data",
+                textColor = MaterialTheme.colorScheme.onPrimary,
+                rounded = 50,
+                onClick = viewModel::onInitTestData
+            )
+
             var buttonText = "Offline"
             var buttonTextColor = MaterialTheme.colorScheme.onSecondary
             if (uiStateOnline.value) {
