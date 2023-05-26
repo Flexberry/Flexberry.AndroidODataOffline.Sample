@@ -2,14 +2,10 @@ package com.flexberry.androidodataofflinesample.data
 
 import com.flexberry.androidodataofflinesample.data.di.DetailLocalDatasource
 import com.flexberry.androidodataofflinesample.data.di.MasterLocalDataSource
-import com.flexberry.androidodataofflinesample.data.di.MasterNetworkDataSource
 import com.flexberry.androidodataofflinesample.data.local.entities.DetailEntity
 import com.flexberry.androidodataofflinesample.data.local.entities.MasterEntity
 import com.flexberry.androidodataofflinesample.data.local.interfaces.LocalDataSource
-import com.flexberry.androidodataofflinesample.data.network.interfaces.NetworkDataSource
-import com.flexberry.androidodataofflinesample.data.network.models.NetworkMaster
 import javax.inject.Inject
-
 
 /**
  * Репозиторий для тестовых данных
