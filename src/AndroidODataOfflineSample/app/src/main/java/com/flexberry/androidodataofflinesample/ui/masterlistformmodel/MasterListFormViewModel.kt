@@ -25,8 +25,6 @@ class MasterListFormViewModel@Inject constructor(
     val masters = mutableStateOf(getMasters(applicationState.isOnline.value))
 
     init {
-        repository.initTestOfflineData()
-
         // Пример слежки за изменением онлайна.
         snapshotFlow { applicationState.isOnline.value }.onEach { isOnline ->
             masters.value = getMasters(isOnline)
