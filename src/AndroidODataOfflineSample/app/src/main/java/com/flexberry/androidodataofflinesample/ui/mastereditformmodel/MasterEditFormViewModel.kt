@@ -1,6 +1,5 @@
 package com.flexberry.androidodataofflinesample.ui.mastereditformmodel
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
