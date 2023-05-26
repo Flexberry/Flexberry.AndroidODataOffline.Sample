@@ -48,7 +48,7 @@ fun MasterListFormScreen(
     Box(
         modifier = modifier.fillMaxWidth(),
     ) {
-        Column() {
+        Column(modifier = modifier.padding(bottom = 100.dp)) {
             Text(
                 modifier = modifier.padding(start = 16.dp),
                 text = "Master List",
@@ -119,7 +119,7 @@ fun ListItem(
                 ) {
                 DropdownMenuItem(
                     text = { Text("Редактировать") },
-                    onClick = { viewModel::onEditMasterClicked },
+                    onClick = { viewModel.onEditMasterClicked(master) },
                     leadingIcon = {
                         Icon(imageVector = Icons.Default.Edit, contentDescription = null)
                     },

@@ -9,8 +9,8 @@ import java.util.UUID
  */
 data class Master(
     val primarykey: UUID,
-    val name: String? = null,
-    val details: List<Detail>? = null
+    var name: String? = null,
+    var details: List<Detail>? = null
 ) {
     /**
      * Преобразование [Master] в [NetworkMaster].
