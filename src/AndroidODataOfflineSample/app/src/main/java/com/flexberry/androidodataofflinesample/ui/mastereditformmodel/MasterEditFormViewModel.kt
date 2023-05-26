@@ -8,7 +8,6 @@ import com.flexberry.androidodataofflinesample.data.MasterRepository
 import com.flexberry.androidodataofflinesample.data.di.AppState
 import com.flexberry.androidodataofflinesample.data.model.Detail
 import com.flexberry.androidodataofflinesample.data.model.Master
-import com.flexberry.androidodataofflinesample.ui.detaillistform.SampleDetailData
 import com.flexberry.androidodataofflinesample.ui.navigation.AppNavigator
 import com.flexberry.androidodataofflinesample.ui.navigation.Destination
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -50,12 +49,12 @@ class MasterEditFormViewModel@Inject constructor(
             Detail(
                 primarykey = UUID.randomUUID(),
                 name = "Alex",
-                master = SampleDetailData.master
+                master = master
             ),
             Detail(
                 primarykey = UUID.randomUUID(),
                 name = "Peter",
-                master = SampleDetailData.master
+                master = master
             )
         )
         return Master(master.primarykey, master.name, details = detailsSample)
