@@ -57,10 +57,6 @@ class MasterListFormViewModel @Inject constructor(
         appNavigator.tryNavigateBack(Destination.MainScreen())
     }
 
-    override fun onCleared() {
-        super.onCleared()
-    }
-
     private fun getMasters(isOnline: Boolean): List<Master> {
         return if (isOnline) {
             repository.getMastersOnline(10)
