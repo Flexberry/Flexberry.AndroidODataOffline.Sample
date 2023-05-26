@@ -1,12 +1,10 @@
 package com.flexberry.androidodataofflinesample.ui.mastereditformmodel
 
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.flexberry.androidodataofflinesample.ApplicationState
 import com.flexberry.androidodataofflinesample.data.MasterRepository
 import com.flexberry.androidodataofflinesample.data.di.AppState
-import com.flexberry.androidodataofflinesample.data.model.Master
 import com.flexberry.androidodataofflinesample.ui.detaillistform.SampleDetailData
 import com.flexberry.androidodataofflinesample.ui.navigation.AppNavigator
 import com.flexberry.androidodataofflinesample.ui.navigation.Destination
@@ -24,10 +22,6 @@ class MasterEditFormViewModel@Inject constructor(
 
     fun onCloseButtonClicked() {
         appNavigator.tryNavigateBack(Destination.MasterListForm())
-    }
-
-    fun onTextValueChange(value: String): Unit
-    {
     }
 
     fun onSaveButtonClicked() {
