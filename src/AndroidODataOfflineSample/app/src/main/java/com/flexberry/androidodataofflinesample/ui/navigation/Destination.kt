@@ -16,6 +16,13 @@ sealed class Destination(protected val route: String, vararg params: String) {
     object VoteListFormModelScreen : NoArgumentsDestination("votes")
     object MasterListForm : NoArgumentsDestination("masters")
     object DetailListForm : NoArgumentsDestination("details")
+
+    object MasterEditScreen : Destination("master_edit", "primaryKey") {
+        const val MASTER_PRIMARY_KEY = "primaryKey"
+        operator fun invoke(primaryKey: String): String = route.appendParams(
+            MASTER_PRIMARY_KEY to primaryKey
+        )
+    }
 }
 
 internal fun String.appendParams(vararg params: Pair<String, Any?>): String {

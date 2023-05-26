@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.flexberry.androidodataofflinesample.ui.applicationuserlistformmodel.ApplicationUserListFormModelScreen
 import com.flexberry.androidodataofflinesample.ui.detaillistform.DetailListFormScreen
 import com.flexberry.androidodataofflinesample.ui.mainmodel.MainScreen
+import com.flexberry.androidodataofflinesample.ui.mastereditformmodel.MasterEditFormScreen
 import com.flexberry.androidodataofflinesample.ui.masterlistformmodel.MasterListFormScreen
 import com.flexberry.androidodataofflinesample.ui.votelistformmodel.VoteListFormModelScreen
 import kotlinx.coroutines.channels.Channel
@@ -45,7 +46,9 @@ fun BaseNavigation(
         baseComposable(destination = Destination.DetailListForm) {
             DetailListFormScreen()
         }
-
+        baseComposable(destination = Destination.MasterEditScreen) {
+            MasterEditFormScreen()
+        }
     }
 }
 

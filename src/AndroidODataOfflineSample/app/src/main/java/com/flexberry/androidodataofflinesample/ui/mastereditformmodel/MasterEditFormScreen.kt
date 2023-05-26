@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.flexberry.androidodataofflinesample.ui.mastereditformmodel
 
 import android.content.res.Configuration
@@ -19,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +37,7 @@ fun MasterEditFormScreen(
     modifier: Modifier = Modifier,
     viewModel: MasterEditFormViewModel = hiltViewModel(),
 ) {
+    val viewState = viewModel.viewState.collectAsState().value
     Box(
         modifier = modifier.fillMaxWidth(),
     ) {

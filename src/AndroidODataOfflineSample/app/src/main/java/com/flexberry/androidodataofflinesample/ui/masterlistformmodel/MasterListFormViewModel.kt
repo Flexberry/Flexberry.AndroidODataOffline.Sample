@@ -38,8 +38,12 @@ class MasterListFormViewModel@Inject constructor(
         // добавление нового пользователя
     }
 
-    fun onEditMasterClicked():Unit {
-        // изменение данных пользователя
+    fun onEditMasterClicked(master: Master):Unit {
+        appNavigator.tryNavigateTo(
+            Destination.MasterEditScreen(
+                primaryKey = master.primarykey.toString()
+            )
+        )
     }
 
     fun onDeleteMasterClicked():Unit {
