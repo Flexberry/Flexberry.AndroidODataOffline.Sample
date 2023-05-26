@@ -25,11 +25,7 @@ class MasterRepository @Inject constructor(
      * @return [List] of [Master].
      */
     fun getMastersOnline(): List<Master> {
-        return if (networkDataSource is MasterOdataDataSource) {
-            networkDataSource.getMastersWithRelations()
-        } else {
-            networkDataSource.readObjects()
-        }.map { it.asDataModel() }
+        return networkDataSource.readObjects(view = NetworkMaster.Views.NetworkMasterE).map { it.asDataModel() }
     }
 
     /**
@@ -47,11 +43,7 @@ class MasterRepository @Inject constructor(
      * @return [List] of [Master].
      */
     fun getMastersOffline(): List<Master> {
-        return if (localDataSource is MasterRoomDataSource) {
-            localDataSource.getMastersWithRelations()
-        } else {
-            localDataSource.readObjects()
-        }.map { it.asDataModel() }
+        return localDataSource.readObjects(view = NetworkMaster.Views.NetworkMasterE).map { it.asDataModel() }
     }
 
     /**
