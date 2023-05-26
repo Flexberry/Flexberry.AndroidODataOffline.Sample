@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.flexberry.androidodataofflinesample.ApplicationState
 import com.flexberry.androidodataofflinesample.data.AppDataRepository
+import com.flexberry.androidodataofflinesample.data.DetailRepository
 import com.flexberry.androidodataofflinesample.data.MasterRepository
 import com.flexberry.androidodataofflinesample.data.di.AppState
 import com.flexberry.androidodataofflinesample.ui.navigation.AppNavigator
@@ -19,6 +20,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val repository: AppDataRepository,
     private val masterRepository: MasterRepository,
+    private val detailRepository: DetailRepository,
     @AppState val applicationState: ApplicationState,
     private val appNavigator: AppNavigator,
 ) : ViewModel() {
@@ -52,5 +54,6 @@ class MainViewModel @Inject constructor(
 
     fun onInitTestData() {
         masterRepository.initTestOfflineData()
+        detailRepository.initTestOfflineData()
     }
 }
