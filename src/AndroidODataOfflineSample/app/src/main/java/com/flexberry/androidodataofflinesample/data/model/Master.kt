@@ -10,7 +10,7 @@ import java.util.UUID
 data class Master(
     val primarykey: UUID,
     var name: String? = null,
-    val details: List<Detail>? = null
+    var details: List<Detail>? = null
 ) {
     /**
      * Преобразование [Master] в [NetworkMaster].

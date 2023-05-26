@@ -37,7 +37,6 @@ fun MasterEditFormScreen(
     modifier: Modifier = Modifier,
     viewModel: MasterEditFormViewModel = hiltViewModel(),
 ) {
-    val viewState = viewModel.viewState.collectAsState().value
     Box(
         modifier = modifier.fillMaxWidth(),
     ) {
@@ -76,12 +75,15 @@ fun MasterEditFormScreen(
                 Text(modifier = modifier, text = "Details")
 
                 Spacer(modifier = modifier.size(8.dp))
-                val details = viewModel.master.details!!.toList()
-                LazyColumn(modifier = modifier) {
-                    items(details) { detail ->
-                        ListItem(detail)
+                val details = viewModel.master.details?.toList()
+                if (details != null) {
+                    LazyColumn(modifier = modifier) {
+                        items(details) { detail ->
+                            ListItem(detail)
+                        }
                     }
                 }
+
             }
         }
     }
@@ -140,7 +142,8 @@ fun EditItem(
     fieldName: String,
     viewModel: MasterEditFormViewModel
 ) {
-    var name by remember { mutableStateOf(viewModel.master.name) }
+    var masterName by remember { viewModel.masterName }
+
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -151,11 +154,8 @@ fun EditItem(
         )
         TextField(
             modifier = modifier.weight(2f),
-            value = name.toString(),
-            onValueChange = {
-                name = it
-                viewModel.master.name = it
-                            },
+            value = masterName,
+            onValueChange = { masterName = it },
             maxLines = 1
         )
     }
