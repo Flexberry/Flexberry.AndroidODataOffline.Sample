@@ -54,13 +54,4 @@ class DetailRepository @Inject constructor(
     fun updateDetailsOffline(dataObjects: List<Detail>) {
         localDataSource.updateObjects(dataObjects.map { it.asLocalModel() })
     }
-
-    fun initTestOfflineData() {
-        val m = MasterEntity(UUID.randomUUID(), "Master")
-        localDataSource.createObjects(
-            DetailEntity(UUID.randomUUID(), "Detail One", m),
-            DetailEntity(UUID.randomUUID(), "Detail Two", m),
-            DetailEntity(UUID.randomUUID(), "Detail Three", m),
-        )
-    }
 }

@@ -25,8 +25,6 @@ class DetailListFormViewModel@Inject constructor(
     val details = mutableStateOf(getDetails(applicationState.isOnline.value))
 
     init {
-        repository.initTestOfflineData()
-
         // Пример слежки за изменением онлайна.
         snapshotFlow { applicationState.isOnline.value }.onEach { isOnline ->
             details.value = getDetails(isOnline)
