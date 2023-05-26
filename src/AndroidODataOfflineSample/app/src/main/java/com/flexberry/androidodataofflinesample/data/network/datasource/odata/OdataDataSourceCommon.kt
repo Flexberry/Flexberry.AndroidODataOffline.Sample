@@ -444,7 +444,7 @@ open class OdataDataSourceCommon {
 
         if (view != null) {
             // Расширение по представлению.
-            val viewExpand = getViewTreeExtension(view)
+            val viewExpand = getViewExtension(view)
 
             if (viewExpand != null) resultList.add(viewExpand)
         } else {
@@ -476,7 +476,7 @@ open class OdataDataSourceCommon {
      * @param view Представление.
      * @return Строковое значение расширения свойств.
      */
-    private fun getViewTreeExtension(view: View): String? {
+    private fun getViewExtension(view: View): String? {
         val resultList = mutableListOf<String>()
 
         // Берем мастеровые свойства и по каждому забираем его расширение.
@@ -488,7 +488,7 @@ open class OdataDataSourceCommon {
         view.detailViews.forEach { (detailName, detailView) ->
             // Расшиирение для детейлов детейла.
             val detailResultList = mutableListOf<String>()
-            val detailExpand = getViewTreeExtension(detailView)
+            val detailExpand = getViewExtension(detailView)
             val detailAttributes = detailView.propertiesTree.map { it.name } as MutableList
 
             if (!detailAttributes.contains(primaryKeyPropertyName)) {
