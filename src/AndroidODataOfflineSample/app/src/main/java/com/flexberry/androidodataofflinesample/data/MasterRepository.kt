@@ -43,7 +43,7 @@ class MasterRepository @Inject constructor(
      * @return [List] of [Master].
      */
     fun getMastersOffline(): List<Master> {
-        return localDataSource.readObjects(view = NetworkMaster.Views.NetworkMasterE).map { it.asDataModel() }
+        return localDataSource.readObjects(view = MasterEntity.Views.MasterEntityE).map { it.asDataModel() }
     }
 
     /**
