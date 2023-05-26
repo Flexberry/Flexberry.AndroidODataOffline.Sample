@@ -40,17 +40,17 @@ class DetailEditFormViewModel@Inject constructor(
         return detail
     }
 
-    fun onCloseButtonClicked() {
+    fun onCloseDetailClicked() {
         appNavigator.tryNavigateBack(Destination.DetailListForm())
     }
 
-    fun onSaveButtonClicked() {
+    fun onSaveDetailClicked() {
         // сохранение изменного Мастера
         detail.name = detailName.value
     }
 
-    fun onSaveCloseButtonClicked() {
-        onSaveButtonClicked()
-        onCloseButtonClicked()
+    fun onSaveCloseDetailClicked() {
+        onSaveDetailClicked()
+        onCloseDetailClicked()
     }
 }

@@ -36,9 +36,9 @@ fun DetailEditFormScreen(
         ) {
             editFormTopMenu(
                 modifier = modifier,
-                onCloseButtonClicked = viewModel::onCloseButtonClicked,
-                onSaveCloseButtonClicked = viewModel::onSaveCloseButtonClicked,
-                onSaveButtonClicked = viewModel::onSaveButtonClicked
+                onCloseButtonClicked = viewModel::onCloseDetailClicked,
+                onSaveCloseButtonClicked = viewModel::onSaveCloseDetailClicked,
+                onSaveButtonClicked = viewModel::onSaveDetailClicked
             )
 
             Column(

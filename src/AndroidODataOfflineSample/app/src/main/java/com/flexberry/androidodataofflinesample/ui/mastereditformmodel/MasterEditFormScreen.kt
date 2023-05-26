@@ -41,9 +41,9 @@ fun MasterEditFormScreen(
         ) {
             editFormTopMenu(
                 modifier = modifier,
-                onCloseButtonClicked = viewModel::onCloseButtonClicked,
-                onSaveCloseButtonClicked = viewModel::onSaveCloseButtonClicked,
-                onSaveButtonClicked = viewModel::onSaveButtonClicked
+                onCloseButtonClicked = viewModel::onCloseMasterClicked,
+                onSaveCloseButtonClicked = viewModel::onSaveCloseMasterClicked,
+                onSaveButtonClicked = viewModel::onSaveMasterClicked
             )
 
             Column(
