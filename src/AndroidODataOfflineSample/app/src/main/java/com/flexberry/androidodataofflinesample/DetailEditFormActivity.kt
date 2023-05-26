@@ -10,7 +10,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.flexberry.androidodataofflinesample.ui.detaileditform.DetailEditFormScreen
 import com.flexberry.androidodataofflinesample.ui.detaileditform.DetailEditFormViewModel
-import com.flexberry.androidodataofflinesample.ui.mastereditformmodel.MasterEditFormScreen
 import com.flexberry.androidodataofflinesample.ui.theme.AndroidODataOfflineSampleTheme
 import dagger.hilt.android.AndroidEntryPoint
 

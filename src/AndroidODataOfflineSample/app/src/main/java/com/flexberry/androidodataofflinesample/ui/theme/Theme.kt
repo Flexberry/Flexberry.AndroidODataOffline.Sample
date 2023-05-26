@@ -40,8 +40,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.flexberry.androidodataofflinesample.ui.mastereditformmodel.MasterEditFormViewModel
 
 private val DarkColorScheme = darkColorScheme(
         primary = LightGrey,
