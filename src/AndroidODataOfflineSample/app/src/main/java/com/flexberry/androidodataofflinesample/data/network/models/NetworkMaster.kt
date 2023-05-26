@@ -18,14 +18,14 @@ data class NetworkMaster(
             val NetworkMasterE = View(
                 name = "NetworkMasterE",
                 stringedView =  """
-                        ${NetworkMaster::Name.name}
+                        Name
                     """.trimIndent()
-            ).addDetail(NetworkMaster::Detail.name, NetworkDetail.Views.NetworkDetailD)
+            ).addDetail("Detail", NetworkDetail.Views.NetworkDetailD)
 
             val NetworkMasterL = View(
                 name = "NetworkMasterL",
                 stringedView =  """
-                        ${NetworkMaster::Name.name}
+                        Name
                     """.trimIndent()
             )
         }

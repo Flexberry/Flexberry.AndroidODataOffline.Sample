@@ -435,25 +435,18 @@ open class OdataDataSourceCommon {
      * Получить расширение свойств объекта для вычитки.
      *
      * @param odataObjectClass Класс объекта.
+     * @param view Представление объекта.
+     * @return Строковое значение расширения свойств.
      */
     private fun getRequestExtension(odataObjectClass: KClass<*>, view: View? = null): String? {
+        // Список расширений.
         val resultList = mutableListOf<String>()
 
         if (view != null) {
-            resultList.add(getViewExtension(
-                view.propertiesTree
-                    .filter { it.children != null }))
+            // Расширение по представлению.
+            val viewExpand = getViewExtension(view)
 
-            view.detailViews.forEach { (detailName, detailView) ->
-                val detailProperties = detailView.propertiesTree
-                var detailExpand = getViewExtension(detailProperties)
-
-                if (!detailProperties.any { it.name == primaryKeyPropertyName }) {
-                    detailExpand = "$primaryKeyPropertyName,$detailExpand"
-                }
-
-                resultList.add("$detailName(${UrlParamNames.select}=$detailExpand)")
-            }
+            if (viewExpand != null) resultList.add(viewExpand)
         } else {
             // Берем всех мастеров объекта.
             odataObjectClass.declaredMemberProperties.forEach { prop ->
@@ -478,25 +471,83 @@ open class OdataDataSourceCommon {
     }
 
     /**
-     * Получить расширание согласно [View].
+     * Получить расширение по представлению.
      *
-     * @param tree Дерево свойств представления.
-     * @return Extend для дерева свойств.
+     * @param view Представление.
+     * @return Строковое значение расширения свойств.
      */
-    private fun getViewExtension(tree: List<View.PropertyTreeNode>): String {
+    private fun getViewExtension(view: View): String? {
         val resultList = mutableListOf<String>()
 
-        tree.forEach { node ->
-            if (node.children == null) {
-                resultList.add(node.name)
-            } else {
-                val childExtension = getViewExtension(node.children.listProperties)
-
-                resultList.add("${node.name}(${UrlParamNames.select}=$childExtension)")
-            }
+        // Берем мастеровые свойства и по каждому забираем его расширение.
+        view.propertiesTree.filter { it.children != null }.forEach { master ->
+            resultList.add(getViewTreeExtension(master.name, master.children!!.listProperties))
         }
 
-        return resultList.filter { it.isNotEmpty() }.joinToString(",")
+        // Расширение для детейлов.
+        view.detailViews.forEach { (detailName, detailView) ->
+            // Расшиирение для детейлов детейла.
+            val detailResultList = mutableListOf<String>()
+            val detailExpand = getViewExtension(detailView)
+            val detailAttributes = detailView.propertiesTree.map { it.name } as MutableList
+
+            if (!detailAttributes.contains(primaryKeyPropertyName)) {
+                detailAttributes.add(primaryKeyPropertyName)
+            }
+
+            val detailAttributesValue = detailAttributes.joinToString(",")
+
+            if (detailAttributesValue.isNotEmpty()) {
+                detailResultList.add("${UrlParamNames.select}=$detailAttributesValue")
+            }
+
+            if (detailExpand?.isNotEmpty() == true) {
+                detailResultList.add("${UrlParamNames.expand}=$detailExpand")
+            }
+
+            val detailResult = detailResultList.joinToString(";")
+
+            resultList.add("$detailName(${detailResult})")
+        }
+
+        return if (resultList.any()) {
+            resultList.filter { it.isNotEmpty() }.joinToString(",")
+        } else {
+            null
+        }
+    }
+
+    /**
+     * Получить расширание согласно [View].
+     *
+     * @param propertyName Имя текущего свойства.
+     * @param viewTree Дерево свойств представления.
+     * @return Extend для дерева свойств.
+     */
+    private fun getViewTreeExtension(propertyName: String, viewTree: List<View.PropertyTreeNode>): String {
+        val resultList = mutableListOf<String>()
+        val attributes = viewTree.map { it.name } as MutableList
+        val mastersExpand = viewTree
+            .filter { it.children != null }
+            .joinToString(",") { getViewTreeExtension(it.name, it.children!!.listProperties) }
+
+        if (!attributes.contains(primaryKeyPropertyName)) {
+            attributes.add(primaryKeyPropertyName)
+        }
+
+        val attributesValue = attributes.joinToString(",")
+
+        if (attributesValue.isNotEmpty()) {
+            resultList.add("${UrlParamNames.select}=$attributesValue")
+        }
+
+        if (mastersExpand.isNotEmpty()) {
+            resultList.add("${UrlParamNames.expand}=$mastersExpand")
+        }
+
+        val result = resultList.joinToString(";")
+
+        return "$propertyName(${result})"
     }
 
     /**
@@ -541,12 +592,13 @@ open class OdataDataSourceCommon {
         if (view != null) {
             val selectPropertiesList = view.propertiesTree
                 .filter { it.children == null }
-                .map { it.name }
-            var selectValue = selectPropertiesList.joinToString(",")
+                .map { it.name } as MutableList
 
             if (!selectPropertiesList.contains(primaryKeyPropertyName)) {
-                selectValue = "$primaryKeyPropertyName,$selectValue"
+                selectPropertiesList.add(primaryKeyPropertyName)
             }
+
+            val selectValue = selectPropertiesList.joinToString(",")
 
             elements.add("${UrlParamNames.select}=$selectValue")
         }

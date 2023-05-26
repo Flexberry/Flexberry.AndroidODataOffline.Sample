@@ -29,7 +29,7 @@ class MasterListFormActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MasterListFormScreen(masters = emptyList())
+                    MasterListFormScreen()
                 }
             }
         }
