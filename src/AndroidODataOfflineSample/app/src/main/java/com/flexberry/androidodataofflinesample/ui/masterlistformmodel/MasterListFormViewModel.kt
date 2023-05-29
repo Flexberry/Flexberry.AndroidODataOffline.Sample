@@ -44,7 +44,7 @@ class MasterListFormViewModel@Inject constructor(
         )
     }
 
-    fun onDeleteMasterClicked():Unit {
+    fun onDeleteMasterClicked(master: Master):Unit {
         // удаление пользователя
     }
 

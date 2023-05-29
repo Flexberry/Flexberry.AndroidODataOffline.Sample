@@ -8,6 +8,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.flexberry.androidodataofflinesample.ui.applicationuserlistformmodel.ApplicationUserListFormModelScreen
+import com.flexberry.androidodataofflinesample.ui.detaileditform.DetailEditFormScreen
 import com.flexberry.androidodataofflinesample.ui.detaillistform.DetailListFormScreen
 import com.flexberry.androidodataofflinesample.ui.mainmodel.MainScreen
 import com.flexberry.androidodataofflinesample.ui.mastereditformmodel.MasterEditFormScreen
@@ -48,6 +49,9 @@ fun BaseNavigation(
         }
         baseComposable(destination = Destination.MasterEditScreen) {
             MasterEditFormScreen()
+        }
+        baseComposable(destination = Destination.DetailEditScreen) {
+            DetailEditFormScreen()
         }
     }
 }

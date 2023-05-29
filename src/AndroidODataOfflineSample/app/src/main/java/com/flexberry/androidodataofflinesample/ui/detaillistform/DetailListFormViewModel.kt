@@ -36,11 +36,15 @@ class DetailListFormViewModel@Inject constructor(
         // добавление нового пользователя
     }
 
-    fun onEditDetailClicked():Unit {
-        // изменение данных пользователя
+    fun onEditDetailClicked(detail: Detail):Unit {
+        appNavigator.tryNavigateTo(
+            Destination.DetailEditScreen(
+                primaryKey = detail.primarykey.toString()
+            )
+        )
     }
 
-    fun onDeleteDetailClicked():Unit {
+    fun onDeleteDetailClicked(detail: Detail):Unit {
         // удаление пользователя
     }
 

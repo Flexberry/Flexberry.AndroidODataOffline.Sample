@@ -37,12 +37,17 @@ class MasterEditFormViewModel@Inject constructor(
         return master
     }
 
-    fun onCloseButtonClicked() {
+    fun onCloseMasterClicked() {
         appNavigator.tryNavigateBack(Destination.MasterListForm())
     }
 
-    fun onSaveButtonClicked() {
+    fun onSaveMasterClicked() {
         // сохранение изменного Мастера
         master.name = masterName.value
+    }
+
+    fun onSaveCloseMasterClicked() {
+        onSaveMasterClicked()
+        onCloseMasterClicked()
     }
 }

@@ -127,7 +127,7 @@ fun ListItem(
                 Divider()
                 DropdownMenuItem(
                     text = { Text("Удалить") },
-                    onClick = { viewModel::onDeleteMasterClicked },
+                    onClick = { viewModel.onDeleteMasterClicked(master) },
                     leadingIcon = {
                         Icon(imageVector = Icons.Default.Delete, contentDescription = null)
                     },
