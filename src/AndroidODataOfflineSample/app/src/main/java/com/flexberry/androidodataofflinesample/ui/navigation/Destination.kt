@@ -23,6 +23,12 @@ sealed class Destination(protected val route: String, vararg params: String) {
             MASTER_PRIMARY_KEY to primaryKey
         )
     }
+    object DetailEditScreen : Destination("detail_edit", "primaryKey") {
+        const val DETAIL_PRIMARY_KEY = "primaryKey"
+        operator fun invoke(primaryKey: String): String = route.appendParams(
+            DETAIL_PRIMARY_KEY to primaryKey
+        )
+    }
 }
 
 internal fun String.appendParams(vararg params: Pair<String, Any?>): String {

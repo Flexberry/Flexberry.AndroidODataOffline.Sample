@@ -117,7 +117,7 @@ fun ListItem(
                 ) {
                 DropdownMenuItem(
                     text = { Text("Редактировать") },
-                    onClick = { viewModel::onEditDetailClicked },
+                    onClick = { viewModel.onEditDetailClicked(detail) },
                     leadingIcon = {
                         Icon(imageVector = Icons.Default.Edit, contentDescription = null)
                     },
@@ -125,7 +125,7 @@ fun ListItem(
                 Divider()
                 DropdownMenuItem(
                     text = { Text("Удалить") },
-                    onClick = { viewModel::onDeleteDetailClicked },
+                    onClick = { viewModel.onDeleteDetailClicked(detail) },
                     leadingIcon = {
                         Icon(imageVector = Icons.Default.Delete, contentDescription = null)
                     },

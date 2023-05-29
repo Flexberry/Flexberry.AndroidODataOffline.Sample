@@ -57,21 +57,26 @@ class MasterEditFormViewModel @Inject constructor(
     /**
      * Событие закрытия формы.
      */
-    fun onCloseButtonClicked() {
+    fun onCloseMasterClicked() {
         appNavigator.tryNavigateBack(Destination.MasterListForm())
     }
 
     /**
      * Событие кнопки сохранения.
      */
-    fun onSaveButtonClicked() {
+    fun onSaveMasterClicked() {
         // сохранение изменного Мастера
         dataObject.name = mutableName
-
+        
         if (applicationState.isOnline.value) {
             repository.updateMastersOnline(listOf(dataObject))
         } else {
             repository.updateMastersOffline(listOf(dataObject))
         }
+    }
+
+    fun onSaveCloseMasterClicked() {
+        onSaveMasterClicked()
+        onCloseMasterClicked()
     }
 }
