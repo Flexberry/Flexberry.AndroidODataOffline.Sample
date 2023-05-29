@@ -46,7 +46,7 @@ fun DetailListFormScreen(
     Box(
         modifier = modifier.fillMaxWidth(),
     ) {
-        Column() {
+        Column(modifier = modifier.padding(bottom = 100.dp)) {
             Text(
                 modifier = modifier.padding(start = 16.dp),
                 text = "Detail List",
