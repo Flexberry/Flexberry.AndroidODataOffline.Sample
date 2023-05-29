@@ -23,7 +23,6 @@ class DetailEditFormViewModel@Inject constructor(
 ) : ViewModel() {
 
     var detailName = mutableStateOf("")
-    var masterName = mutableStateOf("")
     var detail: Detail = Detail(UUID.randomUUID(), "", Master(UUID.randomUUID(),""))
 
     init {
@@ -32,7 +31,6 @@ class DetailEditFormViewModel@Inject constructor(
 
         detail = getDetailByPrimaryKey(primaryKey)
         detailName.value = detail.name ?: ""
-        masterName.value = detail.master.name ?: ""
     }
 
     fun getDetailByPrimaryKey(primaryKey: String): Detail {

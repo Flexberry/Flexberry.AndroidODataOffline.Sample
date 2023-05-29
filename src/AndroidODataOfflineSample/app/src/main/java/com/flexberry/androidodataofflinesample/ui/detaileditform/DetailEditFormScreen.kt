@@ -68,7 +68,7 @@ fun DetailEditFormScreen(
                 EditItem(fieldName = "Name", value = viewModel.detailName)
 
                 Spacer(modifier = modifier.size(16.dp))
-                EditItem(fieldName = "Master name", value = viewModel.masterName, enabled = false)
+                Item(fieldName = "Master name", value = viewModel.detail.master.name.toString())
             }
         }
     }
@@ -81,9 +81,8 @@ fun EditItem(
     modifier: Modifier = Modifier,
     fieldName: String,
     value: MutableState<String>,
-    enabled: Boolean = true
 ) {
-    var detailName by remember { value }
+    var mutableValue  by remember { value }
 
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -95,10 +94,34 @@ fun EditItem(
         )
         TextField(
             modifier = modifier.weight(2f),
-            value = detailName,
-            onValueChange = { detailName = it },
+            value = mutableValue ,
+            onValueChange = { mutableValue = it },
+            maxLines = 1
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Item(
+    modifier: Modifier = Modifier,
+    fieldName: String,
+    value: String,
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        Text(
+            modifier = modifier.weight(1f),
+            text = fieldName
+        )
+        TextField(
+            modifier = modifier.weight(2f),
+            value = value ,
+            onValueChange = { },
             maxLines = 1,
-            enabled = enabled
+            enabled = false
         )
     }
 }
