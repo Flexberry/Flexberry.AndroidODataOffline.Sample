@@ -12,12 +12,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,7 +60,7 @@ fun MasterEditFormScreen(
                     )
                     Text(
                         modifier = modifier,
-                        text = viewModel.master.primarykey.toString(),
+                        text = viewModel.dataObject.primarykey.toString(),
                         style = MaterialTheme.typography.titleLarge,
                         fontSize = 12.sp
                     )
@@ -76,7 +73,7 @@ fun MasterEditFormScreen(
                 Text(modifier = modifier, text = "Details")
 
                 Spacer(modifier = modifier.size(8.dp))
-                val details = viewModel.master.details?.toList()
+                val details = viewModel.dataObject.details?.toList()
                 if (details != null) {
                     LazyColumn(modifier = modifier) {
                         items(details) { detail ->
@@ -98,8 +95,6 @@ fun EditItem(
     fieldName: String,
     viewModel: MasterEditFormViewModel
 ) {
-    var masterName by remember { viewModel.masterName }
-
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -108,10 +103,10 @@ fun EditItem(
             modifier = modifier.weight(1f),
             text = fieldName
         )
-        TextField(
+        OutlinedTextField(
             modifier = modifier.weight(2f),
-            value = masterName,
-            onValueChange = { masterName = it },
+            value = viewModel.mutableName,
+            onValueChange = { viewModel.mutableName = it },
             maxLines = 1
         )
     }

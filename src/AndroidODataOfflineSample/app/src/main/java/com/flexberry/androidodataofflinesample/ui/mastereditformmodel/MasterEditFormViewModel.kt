@@ -1,6 +1,8 @@
 package com.flexberry.androidodataofflinesample.ui.mastereditformmodel
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.flexberry.androidodataofflinesample.ApplicationState
@@ -14,36 +16,63 @@ import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
-class MasterEditFormViewModel@Inject constructor(
+class MasterEditFormViewModel @Inject constructor(
     private val repository: MasterRepository,
     @AppState private val applicationState: ApplicationState,
     private val appNavigator: AppNavigator,
     savedStateHandle: SavedStateHandle
 ):ViewModel() {
+    /**
+     * Изменяемое имя мастера.
+     */
+    var mutableName by mutableStateOf("")
 
-    var masterName = mutableStateOf("")
-    var master: Master = Master(UUID.randomUUID(),"")
+    /**
+     * Мастер.
+     */
+    var dataObject: Master = Master(UUID.randomUUID())
 
     init {
         val primaryKey =
             savedStateHandle.get<String>(Destination.MasterEditScreen.MASTER_PRIMARY_KEY) ?: ""
 
-        master = getMasterByPrimaryKey(primaryKey)
-        masterName.value = master.name ?: ""
+        if (primaryKey.isNotEmpty()) {
+            dataObject = getMasterByPrimaryKey(UUID.fromString(primaryKey)) ?: dataObject
+        }
+        
+        mutableName = dataObject.name ?: ""
     }
 
-    fun getMasterByPrimaryKey(primaryKey: String): Master {
-        // Изменить возвращаемое значение return на получение данных мастера по primaryKey
-        return master
+    /**
+     * Получить мастера по ключу их хранилища.
+     */
+    fun getMasterByPrimaryKey(primaryKey: UUID): Master? {
+        return if (applicationState.isOnline.value) {
+            repository.getMasterByPrimaryKeyOnline(primaryKey)
+        } else {
+            repository.getMasterByPrimaryKeyOffline(primaryKey)
+        }
     }
 
+    /**
+     * Событие закрытия формы.
+     */
     fun onCloseMasterClicked() {
         appNavigator.tryNavigateBack(Destination.MasterListForm())
     }
 
+    /**
+     * Событие кнопки сохранения.
+     */
     fun onSaveMasterClicked() {
         // сохранение изменного Мастера
-        master.name = masterName.value
+        dataObject.name = mutableName
+        
+        if (applicationState.isOnline.value) {
+            repository.updateMastersOnline(listOf(dataObject))
+        } else {
+            repository.updateMastersOffline(listOf(dataObject))
+        }
     }
 
     fun onSaveCloseMasterClicked() {

@@ -16,26 +16,35 @@ import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
-class MasterListFormViewModel@Inject constructor(
+class MasterListFormViewModel @Inject constructor(
     private val repository: MasterRepository,
     @AppState private val applicationState: ApplicationState,
     private val appNavigator: AppNavigator
 ) : ViewModel() {
-
     val masters = mutableStateOf(getMasters(applicationState.isOnline.value))
 
     init {
         // Пример слежки за изменением онлайна.
-        snapshotFlow { applicationState.isOnline.value }.onEach { isOnline ->
-            masters.value = getMasters(isOnline)
+        snapshotFlow { applicationState.isOnline.value }.onEach {
+            refreshData()
         }
         .launchIn(viewModelScope)
     }
 
+    /**
+     * Событие добавления мастера.
+     */
     fun onAddMasterButtonClicked():Unit {
-        // добавление нового пользователя
+        appNavigator.tryNavigateTo(
+            Destination.MasterEditScreen(
+                primaryKey = ""
+            )
+        )
     }
 
+    /**
+     * Редактирование мастера.
+     */
     fun onEditMasterClicked(master: Master):Unit {
         appNavigator.tryNavigateTo(
             Destination.MasterEditScreen(
@@ -44,19 +53,38 @@ class MasterListFormViewModel@Inject constructor(
         )
     }
 
+    /**
+     * Удаление мастера.
+     */
     fun onDeleteMasterClicked(master: Master):Unit {
-        // удаление пользователя
+        if (applicationState.isOnline.value) {
+            repository.deleteMastersOnline(listOf(master))
+        } else {
+            repository.deleteMastersOffline(listOf(master))
+        }
+
+        refreshData()
     }
 
+    /**
+     * Событие возврата.
+     */
     fun onBackButtonClicked() {
         appNavigator.tryNavigateBack(Destination.MainScreen())
     }
 
+    /**
+     * Получить мастеров из хранилища.
+     */
     private fun getMasters(isOnline: Boolean): List<Master> {
         return if (isOnline) {
             repository.getMastersOnline(10)
         } else {
             repository.getMastersOffline(10)
         }
+    }
+
+    fun refreshData() {
+        masters.value = getMasters(applicationState.isOnline.value)
     }
 }
